@@ -1,6 +1,6 @@
 ![C3L is the Commodore 128 CP/M C Library](images/title.png)
 
-C3L is an ANSI C based API to access C128 specific features of CP/M.
+C3L is an ANSI C based API to access C128 specific features under CP/M.
 This will eventually incorporate [SG C Tools](https://github.com/sgjava/garage/tree/master/commodore/cpm/sgctools).
 I decided to build a new library from scratch after creating
 [C128 CP/M VIC Demo](https://github.com/sgjava/garage/tree/master/commodore/cpm/vicdemo).
@@ -38,11 +38,10 @@ Build ctools:
 Install [Eclipse](https://linuxize.com/post/how-to-install-the-latest-eclipse-ide-on-ubuntu-18-04/).
 
 ## Programming considerations
-No range checks are performed by most functions for performance sake. It is
+* No range checks are performed by most functions for performance sake. It is
 incumbent upon the programmer to handle range checks. If you go out of range
 and corrupt the program or OS memory it will most likely lock the machine.
-
-If the linker gives an "Undefined symbol" message for some symbol which you know
+* If the linker gives an "Undefined symbol" message for some symbol which you know
 nothing about, it is possible that it is a library routine which was not found
 during the library search due to incorrect library ordering.  In this case you
 can search the library twice, e.g. for the standard library add a -LC to the end
