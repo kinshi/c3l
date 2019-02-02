@@ -61,6 +61,7 @@ latest source from scratch:
 * Build demos.
 * `submit compile`
 * Alt+W (VICE warp mode).
+* Run a demo.
 * `vicdemo1`
 
 ## Programming considerations
