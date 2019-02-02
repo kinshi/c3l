@@ -49,6 +49,31 @@ can search the library twice, e.g. for the standard library add a -LC to the end
 of the C command line, or -LF for the floating library.  If you have specified
 the library by name simply repeat its name.
 
+## Building
+I'm using VICE, but you could use MyZ80 or a real C128 with two drives.
+Drive a: (1581) boots CP/M and has Hitech C, turbo editor, etc. Drive b: (1571)
+contains the source that ctools can write to from your Eclipse src folder. The
+[src](https://github.com/sgjava/c3l/tree/master/src) directory should be
+considered the latest source. The disk images may go out of date. To build
+latest source from scratch:
+* `x128 -80col`
+* In VICE configure drives.
+* Boot boot.d81 as device 8.
+* Attach c3l.d71 as device 9.
+* `b`:
+* `era *.*`
+* Detach device 9.
+* Copy eclipse src to disk image. Change paths as needed.
+* `~/ctools/bin/ctools ~/cpm/c3l.d71 p ~/eclipse-workspace/c3l/src/*.*`
+* Attach c3l.d71 as device 9.
+* Build c3l library.
+* `submit lib`
+* Alt+W (VICE warp mode) and answer prompts.
+* Build demos.
+* `submit compile`
+* Alt+W (VICE warp mode).
+* `vicdemo1`
+
 ## 8564/8566 VIC-IIe
 
 ![VIC](images/vic.png)
@@ -96,8 +121,7 @@ setVicChrMode(0, 0, 11, 3);
 ### Limitations
 As I mentioned before 0x1000 is always read by the VIC as character ROM. You can
 still read and write to the memory with your program. You could store extra
-character sets, sprites, etc. there and copy them as needed for example. Since the
-Z80 cannot access memory location 0x00 of the 8502
+character sets, sprites, etc. there and copy them as needed for example.
 
 Sprites flicker and cause characters on the screen to flicker too. I'm not sure
-if this is VICE or if it would happen on a real C128. 
+if this is VICE or if it would happen on a real C128.
