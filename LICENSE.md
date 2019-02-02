@@ -1,6 +1,6 @@
 BSD 3-Clause License
 
-Copyright (c) 2019, Steven P. Goldsmith
+Copyright (c) 2018, Steven P. Goldsmith
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
