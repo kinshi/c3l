@@ -84,11 +84,26 @@ void fillScrCol(uchar *scr) {
  */
 void scrollScrUp(uchar *scr) {
     register uchar i;
-    clearVicCol(1);
     scrollVicUp(scr, 0, 24);
     fillVicScr(scr, 480, 20, 0x2020);
     for (i = 0; i < 24; i++) {
         scrollVicUp(scr, 0, 24);
+    }
+    clearVicCol(1);
+    waitKey(scr);
+    for (i = 0; i < 25; i++) {
+        printVic(scr, 0, i, "You can scroll any part of the screen!!!");
+    }
+    scrollVicUpX(scr, 0, 0, 10, 24);
+    fillVicScr(scr, 480, 10, 0x2020);
+    for (i = 0; i < 24; i++) {
+        scrollVicUpX(scr, 0, 0, 10, 24);
+    }
+    waitKey(scr);
+    scrollVicUpX(scr, 10, 0, 10, 24);
+    fillVicScr(scr, 490, 10, 0x2020);
+    for (i = 0; i < 24; i++) {
+        scrollVicUpX(scr, 10, 0, 10, 24);
     }
     waitKey(scr);
 }
@@ -106,9 +121,9 @@ void run(uchar *scr, uchar *chr, uchar *vicMem) {
     sprintf(str, "vicMem: %04x", vicMem);
     printVic(scr, 0, 6, str);
     sprintf(str, "chr:    %04x", chr);
-    printVic(scr, 0, 8, str);
-    sprintf(str, "scr:    %04x", scr);
     printVic(scr, 0, 7, str);
+    sprintf(str, "scr:    %04x", scr);
+    printVic(scr, 0, 8, str);
     waitKey(scr);
     fillScr(scr);
     fillScrCol(scr);

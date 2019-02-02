@@ -17,7 +17,8 @@ use MyZ80 which is pretty darn fast or lastly you could use the VICE emulator.
 Of course a real C128 system would work, but it will not be as productive as
 the above mentioned methods. I've chosen the Eclipse/ctools/VICE method
 because the flow is easier even though build times are longer on VICE. You can
-use an Ubuntu VM on VirtualBox to run under Windows if that works for you.
+use an Ubuntu VM on VirtualBox to run under Linux/Windows/Mac if that works for
+you.
 
 Build [VICE 3.3](http://vice-emu.sourceforge.net) on Ubuntu 18.04 x64.
 * `sudo apt-get install build-essential byacc texi2html flex xa65 libreadline-dev libxaw7-dev libgtkmm-3.0-dev libpulse-dev`
@@ -57,7 +58,7 @@ the library by name simply repeat its name.
 * 16 bit operations used where possible
 * Fast text output (even faster without color)
 * Custom character sets (can be copied from VDC)
-* Scroll entire screen
+* Scroll any area of screen
 
 ### VIC memory management in CP/M
 By default CP/M uses the VIC in MMU bank 0. This makes it difficult to access
@@ -66,7 +67,8 @@ banks like CP/M does, but this is very inefficient. Plus there is very little
 free RAM in bank 0 that you could leverage. For C3L programs MMU bank 1 is
 used and your program manages the VIC's memory.
 
-You can use allocVicMem() function to handle reserving memory for the VIC and
+You can use [allocVicMem()](https://github.com/sgjava/c3l/blob/be5396dbebb6b99084f3128bf62baf0d6e4c1427/src/vicmem.c#L19)
+function to handle reserving memory for the VIC and
 protect it from the running program. There are several configurations you can
 use based on program size and VIC features you want to use. The simplest
 configuration is to have your program and VIC memory in VIC bank 0 with
