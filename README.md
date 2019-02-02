@@ -38,17 +38,6 @@ Build ctools:
 
 Install [Eclipse](https://linuxize.com/post/how-to-install-the-latest-eclipse-ide-on-ubuntu-18-04/).
 
-## Programming considerations
-* No range checks are performed by most functions for performance sake. It is
-incumbent upon the programmer to handle range checks. If you go out of range
-and corrupt the program or OS memory it will most likely lock the machine.
-* If the linker gives an "Undefined symbol" message for some symbol which you know
-nothing about, it is possible that it is a library routine which was not found
-during the library search due to incorrect library ordering.  In this case you
-can search the library twice, e.g. for the standard library add a -LC to the end
-of the C command line, or -LF for the floating library.  If you have specified
-the library by name simply repeat its name.
-
 ## Building
 I'm using VICE, but you could use MyZ80 or a real C128 with two drives.
 Drive a: (1581) boots CP/M and has Hitech C, turbo editor, etc. Drive b: (1571)
@@ -73,6 +62,17 @@ latest source from scratch:
 * `submit compile`
 * Alt+W (VICE warp mode).
 * `vicdemo1`
+
+## Programming considerations
+* No range checks are performed by most functions for performance sake. It is
+incumbent upon the programmer to handle range checks. If you go out of range
+and corrupt the program or OS memory it will most likely lock the machine.
+* If the linker gives an "Undefined symbol" message for some symbol which you know
+nothing about, it is possible that it is a library routine which was not found
+during the library search due to incorrect library ordering.  In this case you
+can search the library twice, e.g. for the standard library add a -LC to the end
+of the C command line, or -LF for the floating library.  If you have specified
+the library by name simply repeat its name.
 
 ## 8564/8566 VIC-IIe
 
