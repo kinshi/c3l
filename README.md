@@ -53,12 +53,6 @@ the library by name simply repeat its name.
 
 ![VIC](images/vic.png)
 
-By default CP/M uses the VIC in MMU bank 0. This makes it difficult to access
-from your CP/M program because the TPA is in bank 1. You could try to switch
-banks like CP/M does, but this is very inefficient. Plus there is very little
-free RAM in bank 0 that you could leverage. For C3L programs MMU bank 1 is
-used and your program manages the VIC's memory.
-
 ### Features
 * Easy to configure VIC mode and memory layout
 * 16 bit operations used where possible
@@ -67,6 +61,12 @@ used and your program manages the VIC's memory.
 * Scroll entire screen
 
 ### VIC memory management in CP/M
+By default CP/M uses the VIC in MMU bank 0. This makes it difficult to access
+from your CP/M program because the TPA is in bank 1. You could try to switch
+banks like CP/M does, but this is very inefficient. Plus there is very little
+free RAM in bank 0 that you could leverage. For C3L programs MMU bank 1 is
+used and your program manages the VIC's memory.
+
 You can use allocVicMem() function to handle reserving memory for the VIC and
 protect it from the running program. There are several configurations you can
 use based on program size and VIC features you want to use. The simplest
