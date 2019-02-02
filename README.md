@@ -50,6 +50,9 @@ of the C command line, or -LF for the floating library.  If you have specified
 the library by name simply repeat its name.
 
 ## 8564/8566 VIC-IIe
+
+![VIC](images/vic.png)
+
 By default CP/M uses the VIC in MMU bank 0. This makes it difficult to access
 from your CP/M program because the TPA is in bank 1. You could try to switch
 banks like CP/M does, but this is very inefficient. Plus there is very little
@@ -81,8 +84,13 @@ when you are done with the VIC.
 
 ### Return to CP/M mode
 You should return to CP/M like nothing happened to the VIC. Color memory is restored
-when you exit back to CP/M, so no code is required for that. ALl the demo programs
-have examples of setting up the VIC and returning to CP/M.
+when you exit back to CP/M, so no code is required for that. To restore VIC for CP/M
+use:
+
+```
+/* CPM default */
+setVicChrMode(0, 0, 11, 3);
+```
 
 ### Limitations
 As I mentioned before 0x1000 is always read by the VIC as character ROM. You can
@@ -92,12 +100,3 @@ Z80 cannot access memory location 0x00 of the 8502
 
 Sprites flicker and cause characters on the screen to flicker too. I'm not sure
 if this is VICE or if it would happen on a real C128. 
-
-### Return to CP/M mode
-You should return to CP/M like nothing happened to the VIC. Color memory is restored
-when you exit back to CP/M, so no code is required for that. To restore VIC for CP/M
-use:
-
-
-
-
