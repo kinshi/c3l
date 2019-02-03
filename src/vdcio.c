@@ -12,7 +12,7 @@
  * Read VDC register.
  */
 uchar inVdc(uchar regNum) {
-    outp(0xd600, regNum);
+    outp(vdcStatusReg, regNum);
     while ((inp(vdcStatusReg) & 0x80) == 0x00)
         ;
     return (inp(vdcDataReg));
@@ -42,7 +42,10 @@ void copyVdcChars(uchar *chr, ushort vdcMem, ushort chars) {
         }
         /* Skip bottom 8 bytes of VDC data */
         for (c = 0; c < 8; c++) {
-            inVdc(vdcCPUData);
+            /* We do this inline instead of inVdc call overhead */
+            outp(vdcStatusReg, vdcCPUData);
+            while ((inp(vdcStatusReg) & 0x80) == 0x00)
+                ;
         }
     }
 }
