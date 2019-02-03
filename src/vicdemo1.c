@@ -62,7 +62,7 @@ void waitKey(uchar *scr) {
  */
 void fillScr(uchar *scr) {
     register uchar i;
-    for (i = 0; i < 25; i++) {
+    for (i = 0; i < 24; i++) {
         printVic(scr, 0, i, "|Watch how fast you can fill the screen|");
     }
     waitKey(scr);
@@ -74,7 +74,7 @@ void fillScr(uchar *scr) {
 void fillScrCol(uchar *scr) {
     register uchar i;
     clearVicScr(scr, 32);
-    for (i = 0; i < 25; i++) {
+    for (i = 0; i < 24; i++) {
         printVicCol(scr, 4, i, i / 2 + 1, "You can do color text as well");
     }
     waitKey(scr);
@@ -91,7 +91,7 @@ void scrollScrUp(uchar *scr) {
         scrollVicUp(scr, 0, 24);
     }
     clearVicCol(1);
-    for (i = 0; i < 25; i++) {
+    for (i = 0; i < 24; i++) {
         printVic(scr, 0, i, "You can scroll any part of the screen!!!");
     }
     waitKey(scr);

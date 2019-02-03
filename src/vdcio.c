@@ -46,6 +46,7 @@ void copyVdcChars(uchar *chr, ushort vdcMem, ushort chars) {
             outp(vdcStatusReg, vdcCPUData);
             while ((inp(vdcStatusReg) & 0x80) == 0x00)
                 ;
+            inp(vdcDataReg);
         }
     }
 }
