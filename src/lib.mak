@@ -1,4 +1,5 @@
 r a:libc3l.lib \
+rtc.obj \
 vicscr.obj \
 vicscrpr.obj \
 vicscrsc.obj \

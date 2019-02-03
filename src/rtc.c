@@ -4,6 +4,7 @@
  * Copyright (c) Steven P. Goldsmith. All rights reserved.
  */
 
+#include <stdlib.h>
 #include <sys.h>
 #include <stdio.h>
 #include <hitech.h>
@@ -36,8 +37,9 @@ void setRtcMode(uchar mode) {
  * Get RTC time as hh:mm:ss.
  */
 char *getRtcTime() {
-    char curTime[8];
-    sprintf(curTime, "%02d:%02d:%02d", getRtcReg(4), getRtcReg(2), getRtcReg(0));
+    char *curTime = (char *) malloc(9);
+    sprintf(curTime, "%02d:%02d:%02d", getRtcReg(4), getRtcReg(2),
+            getRtcReg(0));
     return curTime;
 }
 
@@ -45,7 +47,8 @@ char *getRtcTime() {
  * Get RTC date as mm/dd/yyyy.
  */
 char *getRtcDate() {
-    char curDate[10];
-    sprintf(curDate, "%02d/%02d/20%02d", getRtcReg(8), getRtcReg(7), getRtcReg(0));
+    char *curDate = (char *) malloc(11);
+    sprintf(curDate, "%02d/%02d/20%02d", getRtcReg(8), getRtcReg(7),
+            getRtcReg(9));
     return curDate;
 }

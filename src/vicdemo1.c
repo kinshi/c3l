@@ -91,10 +91,10 @@ void scrollScrUp(uchar *scr) {
         scrollVicUp(scr, 0, 24);
     }
     clearVicCol(1);
-    waitKey(scr);
     for (i = 0; i < 25; i++) {
         printVic(scr, 0, i, "You can scroll any part of the screen!!!");
     }
+    waitKey(scr);
     scrollVicUpX(scr, 0, 0, 10, 24);
     fillVicScr(scr, 480, 10, 0x2020);
     for (i = 0; i < 24; i++) {
@@ -106,7 +106,6 @@ void scrollScrUp(uchar *scr) {
     for (i = 0; i < 24; i++) {
         scrollVicUpX(scr, 10, 0, 10, 24);
     }
-    waitKey(scr);
 }
 
 /*
@@ -114,16 +113,19 @@ void scrollScrUp(uchar *scr) {
  */
 void run(uchar *scr, uchar *chr, uchar *vicMem) {
     char str[40];
+    char *dateStr, *timeStr;
     /* Binary, 24h, DST */
     setRtcMode(0x87);
+    dateStr = getRtcDate();
+    timeStr = getRtcTime();
     printVic(scr, 0, 0, "Simple character mode using the VDC     "
             "character set and one screen. No        "
             "interrupts are disabled and getch is    "
             "used to read keyboard. Since no color is"
             "updated text output is blazing fast!");
-    sprintf(str, "Date:   %s", getRtcDate());
+    sprintf(str, "Date:   %s", dateStr);
     printVic(scr, 0, 6, str);
-    sprintf(str, "Time:   %s", getRtcTime());
+    sprintf(str, "Time:   %s", timeStr);
     printVic(scr, 0, 7, str);
     sprintf(str, "vicMem: %04x", vicMem);
     printVic(scr, 0, 8, str);
@@ -131,6 +133,8 @@ void run(uchar *scr, uchar *chr, uchar *vicMem) {
     printVic(scr, 0, 9, str);
     sprintf(str, "scr:    %04x", scr);
     printVic(scr, 0, 10, str);
+    free(dateStr);
+    free(timeStr);
     waitKey(scr);
     fillScr(scr);
     fillScrCol(scr);
