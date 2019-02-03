@@ -126,3 +126,22 @@ character sets, sprites, etc. there and copy them as needed for example.
 
 Sprites flicker and cause characters on the screen to flicker too. I'm not sure
 if this is VICE or if it would happen on a real C128.
+
+## DS12C887 Real Time Clock
+
+I have been spoiled using NodeMCU (ESP8266) micro controllers. NodeMcu has a
+NTP module for getting network time. I thought why not try a RTC on the C128?
+[DS12C887 - Real Time Clock for C64/128](https://github.com/ytmytm/c64-ds12c887.git)
+covers how it's done on a real C128.
+[DS12887 RTC INTERFACING](http://what-when-how.com/8051-microcontroller/ds12887-rtc-interfacing)
+gives you more detailed information on how to program the DS12C887.
+
+### Features
+* Read and write data register.
+* Get time in hh:mm:ss format.
+* Get date in mm/dd/yyyy format.
+
+Under VICE Settings, I/O extensions, DS12C887 Real Time Clock click Enable
+DS12C887 Real Time Clock, Start with running oscillator, Enable RTC Saving.
+Make sure to save your configuration.
+

@@ -13,6 +13,7 @@
 #include <hitech.h>
 #include <vic.h>
 #include <vdc.h>
+#include <rtc.h>
 
 /*
  * Copy VDC char set to memory, set screen color, MMU bank, VIC bank, screen
@@ -113,17 +114,23 @@ void scrollScrUp(uchar *scr) {
  */
 void run(uchar *scr, uchar *chr, uchar *vicMem) {
     char str[40];
+    /* Binary, 24h, DST */
+    setRtcMode(0x87);
     printVic(scr, 0, 0, "Simple character mode using the VDC     "
             "character set and one screen. No        "
             "interrupts are disabled and getch is    "
             "used to read keyboard. Since no color is"
             "updated text output is blazing fast!");
-    sprintf(str, "vicMem: %04x", vicMem);
+    sprintf(str, "Date:   %s", getRtcDate());
     printVic(scr, 0, 6, str);
-    sprintf(str, "chr:    %04x", chr);
+    sprintf(str, "Time:   %s", getRtcTime());
     printVic(scr, 0, 7, str);
-    sprintf(str, "scr:    %04x", scr);
+    sprintf(str, "vicMem: %04x", vicMem);
     printVic(scr, 0, 8, str);
+    sprintf(str, "chr:    %04x", chr);
+    printVic(scr, 0, 9, str);
+    sprintf(str, "scr:    %04x", scr);
+    printVic(scr, 0, 10, str);
     waitKey(scr);
     fillScr(scr);
     fillScrCol(scr);
