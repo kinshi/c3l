@@ -23,14 +23,14 @@ void setVicMode(uchar ecm, uchar bmm, uchar mcm) {
  * Set screen 0-15 memory location (1K per screen).
  */
 void setVicScrMem(uchar scrMem) {
-    outp(0xd018, (inp(0xd018) & 0x0f) | (scrMem << 4));
+    outp(vicMemCtrl, (inp(vicMemCtrl) & 0x0f) | (scrMem << 4));
 }
 
 /*
  * Set character set 0-7 memory location (2K per character set).
  */
 void setVicChrMem(uchar chrMem) {
-    outp(0xd018, (inp(0xd018) & 0xf0) | (chrMem << 1));
+    outp(vicMemCtrl, (inp(vicMemCtrl) & 0xf0) | (chrMem << 1));
 }
 
 /*
@@ -59,8 +59,7 @@ void fillVicScr(uchar *scr, ushort start, ushort len, ushort value) {
  * Clear screen using 16 bit word.
  */
 void clearVicScr(uchar *scr, uchar c) {
-    ushort c16 = (c << 8) + c;
-    fillVicScr(scr, 0, vicScrSizeW, c16);
+    fillVicScr(scr, 0, vicScrSizeW, (c << 8) + c);
 }
 
 /*

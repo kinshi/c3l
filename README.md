@@ -83,8 +83,9 @@ the library by name simply repeat its name.
 * Easy to configure VIC mode and memory layout
 * 16 bit operations used where possible
 * Fast text output (even faster without color)
-* Custom character sets (can be copied from VDC)
+* Custom character sets (can be copied from VDC or loaded from disk)
 * Scroll any area of screen
+* Bitmap mode with optimized line graphics and text 
 
 ### VIC memory management in CP/M
 By default CP/M uses the VIC in MMU bank 0. This makes it difficult to access

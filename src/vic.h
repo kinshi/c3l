@@ -57,6 +57,7 @@
 #define vicColMem 0xd800 /* VIC I/O mapped color memory */
 #define vicScrSize 1000  /* VIC screen size in bytes */
 #define vicScrSizeW 500  /* VIC screen size in words */
+#define vicBmpSizeW 4000 /* VIC bitmap size in words */
 
 extern uchar *allocVicMem(uchar maxBank);
 extern void setVicMmuBank(uchar mmuRcr);
@@ -71,3 +72,9 @@ extern void clearVicCol(uchar color);
 extern void printVic(uchar *scr, uchar x, uchar y, char *str);
 extern void printVicCol(uchar *scr, uchar x, uchar y, uchar color, char *str);
 extern void scrollVicUp(uchar *scr, uchar y, uchar lines);
+extern void setVicBmpMem(uchar bmpMem);
+extern void setVicBmpMode(uchar mmuRcr, uchar vicBank, uchar scrMem, uchar bmpMem);
+extern void clearVicBmp(uchar *bmp, uchar c);
+extern void clearVicBmpCol(uchar *scr, uchar color);
+extern void setPix(uchar *bmp, ushort x, uchar y);
+extern void drawVicLine(uchar *bmp, int x1, int y1, int x2, int y2);

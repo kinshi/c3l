@@ -4,4 +4,6 @@ vicscr.obj \
 vicscrpr.obj \
 vicscrsc.obj \
 vdcio.obj \
-vicmem.obj
+vicmem.obj \
+vicbmp.obj \
+viclines.obj

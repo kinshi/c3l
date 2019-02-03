@@ -42,11 +42,7 @@ void copyVdcChars(uchar *chr, ushort vdcMem, ushort chars) {
         }
         /* Skip bottom 8 bytes of VDC data */
         for (c = 0; c < 8; c++) {
-            /* We do this inline instead of inVdc call overhead */
-            outp(vdcStatusReg, vdcCPUData);
-            while ((inp(vdcStatusReg) & 0x80) == 0x00)
-                ;
-            inp(vdcDataReg);
+            inVdc(vdcCPUData);
         }
     }
 }

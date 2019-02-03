@@ -4,4 +4,6 @@ vicscr.c \
 vicscrpr.c \
 vicscrsc.c \
 vdcio.c \
-vicmem.c
+vicmem.c \
+vicbmp.c \
+viclines.c
