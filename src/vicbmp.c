@@ -52,3 +52,25 @@ void setPix(uchar *bmp, ushort x, uchar y) {
     ushort pixByte = 40 * (y & 0xf8) + (x & 0x1f8) + (y & 0x07);
     bmp[pixByte] = bmp[pixByte] | (bitTable[x & 0x07]);
 }
+
+/*
+ * Print to bitmap screen.
+ */
+void printBmp(uchar *bmp, uchar *scr, uchar *chr, uchar x, uchar y, uchar color,
+        char *str) {
+    ushort *bmp16 = (ushort *) bmp;
+    ushort *chr16 = (ushort *) chr;
+    ushort bmpOfs = (y * 160) + (x * 4);
+    ushort colOfs = (y * 40) + x;
+    ushort len = strlen(str);
+    ushort i, chrOfs, destOfs;
+    uchar c;
+    for (i = 0; i < len; i++) {
+        chrOfs = str[i] << 2;
+        destOfs = i << 2;
+        scr[colOfs + i] = color;
+        for (c = 0; c < 4; c++) {
+            bmp16[bmpOfs + destOfs + c] = chr16[chrOfs + c];
+        }
+    }
+}
