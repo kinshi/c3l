@@ -5,6 +5,7 @@
  */
 
 #include <sys.h>
+#include <string.h>
 #include <hitech.h>
 #include <vic.h>
 
@@ -48,7 +49,7 @@ void clearVicBmpCol(uchar *scr, uchar color) {
 /*
  * Set pixel.
  */
-void setPix(uchar *bmp, ushort x, uchar y) {
+void setVicPix(uchar *bmp, ushort x, uchar y) {
     ushort pixByte = 40 * (y & 0xf8) + (x & 0x1f8) + (y & 0x07);
     bmp[pixByte] = bmp[pixByte] | (bitTable[x & 0x07]);
 }
@@ -56,8 +57,8 @@ void setPix(uchar *bmp, ushort x, uchar y) {
 /*
  * Print to bitmap screen.
  */
-void printBmp(uchar *bmp, uchar *scr, uchar *chr, uchar x, uchar y, uchar color,
-        char *str) {
+void printVicBmp(uchar *bmp, uchar *scr, uchar *chr, uchar x, uchar y,
+        uchar color, char *str) {
     ushort *bmp16 = (ushort *) bmp;
     ushort *chr16 = (ushort *) chr;
     ushort bmpOfs = (y * 160) + (x * 4);

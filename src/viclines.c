@@ -21,7 +21,7 @@ void drawVicLine(uchar *bmp, int x0, int y0, int x1, int y1) {
     int dy = abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
     int err = (dx > dy ? dx : -dy) / 2, e2;
     for (;;) {
-        setPix(bmp, x0, y0);
+        setVicPix(bmp, x0, y0);
         if (x0 == x1 && y0 == y1)
             break;
         e2 = err;
@@ -41,27 +41,32 @@ void drawVicLine(uchar *bmp, int x0, int y0, int x1, int y1) {
  */
 void drawVicLineH(uchar *bmp, ushort x, uchar y, ushort len) {
     ushort firstByte = 40 * (y & 0xf8) + (x & 0x1f8) + (y & 0x07);
-    ushort lastByte = firstByte + ((x + len) / 8) * 8;
-    ushort fillBytes = len / 8;
     uchar firstBits = x % 8;
     uchar lastBits = (x + len) % 8;
+    ushort fillBytes = len / 8;
     ushort i;
-    fillBytes = len / 8;
     if (firstBits > 0) {
         /* Handle left over bits on first byte */
         bmp[firstByte] = bmp[firstByte] | fillTable[firstBits - 1];
         /* Fill in bytes */
         for (i = 1; i < fillBytes; i++) {
-            bmp[firstByte + (i * 8)] = 0xff;
+            firstByte += 8;
+            bmp[firstByte] = 0xff;
+        }
+        /* Handle left over bits on last byte */
+        if (lastBits > 0) {
+            firstByte += 8;
+            bmp[firstByte] = bmp[firstByte] | ~fillTable[lastBits - 1];
         }
     } else {
         /* Fill in bytes */
         for (i = 0; i < fillBytes; i++) {
-            bmp[firstByte + (i * 8)] = 0xff;
+            bmp[firstByte] = 0xff;
+            firstByte += 8;
         }
-    }
-    /* Handle left over bits on last byte */
-    if (lastBits > 0) {
-        bmp[lastByte + 8] = bmp[lastByte + 8] | ~fillTable[lastBits - 1];
+        /* Handle left over bits on last byte */
+        if (lastBits > 0) {
+            bmp[firstByte] = bmp[firstByte] | ~fillTable[lastBits - 1];
+        }
     }
 }

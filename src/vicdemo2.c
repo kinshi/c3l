@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <conio.h>
+#include <string.h>
 #include <sys.h>
 #include <hitech.h>
 #include <vic.h>
@@ -17,9 +18,10 @@
 
 /*
  * Copy VDC char set to memory, set screen color, MMU bank, VIC bank, screen
- * memory and char set memory. Clear screen and color memory then enable screen.
+ * memory and bitmap memory. Clear bitmap memory, color memory then enable screen.
  */
-void init(uchar *scr, uchar *chr, uchar *bmp, uchar vicBank) {
+void init(uchar *bmp, uchar *scr, uchar *chr) {
+    uchar vicBank = (ushort) bmp / 16384;
     /* Black screen and border */
     outp(vicBorderCol, 0);
     outp(vicBgCol0, 0);
@@ -54,21 +56,49 @@ void done(uchar bgCol, uchar fgCol) {
 /*
  * Wait for key press.
  */
-void waitKey() {
+void waitKey(uchar *bmp, uchar *scr, uchar *chr) {
+    printVicBmp(bmp, scr, chr, 0, 24, 0x36, "Press Return");
     while (getch() == 0)
         ;
+}
+/*
+ * Print centered text on top line in bitmap.
+ */
+void bannerBmp(uchar *bmp, uchar *scr, uchar *chr, char *str) {
+    printVicBmp(bmp, scr, chr, ((40 - strlen(str)) >> 1) - 1, 0, 0x36, str);
+}
+
+/*
+ * Draw lines.
+ */
+void lines(uchar *bmp, uchar *scr, uchar *chr) {
+    uchar i;
+    bannerBmp(bmp, scr, chr, " Lines ");
+    for (i = 0; i < 16; i++) {
+        drawVicLine(bmp, 0, 0, i * 20, 199);
+        drawVicLine(bmp, 319, 0, 319 - (i * 20), 199);
+    }
+    waitKey(bmp, scr, chr);
+}
+/*
+ * Draw horizontal lines.
+ */
+void linesH(uchar *bmp, uchar *scr, uchar *chr) {
+    uchar i;
+    clearVicBmp(bmp, 0);
+    bannerBmp(bmp, scr, chr, " Horizontal lines ");
+    for (i = 0; i < 100; i++) {
+        drawVicLineH(bmp, i, i + 10, 320 - (i * 2));
+    }
+    waitKey(bmp, scr, chr);
 }
 
 /*
  * Run demo.
  */
-void run(uchar *bmp) {
-    uchar i;
-    for (i = 0; i < 16; i++) {
-        drawVicLine(bmp, 0, 0, i * 20, 199);
-        drawVicLine(bmp, 319, 0, 319 - (i * 20), 199);
-    }
-    waitKey();
+void run(uchar *bmp, uchar *scr, uchar *chr) {
+    lines(bmp, scr, chr);
+    linesH(bmp, scr, chr);
 }
 
 main() {
@@ -78,15 +108,14 @@ main() {
     /* Use beginning of bank 0 for RAM character set */
     uchar *chr = (uchar *) 0x4000;
     /* Use ram after character set for screen */
-    uchar *scr1 = (uchar *) 0x4800;
-    uchar *scr2 = (uchar *) 0x4c00;
+    uchar *scr = (uchar *) 0x4800;
     /* Use bottom of bank 1 for bitmap */
     uchar *bmp = (uchar *) 0x6000;
-    /* Save screen/border color */
+    /* Save border/background color */
     uchar border = inp(vicBorderCol);
     uchar background = inp(vicBgCol0);
-    init(scr2, chr, bmp, vicBank);
-    run(bmp);
-    free(vicMem);
+    init(bmp, scr, chr);
+    run(bmp, scr, chr);
     done(border, background);
+    free(vicMem);
 }
