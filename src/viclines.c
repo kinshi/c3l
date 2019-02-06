@@ -5,6 +5,7 @@
  */
 
 #include <stdlib.h>
+#include <assert.h>
 #include <hitech.h>
 #include <vic.h>
 
