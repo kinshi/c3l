@@ -55,7 +55,7 @@ void setVicPix(uchar *bmp, ushort x, uchar y) {
 }
 
 /*
- * Print to bitmap screen.
+ * Print with foreground/background color.
  */
 void printVicBmp(uchar *bmp, uchar *scr, uchar *chr, uchar x, uchar y,
         uchar color, char *str) {

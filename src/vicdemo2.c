@@ -87,7 +87,7 @@ void linesH(uchar *bmp, uchar *scr, uchar *chr) {
     uchar i;
     clearVicBmp(bmp, 0);
     bannerBmp(bmp, scr, chr, " Horizontal lines ");
-    for (i = 0; i < 100; i++) {
+    for (i = 0; i < 159; i++) {
         drawVicLineH(bmp, i, i + 10, 320 - (i * 2));
     }
     waitKey(bmp, scr, chr);

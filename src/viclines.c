@@ -14,7 +14,7 @@
 uchar fillTable[7] = { 0x7f, 0x3f, 0x1f, 0x0f, 0x07, 0x03, 0x01 };
 
 /*
- * Bresenham’s Line Generation Algorithm.
+ * Bresenham’s line generation algorithm.
  */
 void drawVicLine(uchar *bmp, int x0, int y0, int x1, int y1) {
     int dx = abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
@@ -42,13 +42,16 @@ void drawVicLine(uchar *bmp, int x0, int y0, int x1, int y1) {
 void drawVicLineH(uchar *bmp, ushort x, uchar y, ushort len) {
     ushort firstByte = 40 * (y & 0xf8) + (x & 0x1f8) + (y & 0x07);
     uchar firstBits = x % 8;
-    uchar lastBits = (x + len) % 8;
+    uchar lastBits = (x + len - 1) % 8;
     ushort fillBytes = len >> 3;
     ushort i;
     if (firstBits > 0) {
         /* Handle left over bits on first byte */
         bmp[firstByte] = bmp[firstByte] | fillTable[firstBits - 1];
         firstByte += 8;
+        if(fillBytes > 0){
+            fillBytes -= 1;
+        }
     }
     /* Fill in bytes */
     for (i = 0; i < fillBytes; i++) {

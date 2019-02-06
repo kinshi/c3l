@@ -5,6 +5,7 @@
  */
 
 #include <sys.h>
+#include <string.h>
 #include <hitech.h>
 #include <vic.h>
 
@@ -70,4 +71,55 @@ void clearVicCol(uchar color) {
     for (i = 0; i < vicScrSize; i++) {
         outp(vicColMem + i, color);
     }
+}
+
+/*
+ * Print without color.
+ */
+void printVic(uchar *scr, uchar x, uchar y, char *str) {
+    ushort scrOfs = (y * 40) + x;
+    ushort len = strlen(str);
+    ushort i;
+    for (i = 0; i < len; i++) {
+        scr[scrOfs + i] = str[i];
+    }
+}
+
+/*
+ * Print with color.
+ */
+void printVicCol(uchar *scr, uchar x, uchar y, uchar color, char *str) {
+    ushort scrOfs = (y * 40) + x;
+    ushort colOfs = vicColMem + scrOfs;
+    ushort len = strlen(str);
+    ushort i;
+    for (i = 0; i < len; i++) {
+        scr[scrOfs + i] = str[i];
+        outp(colOfs + i, color);
+    }
+}
+
+/*
+ * Scroll screen memory up 1 line starting at x for len words.
+ */
+void scrollVicUpX(uchar *scr, uchar x, uchar y, uchar len, uchar lines) {
+    register uchar w;
+    uchar i;
+    ushort *scr16 = (ushort *) scr;
+    ushort dest = (y * 20) + x;
+    ushort sourceLine, destLine;
+    for (i = 0; i < lines; i++) {
+        destLine = dest + (i * 20);
+        sourceLine = destLine + 20;
+        for (w = 0; w < len; w++) {
+            scr16[destLine + w] = scr16[sourceLine + w];
+        }
+    }
+}
+
+/*
+ * Scroll screen memory up 1 line by number of lines.
+ */
+void scrollVicUp(uchar *scr, uchar y, uchar lines) {
+    scrollVicUpX(scr, 0, y, 20, lines);
 }
