@@ -42,7 +42,7 @@ I'm using VICE, but you could use MyZ80 or a real C128 with two drives.
 Drive a: (1581) boots CP/M and has Hitech C, turbo editor, etc. Drive b: (1571)
 contains the source that ctools can write to from your Eclipse src folder. The
 [src](https://github.com/sgjava/c3l/tree/master/src) directory should be
-considered the latest source. The disk images may go out of date. To build
+considered the latest source. The [disk images](https://github.com/sgjava/c3l/tree/master/disks) may go out of date. To build
 latest source from scratch:
 * `x128 -80col`
 * In VICE configure drives.
