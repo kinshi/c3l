@@ -15,30 +15,7 @@
 uchar fillTable[7] = { 0x7f, 0x3f, 0x1f, 0x0f, 0x07, 0x03, 0x01 };
 
 /*
- * Bresenham’s line generation algorithm.
- */
-void drawVicLine(uchar *bmp, int x0, int y0, int x1, int y1) {
-    int dx = abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
-    int dy = abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
-    int err = (dx > dy ? dx : -dy) / 2, e2;
-    for (;;) {
-        setVicPix(bmp, x0, y0);
-        if (x0 == x1 && y0 == y1)
-            break;
-        e2 = err;
-        if (e2 > -dx) {
-            err -= dy;
-            x0 += sx;
-        }
-        if (e2 < dy) {
-            err += dx;
-            y0 += sy;
-        }
-    }
-}
-
-/*
- * Optimized horizontal line algorithm up to 15x faster than drawVicLine.
+ * Optimized horizontal line algorithm up to 15x faster than Bresenham.
  */
 void drawVicLineH(uchar *bmp, ushort x, uchar y, ushort len) {
     ushort firstByte = 40 * (y & 0xf8) + (x & 0x1f8) + (y & 0x07);
@@ -62,11 +39,45 @@ void drawVicLineH(uchar *bmp, ushort x, uchar y, ushort len) {
     /* Handle left over bits on last byte */
     if (lastBits > 0) {
         /* Handle error in len / 8 */
-        if ((lastBits < 4) && (len > 1)) {
+        if ((lastBits < 4) && (fillBytes > 0)) {
             bmp[firstByte] = 0xff;
             firstByte += 8;
         }
         bmp[firstByte] = bmp[firstByte] | ~fillTable[lastBits - 1];
+    }
+}
+
+/*
+ * Bresenham’s line generation algorithm optimized for horizontal lines.
+ */
+void drawVicLine(uchar *bmp, int x0, int y0, int x1, int y1) {
+    int dx = abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
+    int dy = abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
+    int err = (dx > dy ? dx : -dy) / 2, e2;
+    /* Horizontal line */
+    if (y0 == y1) {
+        if (x0 < x1) {
+            drawVicLineH(bmp, x0, y0, (x1 - x0)  + 1);
+        } else {
+            drawVicLineH(bmp, x1, y1, (x0 - x1) + 1);
+        }
+
+    } else {
+         /* Bresenham line */
+        for (;;) {
+            setVicPix(bmp, x0, y0);
+            if (x0 == x1 && y0 == y1)
+                break;
+            e2 = err;
+            if (e2 > -dx) {
+                err -= dy;
+                x0 += sx;
+            }
+            if (e2 < dy) {
+                err += dx;
+                y0 += sy;
+            }
+        }
     }
 }
 

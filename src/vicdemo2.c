@@ -80,15 +80,27 @@ void lines(uchar *bmp, uchar *scr, uchar *chr) {
     }
     waitKey(bmp, scr, chr);
 }
+
 /*
  * Draw horizontal lines.
  */
 void linesH(uchar *bmp, uchar *scr, uchar *chr) {
     uchar i;
-    clearVicBmp(bmp, 0);
     bannerBmp(bmp, scr, chr, " Horizontal lines ");
     for (i = 0; i < 159; i++) {
-        drawVicLineH(bmp, i, i + 10, 320 - (i * 2));
+        drawVicLine(bmp, i, i + 20, 320 - (i * 2));
+    }
+    waitKey(bmp, scr, chr);
+}
+
+/*
+ * Draw Bezier curves.
+ */
+void bezier(uchar *bmp, uchar *scr, uchar *chr) {
+    uchar i;
+    bannerBmp(bmp, scr, chr, " Bezier curves ");
+    for (i = 0; i < 16; i++) {
+        drawVicBezier(bmp, 0, 0, 159, 99, i * 20, 199);
     }
     waitKey(bmp, scr, chr);
 }
@@ -98,7 +110,10 @@ void linesH(uchar *bmp, uchar *scr, uchar *chr) {
  */
 void run(uchar *bmp, uchar *scr, uchar *chr) {
     lines(bmp, scr, chr);
+    clearVicBmp(bmp, 0);
     linesH(bmp, scr, chr);
+    clearVicBmp(bmp, 0);
+    bezier(bmp, scr, chr);
 }
 
 main() {
