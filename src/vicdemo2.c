@@ -23,7 +23,7 @@
 void init(uchar *bmp, uchar *scr, uchar *chr) {
     uchar vicBank = (ushort) bmp / 16384;
     /* Set screen and border color */
-    outp(vicBorderCol, 6);
+    outp(vicBorderCol, 14);
     outp(vicBgCol0, 0);
     /* Clear color to black */
     clearVicCol(0);
@@ -88,7 +88,7 @@ void linesH(uchar *bmp, uchar *scr, uchar *chr) {
     uchar i;
     bannerBmp(bmp, scr, chr, " Horizontal lines ");
     for (i = 0; i < 159; i++) {
-        drawVicLine(bmp, i, i + 20, 320 - (i * 2));
+        drawVicLine(bmp, i, i + 20, 319 - i , i + 20);
     }
     waitKey(bmp, scr, chr);
 }
@@ -99,8 +99,9 @@ void linesH(uchar *bmp, uchar *scr, uchar *chr) {
 void bezier(uchar *bmp, uchar *scr, uchar *chr) {
     uchar i;
     bannerBmp(bmp, scr, chr, " Bezier curves ");
-    for (i = 0; i < 16; i++) {
-        drawVicBezier(bmp, 0, 0, 159, 99, i * 20, 199);
+    for (i = 0; i < 35; i++) {
+        drawVicBezier(bmp, i * 5, 10, 319, 15 + i * 5, 319, 15 + i * 5);
+
     }
     waitKey(bmp, scr, chr);
 }
@@ -110,8 +111,10 @@ void bezier(uchar *bmp, uchar *scr, uchar *chr) {
  */
 void run(uchar *bmp, uchar *scr, uchar *chr) {
     lines(bmp, scr, chr);
+    clearVicBmpCol(scr, 0x10);
     clearVicBmp(bmp, 0);
     linesH(bmp, scr, chr);
+    clearVicBmpCol(scr, 0x10);
     clearVicBmp(bmp, 0);
     bezier(bmp, scr, chr);
 }

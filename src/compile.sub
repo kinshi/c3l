@@ -1,1 +1,2 @@
+c -o -x -i0:b: -lc3l -lc vicdemo1.c
 c -o -x -i0:b: -lc3l -lc vicdemo2.c
