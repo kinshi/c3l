@@ -22,8 +22,8 @@
  */
 void init(uchar *bmp, uchar *scr, uchar *chr) {
     uchar vicBank = (ushort) bmp / 16384;
-    /* Black screen and border */
-    outp(vicBorderCol, 0);
+    /* Set screen and border color */
+    outp(vicBorderCol, 6);
     outp(vicBgCol0, 0);
     /* Clear color to black */
     clearVicCol(0);
