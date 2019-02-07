@@ -32,7 +32,6 @@ Build [VICE 3.3](http://vice-emu.sourceforge.net) on Ubuntu 18.04 x64.
 Build ctools:
 * `git clone https://github.com/mist64/ctools`
 * `cd ctools/src`
-* Make simple changes in [PR](https://github.com/mist64/ctools/pull/1/commits/f9c41bed64ebf818cfba8dad497451c16b034abe)
 * `make`
 * `make install`
 
