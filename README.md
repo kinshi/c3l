@@ -15,10 +15,9 @@ You have a few ways to develop C code for C128 CP/M. You could use a cross
 compiler, but I haven't found a way to do this with Hitech C 3.09. You could
 use MyZ80 which is pretty darn fast or lastly you could use the VICE emulator.
 Of course a real C128 system would work, but it will not be as productive as
-the above mentioned methods. I've chosen the Eclipse/ctools/VICE method
-because the flow is easier even though build times are longer on VICE. You can
-use an Ubuntu VM on VirtualBox to run under Linux/Windows/Mac if that works for
-you.
+the above mentioned methods. I've chosen the Eclipse/MyZ80/ctools method
+because the flow is easier and build time are fast. You can use an Ubuntu VM
+on VirtualBox to run under Linux/Windows/Mac if that works for you.
 
 Build [VICE 3.3](http://vice-emu.sourceforge.net) on Ubuntu 18.04 x64.
 * `sudo apt-get install build-essential byacc texi2html flex xa65 libreadline-dev libxaw7-dev libgtkmm-3.0-dev libpulse-dev`
@@ -38,7 +37,7 @@ Build ctools:
 Install [Eclipse](https://linuxize.com/post/how-to-install-the-latest-eclipse-ide-on-ubuntu-18-04/).
 
 ## Building
-I'm using VICE, but you could use MyZ80 or a real C128 with two drives.
+I'm using MyZ80, but you could use VICE or a real C128 with two drives.
 Drive a: (1581) boots CP/M and has Hitech C, turbo editor, etc. Drive b: (1571)
 contains the source that ctools can write to from your Eclipse src folder. The
 [src](https://github.com/sgjava/c3l/tree/master/src) directory should be

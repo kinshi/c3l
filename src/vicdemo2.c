@@ -27,10 +27,10 @@ void init(uchar *bmp, uchar *scr, uchar *chr) {
     outp(vicBgCol0, 0);
     /* Clear color to black */
     clearVicCol(0);
+    /* Clear bitmap color to black foreground/background */
+    clearVicBmpCol(scr, 0x00);
     /* Clear bitmap */
     clearVicBmp(bmp, 0);
-    /* Clear bitmap color to white foreground and black background */
-    clearVicBmpCol(scr, 0x10);
     /* Copy VDC alt char set to VIC mem */
     copyVdcChars(chr, 0x3000, 256);
     /* Set standard bitmap mode using MMU bank 1 */
@@ -73,7 +73,7 @@ void bannerBmp(uchar *bmp, uchar *scr, uchar *chr, char *str) {
  */
 void lines(uchar *bmp, uchar *scr, uchar *chr) {
     uchar i;
-    bannerBmp(bmp, scr, chr, " Lines ");
+    bannerBmp(bmp, scr, chr, " Bresenham Line ");
     for (i = 0; i < 16; i++) {
         drawVicLine(bmp, 0, 0, i * 20, 199);
         drawVicLine(bmp, 319, 0, 319 - (i * 20), 199);
@@ -86,9 +86,21 @@ void lines(uchar *bmp, uchar *scr, uchar *chr) {
  */
 void linesH(uchar *bmp, uchar *scr, uchar *chr) {
     uchar i;
-    bannerBmp(bmp, scr, chr, " Horizontal lines ");
+    bannerBmp(bmp, scr, chr, " Optimized horizontal lines ");
     for (i = 0; i < 159; i++) {
         drawVicLine(bmp, i, i + 20, 319 - i , i + 20);
+    }
+    waitKey(bmp, scr, chr);
+}
+
+/*
+ * Draw vertical lines.
+ */
+void linesV(uchar *bmp, uchar *scr, uchar *chr) {
+    uchar i;
+    bannerBmp(bmp, scr, chr, " Optimized vertical lines ");
+    for (i = 10; i < 198; i++) {
+        drawVicLine(bmp, i + 59, 10, i + 59, i + 1);
     }
     waitKey(bmp, scr, chr);
 }
@@ -110,12 +122,19 @@ void bezier(uchar *bmp, uchar *scr, uchar *chr) {
  * Run demo.
  */
 void run(uchar *bmp, uchar *scr, uchar *chr) {
+    clearVicBmpCol(scr, 0x10);
     lines(bmp, scr, chr);
-    clearVicBmpCol(scr, 0x10);
+    clearVicBmpCol(scr, 0x00);
     clearVicBmp(bmp, 0);
+    clearVicBmpCol(scr, 0x10);
     linesH(bmp, scr, chr);
-    clearVicBmpCol(scr, 0x10);
+    clearVicBmpCol(scr, 0x00);
     clearVicBmp(bmp, 0);
+    clearVicBmpCol(scr, 0x10);
+    linesV(bmp, scr, chr);
+    clearVicBmpCol(scr, 0x00);
+    clearVicBmp(bmp, 0);
+    clearVicBmpCol(scr, 0x10);
     bezier(bmp, scr, chr);
 }
 

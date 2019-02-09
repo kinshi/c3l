@@ -13,42 +13,66 @@
  * Lookup for fast horizontal pixel fill.
  */
 uchar fillTable[7] = { 0x7f, 0x3f, 0x1f, 0x0f, 0x07, 0x03, 0x01 };
+/*
+ * Fast lookup for vertical bit.
+ */
+uchar vertTable[8] = { 128, 64, 32, 16, 8, 4, 2, 1 };
 
 /*
  * Optimized horizontal line algorithm up to 15x faster than Bresenham.
  */
 void drawVicLineH(uchar *bmp, ushort x, uchar y, ushort len) {
-    ushort firstByte = 40 * (y & 0xf8) + (x & 0x1f8) + (y & 0x07);
+    ushort pixByte = 40 * (y & 0xf8) + (x & 0x1f8) + (y & 0x07);
     uchar firstBits = x % 8;
     uchar lastBits = (x + len) % 8;
     ushort fillBytes = len >> 3;
     ushort i;
     if (firstBits > 0) {
         /* Handle left over bits on first byte */
-        bmp[firstByte] = bmp[firstByte] | fillTable[firstBits - 1];
-        firstByte += 8;
+        bmp[pixByte] = bmp[pixByte] | fillTable[firstBits - 1];
+        pixByte += 8;
         if (fillBytes > 0) {
             fillBytes -= 1;
         }
     }
     /* Fill in bytes */
     for (i = 0; i < fillBytes; i++) {
-        bmp[firstByte] = 0xff;
-        firstByte += 8;
+        bmp[pixByte] = 0xff;
+        pixByte += 8;
     }
     /* Handle left over bits on last byte */
     if (lastBits > 0) {
         /* Handle error in len / 8 */
         if ((lastBits < 4) && (fillBytes > 0)) {
-            bmp[firstByte] = 0xff;
-            firstByte += 8;
+            bmp[pixByte] = 0xff;
+            pixByte += 8;
         }
-        bmp[firstByte] = bmp[firstByte] | ~fillTable[lastBits - 1];
+        bmp[pixByte] = bmp[pixByte] | ~fillTable[lastBits - 1];
     }
 }
 
 /*
- * Bresenham’s line generation algorithm optimized for horizontal lines.
+ * Optimized vertical line algorithm uses less calculation than setVicPix.
+ */
+void drawVicLineV(uchar *bmp, ushort x, uchar y, ushort len) {
+    ushort pixByte = 40 * (y & 0xf8) + (x & 0x1f8) + (y & 0x07);
+    uchar vBit = vertTable[x & 0x07];
+    uchar i;
+    /* Plot pixels */
+    for (i = 0; i < len; i++) {
+        bmp[pixByte] = bmp[pixByte] | vBit;
+        y += 1;
+        /* Increment based on char boundary */
+        if ((y & 7) > 0) {
+            pixByte += 1;
+        } else {
+            pixByte += 313;
+        }
+    }
+}
+
+/*
+ * Bresenham’s line algorithm optimized for horizontal and vertical lines.
  */
 void drawVicLine(uchar *bmp, int x0, int y0, int x1, int y1) {
     int dx = abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
@@ -57,13 +81,19 @@ void drawVicLine(uchar *bmp, int x0, int y0, int x1, int y1) {
     /* Horizontal line */
     if (y0 == y1) {
         if (x0 < x1) {
-            drawVicLineH(bmp, x0, y0, (x1 - x0)  + 1);
+            drawVicLineH(bmp, x0, y0, dx + 1);
         } else {
-            drawVicLineH(bmp, x1, y1, (x0 - x1) + 1);
+            drawVicLineH(bmp, x1, y1, dx + 1);
         }
-
+        /* Vertical line */
+    } else if (x0 == x1) {
+        if (y0 < y1) {
+            drawVicLineV(bmp, x0, y0, dy + 1);
+        } else {
+            drawVicLineV(bmp, x1, y1, dy + 1);
+        }
     } else {
-         /* Bresenham line */
+        /* Bresenham line */
         for (;;) {
             setVicPix(bmp, x0, y0);
             if (x0 == x1 && y0 == y1)
