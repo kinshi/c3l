@@ -1,14 +1,14 @@
 ![C3L is the Commodore 128 CP/M C Library](images/title.png)
 
 C3L is an ANSI C based API to access C128 specific features under CP/M.
-This will eventually incorporate [SG C Tools](https://github.com/sgjava/garage/tree/master/commodore/cpm/sgctools).
+This will eventually replace [SG C Tools](https://github.com/sgjava/garage/tree/master/commodore/cpm/sgctools).
 I decided to build a new library from scratch after creating
 [C128 CP/M VIC Demo](https://github.com/sgjava/garage/tree/master/commodore/cpm/vicdemo).
-I updated my development process doing almost all development using Eclipse for
-editing the source and [ctools](https://github.com/mist64/ctools) to move the
-source to a d71 disk image for building and running code. This is a vast
-improvement of how I did it back in 1992. I'm starting with the VIC II and will
-add other chips and features as I go.
+I updated my development process doing all development using Eclipse for editing
+the source, MyZ80 to build, ctools to move the source to a d71 disk image for
+running code on VICE. This is a vast improvement of how I did it back in 1992
+when I had to transfer to floppies for testing. I'm starting with the VIC II and
+will add other chips and features as I go.
 
 ## Set up development environment
 You have a few ways to develop C code for C128 CP/M. You could use a cross

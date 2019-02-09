@@ -16,7 +16,6 @@
 #include <vdc.h>
 #include <rtc.h>
 
-
 /*
  * Clear bitmap.
  */
@@ -83,7 +82,7 @@ void bannerBmp(uchar *bmp, uchar *scr, uchar *chr, char *str) {
  */
 void lines(uchar *bmp, uchar *scr, uchar *chr) {
     uchar i;
-    bannerBmp(bmp, scr, chr, " Bresenham Line ");
+    bannerBmp(bmp, scr, chr, " Bresenham lines ");
     for (i = 0; i < 16; i++) {
         drawVicLine(bmp, 0, 0, i * 20, 199);
         drawVicLine(bmp, 319, 0, 319 - (i * 20), 199);
@@ -129,20 +128,58 @@ void bezier(uchar *bmp, uchar *scr, uchar *chr) {
 }
 
 /*
+ * Draw rectangles lines.
+ */
+void rectangles(uchar *bmp, uchar *scr, uchar *chr) {
+    uchar i;
+    bannerBmp(bmp, scr, chr, " Rectangles ");
+    for (i = 1; i < 30; i++) {
+        drawVicRect(bmp, i * 2, i * 2, (i * 10) + 20, (i * 5) + 20);
+    }
+    waitKey(bmp, scr, chr);
+}
+
+/*
+ * Draw ellipses.
+ */
+void ellipses(uchar *bmp, uchar *scr, uchar *chr) {
+    ushort i;
+    bannerBmp(bmp, scr, chr, " Ellipses ");
+    for (i = 1; i < 9; i++) {
+        drawVicEllipse(bmp, 159, 99, i * 19, i * 10);
+    }
+    waitKey(bmp, scr, chr);
+}
+
+/*
+ * Draw circles.
+ */
+void circles(uchar *bmp, uchar *scr, uchar *chr) {
+    ushort i;
+    bannerBmp(bmp, scr, chr, " Circles ");
+    for (i = 1; i < 12; i++) {
+        drawVicCircle(bmp, 159, 99, i * 10);
+    }
+    waitKey(bmp, scr, chr);
+}
+
+/*
  * Run demo.
  */
-void run(uchar *bmp, uchar *scr, uchar *chr) {
+void run(uchar *bmp, uchar *scr, uchar *chr, uchar *vicMem) {
     char str[40];
     printVicBmp(bmp, scr, chr, 0, 0, 0x16,
             "This demo will show off bitmap graphics."
                     "No interrupts are disabled and getch is "
                     "used to read keyboard.                  ");
+    sprintf(str, "mem: %04x", vicMem);
+    printVicBmp(bmp, scr, chr, 0, 4, 0x12, str);
     sprintf(str, "chr: %04x", chr);
-    printVicBmp(bmp, scr, chr, 0, 4, 0x19, str);
+    printVicBmp(bmp, scr, chr, 0, 6, 0x12, str);
     sprintf(str, "scr: %04x", scr);
-    printVicBmp(bmp, scr, chr, 0, 5, 0x19, str);
+    printVicBmp(bmp, scr, chr, 0, 8, 0x12, str);
     sprintf(str, "bmp: %04x", bmp);
-    printVicBmp(bmp, scr, chr, 0, 6, 0x19, str);
+    printVicBmp(bmp, scr, chr, 0, 10, 0x12, str);
     waitKey(bmp, scr, chr);
     clearBitmap(bmp, scr);
     lines(bmp, scr, chr);
@@ -153,23 +190,28 @@ void run(uchar *bmp, uchar *scr, uchar *chr) {
     clearBitmap(bmp, scr);
     bezier(bmp, scr, chr);
     clearBitmap(bmp, scr);
+    rectangles(bmp, scr, chr);
+    clearBitmap(bmp, scr);
+    ellipses(bmp, scr, chr);
+    clearBitmap(bmp, scr);
+    circles(bmp, scr, chr);
 }
 
 main() {
-    /* We need to use bank 1 since bank 0 doesn't have enough room left */
-    uchar vicBank = 1;
+    /* We need to use bank 2 since program is over 16K */
+    uchar vicBank = 2;
     uchar *vicMem = allocVicMem(vicBank);
-    /* Use beginning of bank 1 for RAM character set */
-    uchar *chr = (uchar *) 0x4000;
+    /* Use beginning of bank 2 for RAM character set */
+    uchar *chr = (uchar *) 0x8000;
     /* Use ram after character set for screen */
-    uchar *scr = (uchar *) 0x4800;
-    /* Use bottom of bank 1 for bitmap */
-    uchar *bmp = (uchar *) 0x6000;
+    uchar *scr = (uchar *) 0x8800;
+    /* Use bottom of bank 2 for bitmap */
+    uchar *bmp = (uchar *) 0xa000;
     /* Save border/background color */
     uchar border = inp(vicBorderCol);
     uchar background = inp(vicBgCol0);
     init(bmp, scr, chr);
-    run(bmp, scr, chr);
+    run(bmp, scr, chr, vicMem);
     done(border, background);
     free(vicMem);
 }

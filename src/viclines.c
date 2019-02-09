@@ -35,6 +35,10 @@ void drawVicLineH(uchar *bmp, ushort x, uchar y, ushort len) {
             fillBytes -= 1;
         }
     }
+    /* Handle error in len / 8 */
+    if ((lastBits > 0) && (lastBits < 4) && (fillBytes > 0)) {
+        fillBytes += 1;
+    }
     /* Fill in bytes */
     for (i = 0; i < fillBytes; i++) {
         bmp[pixByte] = 0xff;
@@ -42,11 +46,6 @@ void drawVicLineH(uchar *bmp, ushort x, uchar y, ushort len) {
     }
     /* Handle left over bits on last byte */
     if (lastBits > 0) {
-        /* Handle error in len / 8 */
-        if ((lastBits < 4) && (fillBytes > 0)) {
-            bmp[pixByte] = 0xff;
-            pixByte += 8;
-        }
         bmp[pixByte] = bmp[pixByte] | ~fillTable[lastBits - 1];
     }
 }
