@@ -83,6 +83,5 @@ void drawVicEllipse(uchar *bmp, int xc, int yc, int a, int b) {
  */
 void drawVicCircle(uchar *bmp, int xc, int yc, int a) {
     /* Circle approximation based on 1:0.75 aspect ratio */
-    int b = (a / 2) + (a / 2) / 2;
-    drawVicEllipse(bmp, xc, yc, a, b);
+    drawVicEllipse(bmp, xc, yc, a, (a >> 1) + ((a >> 1) >> 1));
 }
