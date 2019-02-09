@@ -16,6 +16,19 @@
 #include <vdc.h>
 #include <rtc.h>
 
+
+/*
+ * Clear bitmap.
+ */
+void clearBitmap(uchar *bmp, uchar *scr) {
+    /* Set to black */
+    clearVicBmpCol(scr, 0x00);
+    /* Clear bitmap */
+    clearVicBmp(bmp, 0);
+    /* White foreground and black background */
+    clearVicBmpCol(scr, 0x10);
+}
+
 /*
  * Copy VDC char set to memory, set screen color, MMU bank, VIC bank, screen
  * memory and bitmap memory. Clear bitmap memory, color memory then enable screen.
@@ -27,10 +40,7 @@ void init(uchar *bmp, uchar *scr, uchar *chr) {
     outp(vicBgCol0, 0);
     /* Clear color to black */
     clearVicCol(0);
-    /* Clear bitmap color to black foreground/background */
-    clearVicBmpCol(scr, 0x00);
-    /* Clear bitmap */
-    clearVicBmp(bmp, 0);
+    clearBitmap(bmp, scr);
     /* Copy VDC alt char set to VIC mem */
     copyVdcChars(chr, 0x3000, 256);
     /* Set standard bitmap mode using MMU bank 1 */
@@ -88,7 +98,7 @@ void linesH(uchar *bmp, uchar *scr, uchar *chr) {
     uchar i;
     bannerBmp(bmp, scr, chr, " Optimized horizontal lines ");
     for (i = 0; i < 159; i++) {
-        drawVicLine(bmp, i, i + 20, 319 - i , i + 20);
+        drawVicLine(bmp, i, i + 20, 319 - i, i + 20);
     }
     waitKey(bmp, scr, chr);
 }
@@ -122,27 +132,34 @@ void bezier(uchar *bmp, uchar *scr, uchar *chr) {
  * Run demo.
  */
 void run(uchar *bmp, uchar *scr, uchar *chr) {
-    clearVicBmpCol(scr, 0x10);
+    char str[40];
+    printVicBmp(bmp, scr, chr, 0, 0, 0x16,
+            "This demo will show off bitmap graphics."
+                    "No interrupts are disabled and getch is "
+                    "used to read keyboard.                  ");
+    sprintf(str, "chr: %04x", chr);
+    printVicBmp(bmp, scr, chr, 0, 4, 0x19, str);
+    sprintf(str, "scr: %04x", scr);
+    printVicBmp(bmp, scr, chr, 0, 5, 0x19, str);
+    sprintf(str, "bmp: %04x", bmp);
+    printVicBmp(bmp, scr, chr, 0, 6, 0x19, str);
+    waitKey(bmp, scr, chr);
+    clearBitmap(bmp, scr);
     lines(bmp, scr, chr);
-    clearVicBmpCol(scr, 0x00);
-    clearVicBmp(bmp, 0);
-    clearVicBmpCol(scr, 0x10);
+    clearBitmap(bmp, scr);
     linesH(bmp, scr, chr);
-    clearVicBmpCol(scr, 0x00);
-    clearVicBmp(bmp, 0);
-    clearVicBmpCol(scr, 0x10);
+    clearBitmap(bmp, scr);
     linesV(bmp, scr, chr);
-    clearVicBmpCol(scr, 0x00);
-    clearVicBmp(bmp, 0);
-    clearVicBmpCol(scr, 0x10);
+    clearBitmap(bmp, scr);
     bezier(bmp, scr, chr);
+    clearBitmap(bmp, scr);
 }
 
 main() {
     /* We need to use bank 1 since bank 0 doesn't have enough room left */
     uchar vicBank = 1;
     uchar *vicMem = allocVicMem(vicBank);
-    /* Use beginning of bank 0 for RAM character set */
+    /* Use beginning of bank 1 for RAM character set */
     uchar *chr = (uchar *) 0x4000;
     /* Use ram after character set for screen */
     uchar *scr = (uchar *) 0x4800;
