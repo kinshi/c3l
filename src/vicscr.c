@@ -4,6 +4,7 @@
  * Copyright (c) Steven P. Goldsmith. All rights reserved.
  */
 
+#include <stdlib.h>
 #include <sys.h>
 #include <string.h>
 #include <hitech.h>
@@ -100,20 +101,56 @@ void printVicCol(uchar *scr, uchar x, uchar y, uchar color, char *str) {
 }
 
 /*
+ * Convert string to from ASCII to PETSCII.
+ */
+char *asciiToPet(char *str) {
+    ushort len = strlen(str);
+    char *petStr = (char *) malloc(len + 1);
+    ushort i;
+    for (i = 0; i < len; i++) {
+        if ((str[i] > 96) && (str[i] <= 127)) {
+            petStr[i] = str[i] - 96;
+        } else {
+            petStr[i] = str[i];
+        }
+    }
+    petStr[len] = 0;
+    return petStr;
+}
+
+/*
+ * Print PETSCII without color.
+ */
+void printVicPet(uchar *scr, uchar x, uchar y, char *str) {
+    char *petStr = asciiToPet(str);
+    printVic(scr, x, y, petStr);
+    free(petStr);
+}
+
+/*
+ * Print PETSCII with color.
+ */
+void printVicColPet(uchar *scr, uchar x, uchar y, uchar color, char *str) {
+    char *petStr = asciiToPet(str);
+    printVicCol(scr, x, y, color, petStr);
+    free(petStr);
+}
+
+/*
  * Scroll screen memory up 1 line starting at x for len words.
  */
 void scrollVicUpX(uchar *scr, uchar x, uchar y, uchar len, uchar lines) {
     register uchar w;
     uchar i;
     ushort *scr16 = (ushort *) scr;
-    ushort dest = (y * 20) + x;
-    ushort sourceLine, destLine;
+    ushort destLine = (y * 20) + x;
+    ushort sourceLine = destLine + 20;
     for (i = 0; i < lines; i++) {
-        destLine = dest + (i * 20);
-        sourceLine = destLine + 20;
         for (w = 0; w < len; w++) {
             scr16[destLine + w] = scr16[sourceLine + w];
         }
+        destLine += 20;
+        sourceLine = destLine + 20;
     }
 }
 

@@ -16,7 +16,7 @@ compiler, but I haven't found a way to do this with Hitech C 3.09. You could
 use MyZ80 which is pretty darn fast or lastly you could use the VICE emulator.
 Of course a real C128 system would work, but it will not be as productive as
 the above mentioned methods. I've chosen the Eclipse/MyZ80/ctools method
-because the flow is easier and build time are fast. You can use an Ubuntu VM
+because the flow is easier and build times are fast. You can use an Ubuntu VM
 on VirtualBox to run under Linux/Windows/Mac if that works for you.
 
 Build [VICE 3.3](http://vice-emu.sourceforge.net) on Ubuntu 18.04 x64.
@@ -83,7 +83,7 @@ the library by name simply repeat its name.
 * Fast text output (even faster without color)
 * Custom character sets (can be copied from VDC or loaded from disk)
 * Scroll any area of screen
-* Bitmap mode with optimized graphics and text 
+* Bitmap mode with optimized graphics and text
 
 ### VIC memory management in CP/M
 By default CP/M uses the VIC in MMU bank 0. This makes it difficult to access
@@ -125,6 +125,20 @@ character sets, sprites, etc. there and copy them as needed for example.
 
 Sprites flicker and cause characters on the screen to flicker too. I'm not sure
 if this is VICE or if it would happen on a real C128.
+
+### Bitmap graphics
+I took a fresh look at implementing lines, rectangles, ellipses and circles.
+setVicPix sets a pixel and clearVicPix clears a pixels. I added a parameter to
+the graphics function to tell it to set or clear pixels. This is pretty cool,
+since you can easily erase parts of you drawing using the same parameters except
+the last one called setPix. Set it to 1 to set and 0 to clear pixels.
+
+I optimized drawVicLine by detecting horizontal and vertical lines. drawVicLineH
+can draw horizontal lines about 15x faster than Bresenham's algorithm based on
+the bitmap memory layout and not having to read/write the pixel byte 8 times like
+setVicPix and clearVicPix. drawVicLineV is optimized also, but not nearly as much
+as drawVicLineH. You can still call drawVicLineH and drawVicLineV directly as
+needed.
 
 ## DS12C887 Real Time Clock
 

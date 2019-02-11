@@ -1,7 +1,8 @@
+
 /*
  * C128 CP/M C Library C3L
  *
- * 8564/8566 VIC-IIe bitmap demo.
+ * 8564/8566 VIC-IIe screen print demo.
  *
  * Copyright (c) Steven P. Goldsmith. All rights reserved.
  */
@@ -9,7 +10,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <conio.h>
-#include <string.h>
 #include <sys.h>
 #include <hitech.h>
 #include <vic.h>
@@ -17,34 +17,21 @@
 #include <rtc.h>
 
 /*
- * Clear bitmap.
- */
-void clearBitmap(uchar *bmp, uchar *scr) {
-    /* Set to black */
-    clearVicBmpCol(scr, 0x00);
-    /* Clear bitmap */
-    clearVicBmp(bmp, 0);
-    /* White foreground and black background */
-    clearVicBmpCol(scr, 0x10);
-}
-
-/*
  * Copy VDC char set to memory, set screen color, MMU bank, VIC bank, screen
- * memory and bitmap memory. Clear bitmap memory, color memory then enable screen.
+ * memory and char set memory. Clear screen and color memory then enable screen.
  */
-void init(uchar *bmp, uchar *scr, uchar *chr) {
-    uchar vicBank = (ushort) bmp / 16384;
-    /* Set screen and border color */
-    outp(vicBorderCol, 14);
+void init(uchar *scr, uchar *chr) {
+    /* Black screen and border */
+    outp(vicBorderCol, 0);
     outp(vicBgCol0, 0);
-    /* Clear color to black */
-    clearVicCol(0);
-    clearBitmap(bmp, scr);
     /* Copy VDC alt char set to VIC mem */
     copyVdcChars(chr, 0x3000, 256);
-    /* Set standard bitmap mode using MMU bank 1 */
-    setVicBmpMode(1, vicBank, ((ushort) scr - (vicBank * 16384)) / 1024,
-            ((ushort) bmp - (vicBank * 16384)) / 8192);
+    /* Set standard character mode using MMU bank 1 and VIC bank 0 */
+    setVicChrMode(1, 0, (ushort) scr / 1024, (ushort) chr / 2048);
+    /* Clear screen */
+    clearVicScr(scr, 32);
+    /* Clear color to white */
+    clearVicCol(1);
     /* Enable screen */
     outp(vicCtrlReg1, (inp(vicCtrlReg1) | 0x10));
 }
@@ -65,153 +52,108 @@ void done(uchar bgCol, uchar fgCol) {
 /*
  * Wait for key press.
  */
-void waitKey(uchar *bmp, uchar *scr, uchar *chr) {
-    printVicBmp(bmp, scr, chr, 0, 24, 0x36, "Press Return");
+void waitKey(uchar *scr) {
+    printVicCol(scr, 0, 24, 1, "Press Return ");
     while (getch() == 0)
         ;
 }
+
 /*
- * Print centered text on top line in bitmap.
+ * Text output without color.
  */
-void bannerBmp(uchar *bmp, uchar *scr, uchar *chr, char *str) {
-    printVicBmp(bmp, scr, chr, ((40 - strlen(str)) >> 1) - 1, 0, 0x36, str);
+void fillScr(uchar *scr) {
+    register uchar i;
+    for (i = 0; i < 24; i++) {
+        printVic(scr, 0, i, "|Watch how fast you can fill the screen|");
+    }
+    waitKey(scr);
 }
 
 /*
- * Draw lines.
+ * Color text output.
  */
-void lines(uchar *bmp, uchar *scr, uchar *chr) {
-    uchar i;
-    bannerBmp(bmp, scr, chr, " Bresenham lines ");
-    for (i = 0; i < 16; i++) {
-        drawVicLine(bmp, 0, 0, i * 20, 199);
-        drawVicLine(bmp, 319, 0, 319 - (i * 20), 199);
+void fillScrCol(uchar *scr) {
+    register uchar i;
+    clearVicScr(scr, 32);
+    for (i = 0; i < 24; i++) {
+        printVicCol(scr, 4, i, i / 2 + 1, "You can do color text as well");
     }
-    waitKey(bmp, scr, chr);
+    waitKey(scr);
 }
 
 /*
- * Draw horizontal lines.
+ * Scroll screen.
  */
-void linesH(uchar *bmp, uchar *scr, uchar *chr) {
-    uchar i;
-    bannerBmp(bmp, scr, chr, " Optimized horizontal lines ");
-    for (i = 0; i < 159; i++) {
-        drawVicLine(bmp, i, i + 20, 319 - i, i + 20);
+void scrollScrUp(uchar *scr) {
+    register uchar i;
+    scrollVicUp(scr, 0, 24);
+    fillVicScr(scr, 480, 20, 0x2020);
+    for (i = 0; i < 24; i++) {
+        scrollVicUp(scr, 0, 24);
     }
-    waitKey(bmp, scr, chr);
-}
-
-/*
- * Draw vertical lines.
- */
-void linesV(uchar *bmp, uchar *scr, uchar *chr) {
-    uchar i;
-    bannerBmp(bmp, scr, chr, " Optimized vertical lines ");
-    for (i = 10; i < 198; i++) {
-        drawVicLine(bmp, i + 59, 10, i + 59, i + 1);
+    clearVicCol(1);
+    for (i = 0; i < 24; i++) {
+        printVic(scr, 0, i, "You can scroll any part of the screen!!!");
     }
-    waitKey(bmp, scr, chr);
-}
-
-/*
- * Draw Bezier curves.
- */
-void bezier(uchar *bmp, uchar *scr, uchar *chr) {
-    uchar i;
-    bannerBmp(bmp, scr, chr, " Bezier curves ");
-    for (i = 0; i < 35; i++) {
-        drawVicBezier(bmp, i * 5, 10, 319, 15 + i * 5, 319, 15 + i * 5);
-
+    waitKey(scr);
+    scrollVicUpX(scr, 0, 0, 10, 24);
+    fillVicScr(scr, 480, 10, 0x2020);
+    for (i = 0; i < 24; i++) {
+        scrollVicUpX(scr, 0, 0, 10, 24);
     }
-    waitKey(bmp, scr, chr);
-}
-
-/*
- * Draw rectangles lines.
- */
-void rectangles(uchar *bmp, uchar *scr, uchar *chr) {
-    uchar i;
-    bannerBmp(bmp, scr, chr, " Rectangles ");
-    for (i = 1; i < 30; i++) {
-        drawVicRect(bmp, i * 2, i * 2, (i * 10) + 20, (i * 5) + 20);
+    waitKey(scr);
+    scrollVicUpX(scr, 10, 0, 10, 24);
+    fillVicScr(scr, 490, 10, 0x2020);
+    for (i = 0; i < 24; i++) {
+        scrollVicUpX(scr, 10, 0, 10, 24);
     }
-    waitKey(bmp, scr, chr);
-}
-
-/*
- * Draw ellipses.
- */
-void ellipses(uchar *bmp, uchar *scr, uchar *chr) {
-    ushort i;
-    bannerBmp(bmp, scr, chr, " Ellipses ");
-    for (i = 1; i < 9; i++) {
-        drawVicEllipse(bmp, 159, 99, i * 19, i * 10);
-    }
-    waitKey(bmp, scr, chr);
-}
-
-/*
- * Draw circles.
- */
-void circles(uchar *bmp, uchar *scr, uchar *chr) {
-    ushort i;
-    bannerBmp(bmp, scr, chr, " Circles ");
-    for (i = 1; i < 12; i++) {
-        drawVicCircle(bmp, 159, 99, i * 10);
-    }
-    waitKey(bmp, scr, chr);
 }
 
 /*
  * Run demo.
  */
-void run(uchar *bmp, uchar *scr, uchar *chr, uchar *vicMem) {
+void run(uchar *scr, uchar *chr, uchar *vicMem) {
     char str[40];
-    printVicBmp(bmp, scr, chr, 0, 0, 0x16,
-            "This demo will show off bitmap graphics."
-                    "No interrupts are disabled and getch is "
-                    "used to read keyboard.                  ");
-    sprintf(str, "mem: %04x", vicMem);
-    printVicBmp(bmp, scr, chr, 0, 4, 0x12, str);
-    sprintf(str, "chr: %04x", chr);
-    printVicBmp(bmp, scr, chr, 0, 6, 0x12, str);
-    sprintf(str, "scr: %04x", scr);
-    printVicBmp(bmp, scr, chr, 0, 8, 0x12, str);
-    sprintf(str, "bmp: %04x", bmp);
-    printVicBmp(bmp, scr, chr, 0, 10, 0x12, str);
-    waitKey(bmp, scr, chr);
-    clearBitmap(bmp, scr);
-    lines(bmp, scr, chr);
-    clearBitmap(bmp, scr);
-    linesH(bmp, scr, chr);
-    clearBitmap(bmp, scr);
-    linesV(bmp, scr, chr);
-    clearBitmap(bmp, scr);
-    bezier(bmp, scr, chr);
-    clearBitmap(bmp, scr);
-    rectangles(bmp, scr, chr);
-    clearBitmap(bmp, scr);
-    ellipses(bmp, scr, chr);
-    clearBitmap(bmp, scr);
-    circles(bmp, scr, chr);
+    char *dateStr, *timeStr;
+    /* Binary, 24h, DST */
+    setRtcMode(0x87);
+    dateStr = getRtcDate();
+    timeStr = getRtcTime();
+    printVic(scr, 0, 0, "Simple character mode using the VDC     "
+            "character set and one screen. No        "
+            "interrupts are disabled and getch is    "
+            "used to read keyboard. Since no color is"
+            "updated text output is blazing fast!");
+    sprintf(str, "Date:   %s", dateStr);
+    printVic(scr, 0, 6, str);
+    sprintf(str, "Time:   %s", timeStr);
+    printVic(scr, 0, 7, str);
+    sprintf(str, "vicMem: %04x", vicMem);
+    printVic(scr, 0, 8, str);
+    sprintf(str, "chr:    %04x", chr);
+    printVic(scr, 0, 9, str);
+    sprintf(str, "scr:    %04x", scr);
+    printVic(scr, 0, 10, str);
+    free(dateStr);
+    free(timeStr);
+    waitKey(scr);
+    fillScr(scr);
+    fillScrCol(scr);
+    scrollScrUp(scr);
 }
 
 main() {
-    /* We need to use bank 2 since program is over 16K */
-    uchar vicBank = 2;
-    uchar *vicMem = allocVicMem(vicBank);
-    /* Use beginning of bank 2 for RAM character set */
-    uchar *chr = (uchar *) 0x8000;
+    /* Program is small enough to use left over bank 0 memory */
+    uchar *vicMem = allocVicMem(0);
+    /* Use space after ROM character set for RAM character set */
+    uchar *chr = (uchar *) 0x3000;
     /* Use ram after character set for screen */
-    uchar *scr = (uchar *) 0x8800;
-    /* Use bottom of bank 2 for bitmap */
-    uchar *bmp = (uchar *) 0xa000;
-    /* Save border/background color */
+    uchar *scr = (uchar *) 0x3800;
+    /* Save screen/border color */
     uchar border = inp(vicBorderCol);
     uchar background = inp(vicBgCol0);
-    init(bmp, scr, chr);
-    run(bmp, scr, chr, vicMem);
-    done(border, background);
+    init(scr, chr);
+    run(scr, chr, vicMem);
     free(vicMem);
+    done(border, background);
 }

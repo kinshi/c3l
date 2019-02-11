@@ -11,23 +11,23 @@
 /*
  * Draw rectangle using line drawing.
  */
-void drawVicRect(uchar *bmp, int x0, int y0, int x1, int y1) {
+void drawVicRect(uchar *bmp, int x0, int y0, int x1, int y1, uchar setPix) {
     int dx = abs(x1 - x0);
     int dy = abs(y1 - y0);
     /* Top */
-    drawVicLineH(bmp, x0, y0, dx + 1);
+    drawVicLineH(bmp, x0, y0, dx + 1, setPix);
     /* Left */
-    drawVicLineV(bmp, x0, y0 + 1, dy - 1);
+    drawVicLineV(bmp, x0, y0 + 1, dy - 1, setPix);
     /* Right */
-    drawVicLineV(bmp, x1, y0 + 1, dy - 1);
+    drawVicLineV(bmp, x1, y0 + 1, dy - 1, setPix);
     /* Bottom */
-    drawVicLineH(bmp, x0, y1, dx + 1);
+    drawVicLineH(bmp, x0, y1, dx + 1, setPix);
 }
 
 /*
  * Draw ellipse using digital differential analyzer (DDA) method.
  */
-void drawVicEllipse(uchar *bmp, int xc, int yc, int a, int b) {
+void drawVicEllipse(uchar *bmp, int xc, int yc, int a, int b, uchar setPix) {
     long aa = (long) a * a; /* a^2 */
     long bb = (long) b * b; /* b^2 */
     long aa2 = aa << 1; /* 2(a^2) */
@@ -40,10 +40,17 @@ void drawVicEllipse(uchar *bmp, int xc, int yc, int a, int b) {
         long errVal = -y * aa; /* b^2 x^2 + a^2 y^2 - a^2 b^2 -b^2x */
         while (xbb2 <= yaa2) /* draw octant from top to top right */
         {
-            setVicPix(bmp, xc + x, yc + y);
-            setVicPix(bmp, xc + x, yc - y);
-            setVicPix(bmp, xc - x, yc + y);
-            setVicPix(bmp, xc - x, yc - y);
+            if (setPix) {
+                setVicPix(bmp, xc + x, yc + y);
+                setVicPix(bmp, xc + x, yc - y);
+                setVicPix(bmp, xc - x, yc + y);
+                setVicPix(bmp, xc - x, yc - y);
+            } else {
+                clearVicPix(bmp, xc + x, yc + y);
+                clearVicPix(bmp, xc + x, yc - y);
+                clearVicPix(bmp, xc - x, yc + y);
+                clearVicPix(bmp, xc - x, yc - y);
+            }
             x += 1;
             xbb2 += bb2;
             errVal += xbb2 - bb;
@@ -62,10 +69,17 @@ void drawVicEllipse(uchar *bmp, int xc, int yc, int a, int b) {
         long errVal = -x * bb;
         while (xbb2 > yaa2) /* draw octant from right to top right */
         {
-            setVicPix(bmp, xc + x, yc + y);
-            setVicPix(bmp, xc + x, yc - y);
-            setVicPix(bmp, xc - x, yc + y);
-            setVicPix(bmp, xc - x, yc - y);
+            if (setPix) {
+                setVicPix(bmp, xc + x, yc + y);
+                setVicPix(bmp, xc + x, yc - y);
+                setVicPix(bmp, xc - x, yc + y);
+                setVicPix(bmp, xc - x, yc - y);
+            } else {
+                clearVicPix(bmp, xc + x, yc + y);
+                clearVicPix(bmp, xc + x, yc - y);
+                clearVicPix(bmp, xc - x, yc + y);
+                clearVicPix(bmp, xc - x, yc - y);
+            }
             y += 1;
             yaa2 += aa2;
             errVal += yaa2 - aa;
@@ -81,7 +95,7 @@ void drawVicEllipse(uchar *bmp, int xc, int yc, int a, int b) {
 /*
  * Draw circle using ellipse with aspect ration adjustment.
  */
-void drawVicCircle(uchar *bmp, int xc, int yc, int a) {
+void drawVicCircle(uchar *bmp, int xc, int yc, int a, uchar setPix) {
     /* Circle approximation based on 1:0.75 aspect ratio */
-    drawVicEllipse(bmp, xc, yc, a, (a >> 1) + ((a >> 1) >> 1));
+    drawVicEllipse(bmp, xc, yc, a, (a >> 1) + ((a >> 1) >> 1), setPix);
 }

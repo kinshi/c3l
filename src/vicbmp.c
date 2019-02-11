@@ -55,6 +55,14 @@ void setVicPix(uchar *bmp, ushort x, uchar y) {
 }
 
 /*
+ * Clear pixel.
+ */
+void clearVicPix(uchar *bmp, ushort x, uchar y) {
+    ushort pixByte = 40 * (y & 0xf8) + (x & 0x1f8) + (y & 0x07);
+    bmp[pixByte] = bmp[pixByte] & ~(bitTable[x & 0x07]);
+}
+
+/*
  * Print with foreground/background color.
  */
 void printVicBmp(uchar *bmp, uchar *scr, uchar *chr, uchar x, uchar y,
