@@ -10,6 +10,17 @@ running code on VICE. This is a vast improvement of how I did it back in 1992
 when I had to transfer to floppies for testing. I'm starting with the VIC II and
 will add other chips and features as I go.
 
+## Running demos
+You can run the demo applications using the [disk images](https://github.com/sgjava/c3l/tree/master/disks).
+* Unzip disk images
+* `x128 -80col`
+* In VICE configure drives.
+* Boot boot.d81 as device 8.
+* Attach c3l.d71 as device 9.
+* `b`:
+* `vicdemo1`
+* To list all the demos just `dir *.com`.  
+
 ## Set up development environment
 You have a few ways to develop C code for C128 CP/M. You could use a cross
 compiler, but I haven't found a way to do this with Hitech C 3.09. You could
