@@ -144,6 +144,10 @@ use CP/M's stdin for input. You have to think a little different using C3L since
 stdout no longer is visible. stdout still goes to the screen in VIC bank 0, so
 that could be used for debugging, etc.
 
+![VIC Demo 1](images/vicdemo1.png)
+
+![VIC Demo 2](images/vicdemo2.png)
+
 #### Features
 * Use ROM character set at 0x1800 for the smallest memory footprint
 * Fast print uses existing background color
@@ -169,6 +173,8 @@ needed.
 All the bitmap graphic basics are provided to build applications that can graph
 data, build out game screens, annotate with text that can have unique foreground
 and background colors, etc.
+
+![VIC Demo 3](images/vicdemo3.png)
 
 #### Features
 * Set and clear pixel functions
