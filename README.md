@@ -170,7 +170,7 @@ setVicPix and clearVicPix. drawVicLineV is optimized also, but not nearly as muc
 as drawVicLineH. You can still call drawVicLineH and drawVicLineV directly as
 needed.
 
-All the bitmap graphic basics are provided to build applications that can graph
+Enough bitmap graphic basics are provided to build applications that can graph
 data, build out game screens, annotate with text that can have unique foreground
 and background colors, etc.
 
