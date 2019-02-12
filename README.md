@@ -156,7 +156,7 @@ that could be used for debugging, etc.
 I took a fresh look at implementing lines, rectangles, ellipses and circles.
 setVicPix sets a pixel and clearVicPix clears a pixels. I added a parameter to
 the graphics function to tell it to set or clear pixels. This is pretty cool,
-since you can easily erase parts of you drawing using the same parameters except
+since you can easily erase parts of your drawing using the same parameters except
 the last one called setPix. Set it to 1 to set and 0 to clear pixels.
 
 I optimized drawVicLine by detecting horizontal and vertical lines. drawVicLineH
