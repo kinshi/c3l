@@ -121,10 +121,28 @@ setVicChrMode(0, 0, 11, 3);
 ### Limitations
 As I mentioned before 0x1000 is always read by the VIC as character ROM. You can
 still read and write to the memory with your program. You could store extra
-character sets, sprites, etc. there and copy them as needed for example.
+character sets, sprites, etc. there and copy them as needed for example. You can
+can also use the ROM character set at 0x1800. 
 
 Sprites flicker and cause characters on the screen to flicker too. I'm not sure
 if this is VICE or if it would happen on a real C128.
+
+### Character mode
+I pretty much include everything you need to take control of character mode. I
+also included PETSCII print functions, so you can use the ROM character set
+at 0x1800. To keep things consistent I like to use the VDC's character set since
+that's what you use in normal CP/M mode. It wouldn't be hard to add a cursor and
+use CP/M's stdin for input. You have to think a little different using C3L since
+stdout no longer is visible. stdout still goes to the screen in VIC bank 0, so
+that could be used for debugging, etc.
+
+#### Features
+* Use ROM character set at 0x1800 for the smallest memory footprint
+* Fast print uses existing background color
+* Fast color printing too
+* PETSCII print functions convert from ASCII strings to PETSCII
+* Custom character sets (can be copied from VDC or loaded from disk)
+* Scroll any area of screen
 
 ### Bitmap graphics
 I took a fresh look at implementing lines, rectangles, ellipses and circles.
@@ -139,6 +157,22 @@ the bitmap memory layout and not having to read/write the pixel byte 8 times lik
 setVicPix and clearVicPix. drawVicLineV is optimized also, but not nearly as much
 as drawVicLineH. You can still call drawVicLineH and drawVicLineV directly as
 needed.
+
+All the bitmap graphic basics are provided to build applications that can graph
+data, build out game screens, annotate with text that can have unique foreground
+and background colors, etc.
+
+#### Features
+* Set and clear pixel functions
+* Fast color and bitmap clearing
+* All drawing functions can set or clear pixels
+* Optimized line drawing uses accelerated horizontal and vertical line functions
+before using Bresenham's algorithm
+* Rectangle uses optimized horizontal and vertical line functions
+* Bézier curve
+* Ellipse
+* Circle 
+* Use existing character set to print to bitmap
 
 ## DS12C887 Real Time Clock
 
