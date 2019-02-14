@@ -146,8 +146,6 @@ that could be used for debugging, etc.
 
 ![VIC Demo 1](images/vicdemo1.png)
 
-![VIC Demo 2](images/vicdemo2.png)
-
 #### Features
 * Use ROM character set at 0x1800 for the smallest memory footprint
 * Fast print uses existing background color
@@ -207,3 +205,4 @@ Under VICE Settings, I/O extensions, DS12C887 Real Time Clock click Enable
 DS12C887 Real Time Clock, Start with running oscillator, Enable RTC Saving.
 Make sure to save your configuration.
 
+![VIC Demo 2](images/vicdemo2.png)
