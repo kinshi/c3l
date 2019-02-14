@@ -66,7 +66,7 @@ void clearVicPix(uchar *bmp, ushort x, uchar y) {
  * Print with foreground/background color.
  */
 void printVicBmp(uchar *bmp, uchar *scr, uchar *chr, uchar x, uchar y,
-        uchar color, char *str) {
+uchar color, char *str) {
     ushort *bmp16 = (ushort *) bmp;
     ushort *chr16 = (ushort *) chr;
     ushort bmpOfs = (y * 160) + (x * 4);

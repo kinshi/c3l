@@ -88,5 +88,7 @@ extern void drawVicLineV(uchar *bmp, ushort x, uchar y, ushort len, uchar setPix
 extern void drawVicLine(uchar *bmp, int x1, int y1, int x2, int y2, uchar setPix);
 extern void drawVicBezier(uchar *bmp, int x0, int y0, int x1, int y1, int x2, int y2, uchar setPix);
 extern void drawVicRect(uchar *bmp, int x0, int y0, int x1, int y1, uchar setPix);
+extern void drawVicSquare(uchar *bmp, int x, int y, int len, uchar setPix);
+extern void drawVicOctant(uchar *bmp, int xc, int yc, int x, int y, uchar setPix);
 extern void drawVicEllipse(uchar *bmp, int x0, int y0, int x1, int y1, uchar setPix);
 extern void drawVicCircle(uchar *bmp, int xc, int yc, int a, uchar setPix);

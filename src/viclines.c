@@ -24,8 +24,8 @@ uchar vertTable[8] = { 128, 64, 32, 16, 8, 4, 2, 1 };
 void drawVicLineH(uchar *bmp, ushort x, uchar y, ushort len, uchar setPix) {
     ushort pixByte = 40 * (y & 0xf8) + (x & 0x1f8) + (y & 0x07);
     uchar firstBits = x % 8;
-    uchar lastBits = (x + len) % 8;
-    ushort fillBytes = len >> 3;
+    uchar lastBits = (x + len - 1) % 8;
+    ushort fillBytes = (len - lastBits - 1) >> 3;
     ushort i;
     if (firstBits > 0) {
         /* Handle left over bits on first byte */
@@ -35,13 +35,6 @@ void drawVicLineH(uchar *bmp, ushort x, uchar y, ushort len, uchar setPix) {
             bmp[pixByte] = bmp[pixByte] & ~fillTable[firstBits - 1];
         }
         pixByte += 8;
-        if (fillBytes > 0) {
-            fillBytes -= 1;
-        }
-    }
-    /* Handle error in len / 8 */
-    if ((lastBits > 0) && (lastBits < 4) && (fillBytes > 0)) {
-        fillBytes += 1;
     }
     /* Fill in bytes */
     for (i = 0; i < fillBytes; i++) {

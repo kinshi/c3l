@@ -66,9 +66,10 @@ void done(uchar bgCol, uchar fgCol) {
  * Wait for key press.
  */
 void waitKey(uchar *bmp, uchar *scr, uchar *chr) {
-    printVicBmp(bmp, scr, chr, 0, 24, 0x36, "Press Return");
+    printVicBmp(bmp, scr, chr, 0, 24, 0x36, " Press Return ");
     while (getch() == 0)
         ;
+    printVicBmp(bmp, scr, chr, 0, 24, 0x36, " Erasing pixels ");
 }
 /*
  * Print centered text on top line in bitmap.
@@ -101,11 +102,11 @@ void linesH(uchar *bmp, uchar *scr, uchar *chr) {
     uchar i;
     bannerBmp(bmp, scr, chr, " Optimized horizontal lines ");
     for (i = 0; i < 159; i++) {
-        drawVicLine(bmp, i, i + 20, 319 - i, i + 20, 1);
+        drawVicLine(bmp, i, i + 20, 320 - i, i + 20, 1);
     }
     waitKey(bmp, scr, chr);
     for (i = 0; i < 159; i++) {
-        drawVicLine(bmp, i, i + 20, 319 - i, i + 20, 0);
+        drawVicLine(bmp, i, i + 20, 320 - i, i + 20, 0);
     }
 }
 
@@ -140,7 +141,7 @@ void bezier(uchar *bmp, uchar *scr, uchar *chr) {
 }
 
 /*
- * Draw rectangles lines.
+ * Draw rectangles.
  */
 void rectangles(uchar *bmp, uchar *scr, uchar *chr) {
     uchar i;
@@ -151,6 +152,21 @@ void rectangles(uchar *bmp, uchar *scr, uchar *chr) {
     waitKey(bmp, scr, chr);
     for (i = 1; i < 30; i++) {
         drawVicRect(bmp, i * 2, i * 2, (i * 10) + 20, (i * 5) + 20, 0);
+    }
+    }
+
+/*
+ * Draw squares.
+ */
+void squares(uchar *bmp, uchar *scr, uchar *chr) {
+    uchar i;
+    bannerBmp(bmp, scr, chr, " Squares ");
+    for (i = 0; i < 10; i++) {
+        drawVicSquare(bmp, i * 8, i * 8, (i * 8) + 8, 1);
+    }
+    waitKey(bmp, scr, chr);
+    for (i = 0; i < 10; i++) {
+        drawVicSquare(bmp, i * 8, i * 8, (i * 8) + 8, 0);
     }
 }
 
@@ -212,6 +228,8 @@ void run(uchar *bmp, uchar *scr, uchar *chr, uchar *vicMem) {
     bezier(bmp, scr, chr);
     clearBitmap(bmp, scr);
     rectangles(bmp, scr, chr);
+    clearBitmap(bmp, scr);
+    squares(bmp, scr, chr);
     clearBitmap(bmp, scr);
     ellipses(bmp, scr, chr);
     clearBitmap(bmp, scr);
