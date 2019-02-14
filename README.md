@@ -14,12 +14,12 @@ will add other chips and features as I go.
 You can run the demo applications using the [disk images](https://github.com/sgjava/c3l/tree/master/disks).
 * Unzip disk images
 * `x128 -80col`
-* In VICE configure drives.
-* Boot boot.d81 as device 8.
-* Attach c3l.d71 as device 9.
+* In VICE configure drives
+* Boot boot.d81 as device 8
+* Attach c3l.d71 as device 9
 * `b`:
 * `vicdemo1`
-* To list all the demos just `dir *.com`.  
+* To list all the demos just `dir *.com`
 
 ## Set up development environment
 You have a few ways to develop C code for C128 CP/M. You could use a cross
@@ -91,7 +91,7 @@ the library by name simply repeat its name.
 ### Features
 * Easy to configure VIC mode and memory layout
 * 16 bit operations used where possible
-* Character mode and bitmap mode options galore
+* Character and bitmap mode options galore
 
 ### VIC memory management in CP/M
 By default CP/M uses the VIC in MMU bank 0. This makes it difficult to access
@@ -127,10 +127,10 @@ setVicChrMode(0, 0, 11, 3);
 ```
 
 ### Limitations
-As I mentioned before 0x1000 is always read by the VIC as character ROM. You can
-still read and write to the memory with your program. You could store extra
-character sets, sprites, etc. there and copy them as needed for example. You can
-can also use the ROM character set at 0x1800. 
+As I mentioned before 0x1000 is always read by the VIC as character ROM. Your
+program will still use this memory normally. See [vicdemo1](https://github.com/sgjava/c3l/blob/master/src/vicdemo1.c)
+for an example of using the ROM character set and ASCII to PETSCII translation of
+printVicPet.
 
 Sprites flicker and cause characters on the screen to flicker too. I'm not sure
 if this is VICE or if it would happen on a real C128.
@@ -183,6 +183,7 @@ and background colors, etc.
 * Optimized line drawing uses accelerated horizontal and vertical line functions
 before using Bresenham's algorithm
 * Rectangle uses optimized horizontal and vertical line functions
+* Square
 * Bézier curve
 * Ellipse
 * Circle 
