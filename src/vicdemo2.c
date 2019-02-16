@@ -8,9 +8,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <conio.h>
 #include <sys.h>
 #include <hitech.h>
+#include <cia.h>
 #include <vic.h>
 #include <vdc.h>
 #include <rtc.h>
@@ -20,6 +20,10 @@
  * memory and char set memory. Clear screen and color memory then enable screen.
  */
 void init(uchar *scr, uchar *chr) {
+    /* Clear CIA 1 ICR status */
+    inp(cia1Icr);
+    /* Clear all CIA 1 IRQ enable bits */
+    outp(cia1Icr, 0x7f);
     /* Black screen and border */
     outp(vicBorderCol, 0);
     outp(vicBgCol0, 0);
@@ -46,6 +50,18 @@ void done(uchar bgCol, uchar fgCol) {
     clearVicCol(0);
     /* CPM default */
     setVicChrMode(0, 0, 11, 3);
+    /* Enable CIA 1 IRQ */
+    outp(cia1Icr, 0x82);
+}
+
+/*
+ * Return single row of key scan.
+ */
+readKey(uchar index) {
+    uchar *ciaKeyScan = keyScan();
+    uchar key = ciaKeyScan[index];
+    free(ciaKeyScan);
+    return key;
 }
 
 /*
@@ -53,7 +69,7 @@ void done(uchar bgCol, uchar fgCol) {
  */
 void waitKey(uchar *scr) {
     printVicCol(scr, 0, 24, 1, "Press Return ");
-    while (getch() == 0)
+    while (readKey(0) != 253)
         ;
 }
 
@@ -109,6 +125,30 @@ void scrollScrUp(uchar *scr) {
 }
 
 /*
+ * Display low level key scan.
+ */
+void keyboard(uchar *scr) {
+    uchar *ciaKeyScan, exitKey, keyVal;
+    char str[40];
+    clearVicScr(scr, 32);
+    clearVicCol(1);
+    printVic(scr, 4, 0, "Standard and extended key scan");
+    printVicCol(scr, 0, 2, 13, " 0  1  2  3  4  5  6  7  8  9 10");
+    do {
+        ciaKeyScan = keyScan();
+        exitKey = ciaKeyScan[0];
+        sprintf(str, "%02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x",
+                ciaKeyScan[0], ciaKeyScan[1], ciaKeyScan[2], ciaKeyScan[3],
+                ciaKeyScan[4], ciaKeyScan[5], ciaKeyScan[6], ciaKeyScan[7],
+                ciaKeyScan[8], ciaKeyScan[9], ciaKeyScan[10]);
+        printVic(scr, 0, 4, str);
+        keyVal = decodeKey(ciaKeyScan);
+        scr[240] = keyVal;
+        free(ciaKeyScan);
+    } while (exitKey != 0xfd);
+}
+
+/*
  * Run demo.
  */
 void run(uchar *scr, uchar *chr, uchar *vicMem) {
@@ -119,8 +159,8 @@ void run(uchar *scr, uchar *chr, uchar *vicMem) {
     dateStr = getRtcDate();
     timeStr = getRtcTime();
     printVic(scr, 0, 0, "Simple character mode using the VDC     "
-            "character set and one screen. No        "
-            "interrupts are disabled and getch is    "
+            "character set and one screen. CIA 1     "
+            "interrupts are disabled and keyScan is  "
             "used to read keyboard. Since no color is"
             "updated text output is blazing fast!");
     sprintf(str, "Date:   %s", dateStr);
@@ -139,6 +179,7 @@ void run(uchar *scr, uchar *chr, uchar *vicMem) {
     fillScr(scr);
     fillScrCol(scr);
     scrollScrUp(scr);
+    keyboard(scr);
 }
 
 main() {

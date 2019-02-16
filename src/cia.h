@@ -57,3 +57,8 @@
 
 #define ciaPotsPort1 0x40     /* 4066 analog switch settings for CIA 1 */
 #define ciaPotsPort2 0x80
+
+extern uchar *keyScan();
+extern uchar getKeyCol(uchar keyVal);
+extern uchar decodeKey(uchar *ciaKeyScan);
+
