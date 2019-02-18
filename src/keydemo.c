@@ -1,25 +1,28 @@
 /*
  * C128 CP/M C Library C3L
  *
- * 8564/8566 VIC-IIe screen print demo.
+ * C128 keyboard demo.
  *
  * Copyright (c) Steven P. Goldsmith. All rights reserved.
  */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <conio.h>
 #include <sys.h>
 #include <hitech.h>
+#include <cia.h>
 #include <vic.h>
 #include <vdc.h>
-#include <rtc.h>
 
 /*
  * Copy VDC char set to memory, set screen color, MMU bank, VIC bank, screen
  * memory and char set memory. Clear screen and color memory then enable screen.
  */
 void init(uchar *scr, uchar *chr) {
+    /* Clear CIA 1 ICR status */
+    inp(cia1Icr);
+    /* Clear all CIA 1 IRQ enable bits */
+    outp(cia1Icr, 0x7f);
     /* Black screen and border */
     outp(vicBorderCol, 0);
     outp(vicBgCol0, 0);
@@ -46,6 +49,18 @@ void done(uchar bgCol, uchar fgCol) {
     clearVicCol(0);
     /* CPM default */
     setVicChrMode(0, 0, 11, 3);
+    /* Enable CIA 1 IRQ */
+    outp(cia1Icr, 0x82);
+}
+
+/*
+ * Return single row of key scan.
+ */
+readKey(uchar index) {
+    uchar *ciaKeyScan = keyScan();
+    uchar key = ciaKeyScan[index];
+    free(ciaKeyScan);
+    return key;
 }
 
 /*
@@ -53,59 +68,33 @@ void done(uchar bgCol, uchar fgCol) {
  */
 void waitKey(uchar *scr) {
     printVicCol(scr, 0, 24, 1, "Press Return ");
-    while (getch() == 0)
+    while (readKey(0) != 0xfd)
         ;
 }
 
 /*
- * Text output without color.
+ * Display low level key scan and decoded key.
  */
-void fillScr(uchar *scr) {
-    register uchar i;
-    for (i = 0; i < 24; i++) {
-        printVic(scr, 0, i, "|Watch how fast you can fill the screen|");
-    }
-    waitKey(scr);
-}
-
-/*
- * Color text output.
- */
-void fillScrCol(uchar *scr) {
-    register uchar i;
+void keyboard(uchar *scr) {
+    uchar *ciaKeyScan, exitKey, keyVal;
+    char str[40];
     clearVicScr(scr, 32);
-    for (i = 0; i < 24; i++) {
-        printVicCol(scr, 4, i, i / 2 + 1, "You can do color text as well");
-    }
-    waitKey(scr);
-}
-
-/*
- * Scroll screen.
- */
-void scrollScrUp(uchar *scr) {
-    register uchar i;
-    scrollVicUp(scr, 0, 24);
-    fillVicScr(scr, 480, 20, 0x2020);
-    for (i = 0; i < 24; i++) {
-        scrollVicUp(scr, 0, 24);
-    }
     clearVicCol(1);
-    for (i = 0; i < 24; i++) {
-        printVic(scr, 0, i, "You can scroll any part of the screen!!!");
-    }
-    waitKey(scr);
-    scrollVicUpX(scr, 0, 0, 10, 24);
-    fillVicScr(scr, 480, 10, 0x2020);
-    for (i = 0; i < 24; i++) {
-        scrollVicUpX(scr, 0, 0, 10, 24);
-    }
-    waitKey(scr);
-    scrollVicUpX(scr, 10, 0, 10, 24);
-    fillVicScr(scr, 490, 10, 0x2020);
-    for (i = 0; i < 24; i++) {
-        scrollVicUpX(scr, 10, 0, 10, 24);
-    }
+    printVic(scr, 4, 0, "Standard and extended key scan");
+    printVicCol(scr, 0, 2, 14, " 0  1  2  3  4  5  6  7  8  9 10");
+    printVicCol(scr, 0, 6, 3, "Key pressed:");
+    do {
+        ciaKeyScan = keyScan();
+        exitKey = ciaKeyScan[0];
+        sprintf(str, "%02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x",
+                ciaKeyScan[0], ciaKeyScan[1], ciaKeyScan[2], ciaKeyScan[3],
+                ciaKeyScan[4], ciaKeyScan[5], ciaKeyScan[6], ciaKeyScan[7],
+                ciaKeyScan[8], ciaKeyScan[9], ciaKeyScan[10]);
+        printVic(scr, 0, 4, str);
+        keyVal = decodeKey(ciaKeyScan);
+        scr[253] = keyVal;
+        free(ciaKeyScan);
+    } while (exitKey != 0xfd);
 }
 
 /*
@@ -113,32 +102,19 @@ void scrollScrUp(uchar *scr) {
  */
 void run(uchar *scr, uchar *chr, uchar *vicMem) {
     char str[40];
-    char *dateStr, *timeStr;
-    /* Binary, 24h, DST */
-    setRtcMode(0x87);
-    dateStr = getRtcDate();
-    timeStr = getRtcTime();
-    printVic(scr, 0, 0, "Simple character mode using the VDC     "
-            "character set and one screen. No        "
-            "interrupts are disabled and getch is    "
-            "used to read keyboard. Since no color is"
-            "updated text output is blazing fast!");
-    sprintf(str, "Date:   %s", dateStr);
-    printVic(scr, 0, 6, str);
-    sprintf(str, "Time:   %s", timeStr);
-    printVic(scr, 0, 7, str);
+    printVic(scr, 0, 0, "Low level key scan of standard and      "
+                        "extended keyboard. You can also decode  "
+                        "unshifted and shifted characters. CIA 1 "
+                        "interrupts are disabled, so as not to   "
+                        "disrupt the key scan.");
     sprintf(str, "vicMem: %04x", vicMem);
-    printVic(scr, 0, 8, str);
+    printVic(scr, 0, 6, str);
     sprintf(str, "chr:    %04x", chr);
-    printVic(scr, 0, 9, str);
+    printVic(scr, 0, 7, str);
     sprintf(str, "scr:    %04x", scr);
-    printVic(scr, 0, 10, str);
-    free(dateStr);
-    free(timeStr);
+    printVic(scr, 0, 8, str);
     waitKey(scr);
-    fillScr(scr);
-    fillScrCol(scr);
-    scrollScrUp(scr);
+    keyboard(scr);
 }
 
 main() {
