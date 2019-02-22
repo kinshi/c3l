@@ -194,13 +194,19 @@ before using Bresenham's algorithm
 
 ## Keyboard scan and decode
 The 8502 is responsible for most of the low-level I/O functions in CP/M mode and
-the key scan routine is tied to the baud rate as well. The whole idea behind C3L
-is to stay in native Z80 mode as much as possible. This required writing low level
-key scan and decode functions. [Keyboard Scan](https://sites.google.com/site/h2obsession/CBM/C128/keyboard-scan)
-describes the process. You end up with complex weirdness like the shift and
+the key scan routine is no exception. The whole idea behind C3L is to stay in
+native Z80 mode as much as possible. This required writing low level key scan
+and decode functions. [Keyboard Scan](https://sites.google.com/site/h2obsession/CBM/C128/keyboard-scan)
+describes the concept. You end up with complex weirdness like the shift and
 another key being on the scan row. The formula is 255-2^k1-2^k2, but I
 calculated the values for the left and right shift using a lookup table, so no
 calculation or bit fiddling is needed with these combinations.
+
+[getKey](https://github.com/sgjava/c3l/blob/75755335d3a512c2b535649a376d46523dc98814/src/ciakey.c#L101)
+allows you to read a single key row. This can be used for video games or other
+time sensitive applications. In order to read standard and extended rows requires
+18 out and 16 in operations. getKey only requires 2 out and 1 in operations. Plus
+you do not need to decode the row saving that time as well.
 
 ![Key Demo](images/keydemo.png)
 
