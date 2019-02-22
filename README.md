@@ -211,7 +211,7 @@ you do not need to decode the row saving that time as well.
 ![Key Demo](images/keydemo.png)
 
 ### Features
-* Read single row or all rows including the extended keys
+* Read single row for performance
 * Read all standard and extended rows at once
 * Decode key press as ASCII including shifted characters
 * CP/M key scan routine disabled for performance
