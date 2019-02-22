@@ -1,8 +1,7 @@
 ![C3L is the Commodore 128 CP/M C Library](images/title.png)
 
-C3L is an ANSI C based API to access C128 specific features under CP/M.
-This will eventually replace [SG C Tools](https://github.com/sgjava/garage/tree/master/commodore/cpm/sgctools).
-I decided to build a new library from scratch after creating
+C3L is an ANSI C based API to access C128 specific features under CP/M. I
+decided to build a new library from scratch after creating
 [C128 CP/M VIC Demo](https://github.com/sgjava/garage/tree/master/commodore/cpm/vicdemo).
 I updated my development process doing all development using Eclipse for editing
 the source, MyZ80 to build, ctools to move the source to a d71 disk image for
@@ -53,7 +52,7 @@ Drive a: (1581) boots CP/M and has Hitech C, turbo editor, etc. Drive b: (1571)
 contains the source that ctools can write to from your Eclipse src folder. The
 [src](https://github.com/sgjava/c3l/tree/master/src) directory should be
 considered the latest source. The [disk images](https://github.com/sgjava/c3l/tree/master/disks) may go out of date. To build
-latest source from scratch:
+latest source from scratch on VICE or real C128:
 * `x128 -80col`
 * In VICE configure drives.
 * Boot boot.d81 as device 8.
@@ -72,6 +71,11 @@ latest source from scratch:
 * Alt+W (VICE warp mode).
 * Run a demo.
 * `vicdemo1`
+
+If you skip the VICE stuff the build works on MyZ80, so it's cross platform from
+a build perspective. MyZ80 has IMPORT and EXPORT commands to move source files
+in and com files out to DOS which is also a Linux dir. Then just use ctools to
+copy exported files to d71 image.
 
 ## Programming considerations
 * No range checks are performed by most functions for performance sake. It is
@@ -127,10 +131,10 @@ setVicChrMode(0, 0, 11, 3);
 ```
 
 ### Limitations
-As I mentioned before 0x1000 is always read by the VIC as character ROM. Your
+As I mentioned above 0x1000 is always read by the VIC as character ROM. Your
 program will still use this memory normally. See [vicdemo1](https://github.com/sgjava/c3l/blob/master/src/vicdemo1.c)
-for an example of using the ROM character set and ASCII to PETSCII translation of
-printVicPet.
+for an example of using the ROM character set and the ASCII to PETSCII translation
+of printVicPet.
 
 Sprites flicker and cause characters on the screen to flicker too. I'm not sure
 if this is VICE or if it would happen on a real C128.
@@ -140,9 +144,10 @@ I pretty much include everything you need to take control of character mode. I
 also included PETSCII print functions, so you can use the ROM character set
 at 0x1800. To keep things consistent I like to use the VDC's character set since
 that's what you use in normal CP/M mode. It wouldn't be hard to add a cursor and
-use CP/M's stdin for input. You have to think a little different using C3L since
-stdout is no longer visible. stdout still goes to the screen in VIC bank 0, so
-that could be used for debugging, etc.
+use CP/M's stdin for input (or my loew level key scan and decode functions). You
+have to think a little different using C3L since stdout is no longer visible.
+stdout still goes to the screen in VIC bank 0, so that could be used for debugging,
+etc.
 
 ![VIC Demo 1](images/vicdemo1.png)
 
@@ -186,6 +191,24 @@ before using Bresenham's algorithm
 * Ellipse
 * Circle 
 * Use existing character set to print to bitmap
+
+## Keyboard scan and decode
+The 8502 is responsible for most of the low-level I/O functions in CP/M mode and
+the key scan routine is tied to the baud rate as well. The whole idea behind C3L
+is to stay in native Z80 mode as much as possible. This required writing low level
+key scan and decode functions. [Keyboard Scan](https://sites.google.com/site/h2obsession/CBM/C128/keyboard-scan)
+describes the process. You end up with complex weirdness like the shift and
+another key being on the scan row. The formula is 255-2^k1-2^k2, but I
+calculated the values for the left and right shift using a lookup table, so no
+calculation or bit fiddling is needed with these combinations.
+
+![Key Demo](images/keydemo.png)
+
+### Features
+* Read single row or all rows including the extended keys
+* Read all standard and extended rows at once
+* Decode key press as ASCII including shifted characters
+* CP/M key scan routine disabled for performance
 
 ## DS12C887 Real Time Clock
 

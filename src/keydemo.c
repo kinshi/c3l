@@ -23,6 +23,9 @@ void init(uchar *scr, uchar *chr) {
     inp(cia1Icr);
     /* Clear all CIA 1 IRQ enable bits */
     outp(cia1Icr, 0x7f);
+    /* Set CIA 1 DDRs for keyboard scan */
+    outp(cia1DdrA, 0xff);
+    outp(cia1DdrB, 0x00);
     /* Black screen and border */
     outp(vicBorderCol, 0);
     outp(vicBgCol0, 0);
@@ -54,21 +57,12 @@ void done(uchar bgCol, uchar fgCol) {
 }
 
 /*
- * Return single row of key scan.
- */
-readKey(uchar index) {
-    uchar *ciaKeyScan = keyScan();
-    uchar key = ciaKeyScan[index];
-    free(ciaKeyScan);
-    return key;
-}
-
-/*
- * Wait for key press.
+ * Wait for Return.
  */
 void waitKey(uchar *scr) {
-    printVicCol(scr, 0, 24, 1, "Press Return ");
-    while (readKey(0) != 0xfd)
+    printVicCol(scr, 0, 24, 1, "Press Return");
+    /* Note the use of getKey to read only one row for Return key */
+    while (getKey(0) != 0xfd)
         ;
 }
 
@@ -83,8 +77,9 @@ void keyboard(uchar *scr) {
     printVic(scr, 4, 0, "Standard and extended key scan");
     printVicCol(scr, 0, 2, 14, " 0  1  2  3  4  5  6  7  8  9 10");
     printVicCol(scr, 0, 6, 3, "Key pressed:");
+    printVicCol(scr, 0, 24, 1, "Press Return");
     do {
-        ciaKeyScan = keyScan();
+        ciaKeyScan = getKeys();
         exitKey = ciaKeyScan[0];
         sprintf(str, "%02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x",
                 ciaKeyScan[0], ciaKeyScan[1], ciaKeyScan[2], ciaKeyScan[3],

@@ -18,38 +18,108 @@
 uchar keyCol[8] = { 0xfe, 0xfd, 0xfb, 0xf7, 0xef, 0xdf, 0xbf, 0x7f };
 
 /*
- * Key to ASCII code unshifted.
+ * Left shift key column.
  */
-uchar stdKeys[11][8] = { { 0x7f, 0x0d, 0x04, 0x00, 0x00, 0x00, 0x00, 0x18 }, {
-        '3', 'w', 'a', '4', 'z', 's', 'e', 0x00 }, { '5', 'r', 'd', '6', 'c',
-        'f', 't', 'x' }, { '7', 'y', 'g', '8', 'b', 'h', 'u', 'v' }, { '9', 'i',
-        'j', '0', 'm', 'k', 'o', 'n' },
-        { '+', 'p', 'l', '-', '.', ':', '@', ',' }, { '\\', '*', ';', 0x00,
-                0x00, '=', '^', '/' }, { '1', 0x00, 0x00, '2', 0x20, 0x00, 'q',
-                0x00 }, { 0x00, '8', '5', 0x09, '2', '4', '7', '1' }, { 0x1b,
-                '+', '-', 0x0a, 0x0d, '6', '9', '3' }, { 0x00, '0', '.', 0x05,
-                0x18, 0x13, 0x04, 0x00 } };
+uchar lsKeyCol[8] = { 0x7e, 0x7d, 0x7b, 0x77, 0x6f, 0x5f, 0x3f, 0x7f };
 
 /*
- * Key to ASCII code shifted.
+ * Right shift key column.
  */
-uchar shiftKeys[11][8] = { { 0x7f, 0x0d, 0x04, 0x00, 0x00, 0x00, 0x00, 0x18 }, {
-        '#', 'W', 'A', '$', 'Z', 'S', 'E', 0x00 }, { '%', 'R', 'D', '&', 'C',
-        'F', 'T', 'X' }, { '\'', 'Y', 'G', '(', 'B', 'H', 'U', 'V' }, { ')',
-        'I', 'J', '0', 'M', 'K', 'O', 'N' }, { '+', 'P', 'L', '-', '>', '[',
-        '@', '<' }, { '\\', '*', ']', 0x00, 0x00, '=', '^', '?' }, { '!', 0x00,
-        0x00, '"', 0x20, 0x00, 'Q', 0x00 }, { 0x00, '8', '5', 0x09, '2', '4',
-        '7', '1' }, { 0x1b, '+', '-', 0x0a, 0x0d, '6', '9', '3' }, { 0x00, '0',
-        '.', 0x05, 0x18, 0x13, 0x04, 0x00 } };
+uchar rsKeyCol[8] = { 0xee, 0xed, 0xeb, 0xe7, 0xdf, 0xcf, 0xaf, 0x6f };
 
 /*
- * Scan standard and extended keys.
+ * Key to ASCII code unshifted. Unmapped keys are set to 0x00.
  */
-uchar *keyScan() {
+uchar stdKeys[11][8] = {
+        { 0x7f, 0x0d, 0x04, 0x00, 0x00, 0x00, 0x00, 0x18 },
+        { '3', 'w', 'a', '4', 'z', 's', 'e', 0x00 },
+        { '5', 'r', 'd', '6', 'c', 'f', 't', 'x' },
+        { '7', 'y', 'g', '8', 'b', 'h', 'u', 'v' },
+        { '9', 'i', 'j', '0', 'm', 'k', 'o', 'n' },
+        { '+', 'p', 'l', '-', '.', ':', '@', ',' },
+        { '\\', '*', ';', 0x00, 0x00, '=', '^', '/' },
+        { '1', 0x00, 0x00, '2', 0x20, 0x00, 'q', 0x00 },
+        { 0x00, '8', '5', 0x09, '2', '4', '7', '1' },
+        { 0x1b, '+', '-', 0x0a, 0x0d, '6', '9', '3' },
+        { 0x00, '0', '.', 0x05, 0x18, 0x13, 0x04, 0x00 }
+};
+
+/*
+ * Key to ASCII code shifted. Unmapped keys are set to 0x00.
+ */
+uchar shiftKeys[11][8] = {
+        { 0x7f, 0x0d, 0x04, 0x00, 0x00, 0x00, 0x00, 0x18 },
+        { '#', 'W', 'A', '$', 'Z', 'S', 'E', 0x00 },
+        { '%', 'R', 'D', '&', 'C', 'F', 'T', 'X' },
+        { '\'', 'Y', 'G', '(', 'B', 'H', 'U', 'V' },
+        { ')', 'I', 'J', '0', 'M', 'K', 'O', 'N' },
+        { '+', 'P', 'L', '-', '>', '[', '@', '<' },
+        { '\\', '*', ']', 0x00, 0x00, '=', '^', '?' },
+        { '!', 0x00, 0x00, '"', 0x20, 0x00, 'Q', 0x00 },
+        { 0x00, '8', '5', 0x09, '2', '4', '7', '1' },
+        { 0x1b, '+', '-', 0x0a, 0x0d, '6', '9', '3' },
+        { 0x00, '0', '.', 0x05, 0x18, 0x13, 0x04, 0x00 }
+};
+
+/*
+ * Get key column. If column not found then 8 is returned.
+ */
+uchar getKeyCol(uchar keyVal) {
+    register uchar i = 0;
+    while ((i < 8) && (keyCol[i] != keyVal)) {
+        i++;
+    }
+    return i;
+}
+
+/*
+ * Get left shift key column. If column not found then 8 is returned.
+ */
+uchar getLsKeyCol(uchar keyVal) {
+    register uchar i = 0;
+    while ((i < 8) && (lsKeyCol[i] != keyVal)) {
+        i++;
+    }
+    return i;
+}
+
+/*
+ * Get left shift key column. If column not found then 8 is returned.
+ */
+uchar getRsKeyCol(uchar keyVal) {
+    register uchar i = 0;
+    while ((i < 8) && (rsKeyCol[i] != keyVal)) {
+        i++;
+    }
+    return i;
+}
+
+/*
+ * Get standard or extended key code for single row. 0xff is returned if no key
+ * pressed. keyRow is 0 - 10.
+ */
+uchar getKey(uchar keyRow) {
+    uchar keyCode;
+    /* Standard keys? */
+    if (keyRow < 8) {
+        outp(vicExtKey, 0xff);
+        outp(cia1DataA, keyCol[keyRow]);
+        keyCode = inp(cia1DataB);
+    } else {
+        /* Extended keys */
+        outp(cia1DataA, 0xff);
+        outp(vicExtKey, keyCol[keyRow - 8]);
+        keyCode = inp(cia1DataB);
+    }
+    return keyCode;
+}
+
+/*
+ * Get all standard and extended key rows.
+ */
+uchar *getKeys() {
     uchar keyMask, i;
     uchar *ciaKeyScan = (uchar *) malloc(11);
-    outp(cia1DdrA, 0xff);
-    outp(cia1DdrB, 0x00);
     outp(vicExtKey, 0xff);
     /* Scan standard keys */
     for (i = 0, keyMask = 1; i < 8; i++, keyMask <<= 1) {
@@ -66,61 +136,77 @@ uchar *keyScan() {
 }
 
 /*
- * Get key column. If column not found then 8 is returned.
- */
-uchar getKeyCol(uchar keyVal) {
-    register uchar i = 0;
-    while ((i < 8) && (keyCol[i] != keyVal)) {
-        i++;
-    }
-    return i;
-}
-
-/*
- * Decode key from scan array. Handle shifted and unshifted keys.
+ * Decode key from getKeys array. Handle shifted and unshifted keys. 0x00 is
+ * returned if no keys pressed, unmapped keys pressed or unable to decode.
  */
 uchar decodeKey(uchar *ciaKeyScan) {
     register uchar i = 0;
-    uchar keyCode = 0;
-    uchar col;
-    /* Left or right shift pressed without another key on same row? */
-    if (ciaKeyScan[1] == 0x7f || ciaKeyScan[6] == 0xef) {
-        /* Find first key row and skip shift rows */
-        while ((i < 11) && (ciaKeyScan[i] == 0xff)) {
-            /* Skip left shift row */
-            if ((i == 0) && ciaKeyScan[1] == 0x7f) {
-                i++;
-                /* Skip right shift row */
-            } else if ((i == 5) && ciaKeyScan[6] == 0xef) {
+    uchar keyCode = 0x00;
+    uchar lsCol, rsCol, col;
+    /* Shift row pressed? */
+    if ((ciaKeyScan[1] != 0xff) || (ciaKeyScan[6] != 0xff)) {
+        lsCol = getLsKeyCol(ciaKeyScan[1]);
+        rsCol = getRsKeyCol(ciaKeyScan[6]);
+        /* Only shift pressed on row? */
+        if ((ciaKeyScan[1] != 0x7f) || (ciaKeyScan[6] != 0xef)) {
+            /* Find first key row */
+            while ((i < 11) && (ciaKeyScan[i] == 0xff)) {
+                /* Skip left shift or right shift if pressed by themselves */
+                if (((i == 0) && (ciaKeyScan[1] == 0x7f))
+                        || ((i == 5) && ciaKeyScan[6] == 0xef)) {
+                    i++;
+                }
                 i++;
             }
-            i++;
-        }
-        if (i < 11) {
-            col = getKeyCol(ciaKeyScan[i]);
-            if (col < 8) {
-                keyCode = shiftKeys[i][col];
+            /* Another key pressed besides shift? */
+            if (i < 11) {
+                /* Left shift row? */
+                if (i == 1) {
+                    /* See if row 1 in left shifted state */
+                    if (lsCol < 7) {
+                        keyCode = shiftKeys[i][lsCol];
+                    } else {
+                        col = getKeyCol(ciaKeyScan[i]);
+                        /* Make sure key code is valid */
+                        if (col < 8) {
+                            /* Right shift pressed? */
+                            if (ciaKeyScan[6] == 0xef) {
+                                keyCode = shiftKeys[i][col];
+                            } else {
+                                keyCode = stdKeys[i][col];
+                            }
+                        }
+                    }
+                    /* Right shift row? */
+                } else if (i == 6) {
+                    /* See if row 1 in left shifted state */
+                    if (rsCol < 8) {
+                        keyCode = shiftKeys[i][rsCol];
+                    } else {
+                        col = getKeyCol(ciaKeyScan[i]);
+                        /* Make sure key code is valid */
+                        if (col < 8) {
+                            keyCode = stdKeys[i][col];
+                        }
+                    }
+                    /* Not shift row */
+                } else {
+                    col = getKeyCol(ciaKeyScan[i]);
+                    /* Make sure key code is valid */
+                    if (col < 8) {
+                        keyCode = shiftKeys[i][col];
+                    }
+                }
             }
-        }
-        /* Left shift key pressed with another key on same row? */
-    } else if (ciaKeyScan[1] < 0x7f) {
-        col = getKeyCol(ciaKeyScan[1] | 0x80);
-        if (col < 8) {
-            keyCode = shiftKeys[1][col];
-        }
-        /* Right shift key pressed with another key on same row? */
-    } else if (ciaKeyScan[6] < 0x7f) {
-        col = getKeyCol(ciaKeyScan[6] | 0x80);
-        if (col < 8) {
-            keyCode = shiftKeys[6][col];
         }
     } else {
-        /* Find first key row */
+        /* No shift rows pressed, so find first key row */
         while ((i < 11) && (ciaKeyScan[i] == 0xff)) {
             i++;
         }
         if (i < 11) {
             col = getKeyCol(ciaKeyScan[i]);
+            /* Make sure key code is valid */
             if (col < 8) {
                 keyCode = stdKeys[i][col];
             }
