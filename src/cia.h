@@ -63,5 +63,5 @@ extern uchar getLsKeyCol(uchar keyVal);
 extern uchar getRsKeyCol(uchar keyVal);
 extern uchar getKey(uchar keyRow);
 extern uchar *getKeys();
-extern uchar decodeKey(uchar *ciaKeyScan);
+extern uchar decodeKey();
 

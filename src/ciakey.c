@@ -109,19 +109,19 @@ uchar getKey(uchar keyRow) {
  * Get all standard and extended key rows.
  */
 uchar *getKeys() {
-    uchar keyMask, i;
+    register uchar i;
     uchar *ciaKeyScan = (uchar *) malloc(11);
     outp(vicExtKey, 0xff);
     /* Scan standard keys */
-    for (i = 0, keyMask = 1; i < 8; i++, keyMask <<= 1) {
-        outp(cia1DataA, ~keyMask);
+    for (i = 0; i < 8; i++) {
+        outp(cia1DataA, keyCol[i]);
         ciaKeyScan[i] = inp(cia1DataB);
     }
     outp(cia1DataA, 0xff);
     /* Scan extended keys */
-    for (keyMask = 1; i < 11; i++, keyMask <<= 1) {
-        outp(vicExtKey, ~keyMask);
-        ciaKeyScan[i] = inp(cia1DataB);
+    for (i = 0; i < 3; i++) {
+        outp(vicExtKey, keyCol[i]);
+        ciaKeyScan[i + 8] = inp(cia1DataB);
     }
     return ciaKeyScan;
 }
@@ -130,10 +130,12 @@ uchar *getKeys() {
  * Decode key from getKeys array. Handle shifted and unshifted keys. 0x00 is
  * returned if no keys pressed, unmapped keys pressed or unable to decode.
  */
-uchar decodeKey(uchar *ciaKeyScan) {
+uchar decodeKey() {
     register uchar i = 0;
     uchar keyCode = 0x00;
     uchar lsCol, rsCol, col;
+    uchar *ciaKeyScan;
+    ciaKeyScan = getKeys();
     /* Shift row pressed? */
     if ((ciaKeyScan[1] != 0xff) || (ciaKeyScan[6] != 0xff)) {
         lsCol = getLsKeyCol(ciaKeyScan[1]);
@@ -191,5 +193,6 @@ uchar decodeKey(uchar *ciaKeyScan) {
             }
         }
     }
+    free(ciaKeyScan);
     return keyCode;
 }

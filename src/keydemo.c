@@ -61,17 +61,77 @@ void done(uchar bgCol, uchar fgCol) {
  */
 void waitKey(uchar *scr) {
     printVicCol(scr, 0, 24, 1, "Press Return");
+    /* Debounce */
+    while (getKey(0) == 0xfd)
+        ;
     /* Note the use of getKey to read only one row for Return key */
     while (getKey(0) != 0xfd)
         ;
 }
 
 /*
+ * Simple screen line editor.
+ */
+void readLine(uchar *scr) {
+    char str[41];
+    uchar keyVal, lastKeyVal, i;
+    ushort scrOfs = 120;
+    ushort scrMin = scrOfs;
+    ushort scrMax = scrMin + 39;
+    clearVicScr(scr, 32);
+    clearVicCol(1);
+    printVic(scr, 0, 0, "Read input line");
+    lastKeyVal = 0x00;
+    scr[scrOfs] = '_';
+    do {
+        keyVal = decodeKey();
+        /* Debounce if current key equals last key */
+        if (keyVal == lastKeyVal) {
+            i = 0;
+            do {
+                /* ~1/60th second delay */
+                while (inp(vicRaster) != 0xff)
+                    ;
+                while (inp(vicRaster) != 0x00)
+                    ;
+                keyVal = decodeKey();
+                i++;
+            } while ((keyVal == lastKeyVal) && (i < 7));
+        }
+        lastKeyVal = keyVal;
+        /* Decoded key? */
+        if (keyVal != 0x00) {
+            /* Backspace? */
+            if (keyVal == 0x7f) {
+                if (scrOfs > scrMin) {
+                    scr[scrOfs] = ' ';
+                    scrOfs--;
+                }
+            } else {
+                if (scrOfs <= scrMax) {
+                    scr[scrOfs] = keyVal;
+                    scrOfs++;
+                }
+            }
+            scr[scrOfs] = '_';
+        }
+    } while (keyVal != 0x0d);
+    /* Screen to string */
+    for (i = 0; i < scrOfs - scrMin; i++) {
+        str[i] = scr[scrMin + i];
+    }
+    str[i] = 0;
+    printVicCol(scr, 0, 5, 14, "You entered:");
+    printVicCol(scr, 0, 7, 3, str);
+    waitKey(scr);
+}
+
+/*
  * Display low level key scan and decoded key.
  */
 void keyboard(uchar *scr) {
-    uchar *ciaKeyScan, exitKey, keyVal;
     char str[40];
+    uchar *ciaKeyScan, exitKey, keyVal;
     clearVicScr(scr, 32);
     clearVicCol(1);
     printVic(scr, 4, 0, "Standard and extended key scan");
@@ -86,7 +146,7 @@ void keyboard(uchar *scr) {
                 ciaKeyScan[4], ciaKeyScan[5], ciaKeyScan[6], ciaKeyScan[7],
                 ciaKeyScan[8], ciaKeyScan[9], ciaKeyScan[10]);
         printVic(scr, 0, 4, str);
-        keyVal = decodeKey(ciaKeyScan);
+        keyVal = decodeKey();
         scr[253] = keyVal;
         free(ciaKeyScan);
     } while (exitKey != 0xfd);
@@ -98,10 +158,10 @@ void keyboard(uchar *scr) {
 void run(uchar *scr, uchar *chr, uchar *vicMem) {
     char str[40];
     printVic(scr, 0, 0, "Low level key scan of standard and      "
-                        "extended keyboard. You can also decode  "
-                        "unshifted and shifted characters. CIA 1 "
-                        "interrupts are disabled, so as not to   "
-                        "disrupt the key scan.");
+            "extended keyboard. You can also decode  "
+            "unshifted and shifted characters. CIA 1 "
+            "interrupts are disabled, so as not to   "
+            "disrupt the key scan.");
     sprintf(str, "vicMem: %04x", vicMem);
     printVic(scr, 0, 6, str);
     sprintf(str, "chr:    %04x", chr);
@@ -110,6 +170,7 @@ void run(uchar *scr, uchar *chr, uchar *vicMem) {
     printVic(scr, 0, 8, str);
     waitKey(scr);
     keyboard(scr);
+    readLine(scr);
 }
 
 main() {
