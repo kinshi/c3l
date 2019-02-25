@@ -29,14 +29,14 @@ void init(uchar *scr, uchar *chr) {
     /* Black screen and border */
     outp(vicBorderCol, 0);
     outp(vicBgCol0, 0);
-    /* Copy VDC alt char set to VIC mem */
-    copyVdcChars(chr, 0x3000, 256);
-    /* Set standard character mode using MMU bank 1 and VIC bank 0 */
-    setVicChrMode(1, 0, (ushort) scr / 1024, (ushort) chr / 2048);
     /* Clear screen */
     clearVicScr(scr, 32);
     /* Clear color to white */
     clearVicCol(1);
+    /* Copy VDC alt char set to VIC mem */
+    copyVdcChars(chr, 0x3000, 256);
+    /* Set standard character mode using MMU bank 1 and VIC bank 0 */
+    setVicChrMode(1, 0, (ushort) scr / 1024, (ushort) chr / 2048);
     /* Enable screen */
     outp(vicCtrlReg1, (inp(vicCtrlReg1) | 0x10));
 }
@@ -61,11 +61,11 @@ void done(uchar bgCol, uchar fgCol) {
  */
 void waitKey(uchar *scr) {
     printVicCol(scr, 0, 24, 1, "Press Return");
-    /* Debounce */
-    while (getKey(0) == 0xfd)
-        ;
     /* Note the use of getKey to read only one row for Return key */
     while (getKey(0) != 0xfd)
+        ;
+    /* Debounce */
+    while (getKey(0) == 0xfd)
         ;
 }
 
@@ -121,8 +121,8 @@ void readLine(uchar *scr) {
         str[i] = scr[scrMin + i];
     }
     str[i] = 0;
-    printVicCol(scr, 0, 5, 14, "You entered:");
-    printVicCol(scr, 0, 7, 3, str);
+    printVicCol(scr, 0, 6, 14, "You entered:");
+    printVicCol(scr, 0, 8, 13, str);
     waitKey(scr);
 }
 
@@ -131,7 +131,7 @@ void readLine(uchar *scr) {
  */
 void keyboard(uchar *scr) {
     char str[40];
-    uchar *ciaKeyScan, exitKey, keyVal;
+    uchar *ciaKeyScan, exitKey;
     clearVicScr(scr, 32);
     clearVicCol(1);
     printVic(scr, 4, 0, "Standard and extended key scan");
@@ -146,9 +146,8 @@ void keyboard(uchar *scr) {
                 ciaKeyScan[4], ciaKeyScan[5], ciaKeyScan[6], ciaKeyScan[7],
                 ciaKeyScan[8], ciaKeyScan[9], ciaKeyScan[10]);
         printVic(scr, 0, 4, str);
-        keyVal = decodeKey();
-        scr[253] = keyVal;
         free(ciaKeyScan);
+        scr[253] = decodeKey();
     } while (exitKey != 0xfd);
 }
 
