@@ -220,6 +220,7 @@ edit the line. Insert and delete can be added later.
 * Read single row for performance
 * Read all standard and extended rows at once
 * Decode key press as ASCII including shifted characters
+* Simple line editor for VIC
 * CP/M key scan routine disabled for performance
 
 ### Limitations
