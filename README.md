@@ -208,6 +208,12 @@ time sensitive applications. In order to read standard and extended rows require
 18 out and 16 in operations. getKey only requires 2 out and 1 in operations. Plus
 you do not need to decode the row saving that time as well.
 
+[readVicLine](https://github.com/sgjava/c3l/blob/9ef99675463c5abf3eff9b8dda75937cb114f464/src/vicscr.c#L169)
+is a simple line editor that takes advantage of screen memory to allow input
+from the keyboard to be displayed and saved. Debounce logic makes sure the input
+is smooth while still allowing for auto repeat. Only Backspace is allowed to
+edit the line. Insert and delete can be added later. 
+
 ![Key Demo](images/keydemo.png)
 
 ### Features
@@ -215,6 +221,11 @@ you do not need to decode the row saving that time as well.
 * Read all standard and extended rows at once
 * Decode key press as ASCII including shifted characters
 * CP/M key scan routine disabled for performance
+
+### Limitations
+* Shift lock not accessible in Z80 mode
+* Polling frequency is important, so long running processes between key presses
+may cause missed key strokes.
 
 ## DS12C887 Real Time Clock
 
