@@ -76,6 +76,7 @@ extern void printVicPet(uchar *scr, uchar x, uchar y, char *str);
 extern void printVicColPet(uchar *scr, uchar x, uchar y, uchar color, char *str);
 extern void scrollVicUpX(uchar *scr, uchar x, uchar y, uchar len, uchar lines);
 extern void scrollVicUp(uchar *scr, uchar y, uchar lines);
+extern char *readVicLine(uchar *scr, uchar x, uchar y, uchar len);
 extern void setVicBmpMem(uchar bmpMem);
 extern void setVicBmpMode(uchar mmuRcr, uchar vicBank, uchar scrMem, uchar bmpMem);
 extern void clearVicBmp(uchar *bmp, uchar c);

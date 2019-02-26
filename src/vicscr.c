@@ -8,6 +8,7 @@
 #include <sys.h>
 #include <string.h>
 #include <hitech.h>
+#include <cia.h>
 #include <vic.h>
 
 /*
@@ -159,4 +160,63 @@ void scrollVicUpX(uchar *scr, uchar x, uchar y, uchar len, uchar lines) {
  */
 void scrollVicUp(uchar *scr, uchar y, uchar lines) {
     scrollVicUpX(scr, 0, y, 20, lines);
+}
+
+/*
+ * Use screen memory as simple input line. Only backspace supported, but insert
+ * and delete could be added later.
+ */
+char *readVicLine(uchar *scr, uchar x, uchar y, uchar len) {
+    uchar strLen;
+    char *str;
+    uchar keyVal, lastKeyVal, i;
+    ushort scrOfs = (y * 40) + x;
+    ushort scrMin = scrOfs;
+    ushort scrMax = scrMin + len -1;
+    lastKeyVal = 0x00;
+    /* Show cursor */
+    scr[scrOfs] = '_';
+    do {
+        keyVal = decodeKey();
+        /* Debounce if current key equals last key */
+        if (keyVal == lastKeyVal) {
+            i = 0;
+            do {
+                /* ~1/60th second delay */
+                while (inp(vicRaster) != 0xff)
+                    ;
+                while (inp(vicRaster) == 0xff)
+                    ;
+                keyVal = decodeKey();
+                i++;
+            } while ((keyVal == lastKeyVal) && (i < 8));
+        }
+        lastKeyVal = keyVal;
+        /* Decoded key? */
+        if (keyVal != 0x00) {
+            /* Backspace? */
+            if (keyVal == 0x7f) {
+                if (scrOfs > scrMin) {
+                    scr[scrOfs] = ' ';
+                    scrOfs--;
+                }
+            } else {
+                if ((scrOfs <= scrMax) && (keyVal != 0x0d)) {
+                    scr[scrOfs] = keyVal;
+                    scrOfs++;
+                }
+            }
+            /* Show cursor */
+            scr[scrOfs] = '_';
+        }
+    } while (keyVal != 0x0d);
+    /* Figure out string length based on current screen offset */
+    strLen = scrOfs - scrMin;
+    str = (char *) malloc(strLen + 1);
+    /* Screen to string */
+    for (i = 0; i < strLen; i++) {
+        str[i] = scr[scrMin + i];
+    }
+    str[strLen] = 0;
+    return str;
 }

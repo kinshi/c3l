@@ -29,14 +29,16 @@ void init(uchar *scr, uchar *chr) {
     /* Black screen and border */
     outp(vicBorderCol, 0);
     outp(vicBgCol0, 0);
+    /* Clear color to black */
+    clearVicCol(0);
     /* Clear screen */
     clearVicScr(scr, 32);
-    /* Clear color to white */
-    clearVicCol(1);
     /* Copy VDC alt char set to VIC mem */
     copyVdcChars(chr, 0x3000, 256);
     /* Set standard character mode using MMU bank 1 and VIC bank 0 */
     setVicChrMode(1, 0, (ushort) scr / 1024, (ushort) chr / 2048);
+    /* Clear color to white */
+    clearVicCol(1);
     /* Enable screen */
     outp(vicCtrlReg1, (inp(vicCtrlReg1) | 0x10));
 }
@@ -61,7 +63,9 @@ void done(uchar bgCol, uchar fgCol) {
  */
 void waitKey(uchar *scr) {
     printVicCol(scr, 0, 24, 1, "Press Return");
-    /* Note the use of getKey to read only one row for Return key */
+    /* Debounce */
+    while (getKey(0) == 0xfd)
+        ;
     while (getKey(0) != 0xfd)
         ;
     /* Debounce */
@@ -73,56 +77,14 @@ void waitKey(uchar *scr) {
  * Simple screen line editor.
  */
 void readLine(uchar *scr) {
-    char str[41];
-    uchar keyVal, lastKeyVal, i;
-    ushort scrOfs = 120;
-    ushort scrMin = scrOfs;
-    ushort scrMax = scrMin + 39;
+    char *str;
     clearVicScr(scr, 32);
     clearVicCol(1);
-    printVic(scr, 0, 0, "Read input line");
-    lastKeyVal = 0x00;
-    scr[scrOfs] = '_';
-    do {
-        keyVal = decodeKey();
-        /* Debounce if current key equals last key */
-        if (keyVal == lastKeyVal) {
-            i = 0;
-            do {
-                /* ~1/60th second delay */
-                while (inp(vicRaster) != 0xff)
-                    ;
-                while (inp(vicRaster) != 0x00)
-                    ;
-                keyVal = decodeKey();
-                i++;
-            } while ((keyVal == lastKeyVal) && (i < 7));
-        }
-        lastKeyVal = keyVal;
-        /* Decoded key? */
-        if (keyVal != 0x00) {
-            /* Backspace? */
-            if (keyVal == 0x7f) {
-                if (scrOfs > scrMin) {
-                    scr[scrOfs] = ' ';
-                    scrOfs--;
-                }
-            } else {
-                if (scrOfs <= scrMax) {
-                    scr[scrOfs] = keyVal;
-                    scrOfs++;
-                }
-            }
-            scr[scrOfs] = '_';
-        }
-    } while (keyVal != 0x0d);
-    /* Screen to string */
-    for (i = 0; i < scrOfs - scrMin; i++) {
-        str[i] = scr[scrMin + i];
-    }
-    str[i] = 0;
-    printVicCol(scr, 0, 6, 14, "You entered:");
-    printVicCol(scr, 0, 8, 13, str);
+    printVicCol(scr, 0, 0, 14, "Type in line and press return:");
+    str = readVicLine(scr, 0, 2, 40);
+    printVicCol(scr, 0, 4, 14, "You entered:");
+    printVicCol(scr, 0, 6, 13, str);
+    free(str);
     waitKey(scr);
 }
 
