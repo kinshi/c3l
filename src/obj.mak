@@ -6,4 +6,5 @@ vdcio.c \
 vicmem.c \
 vicbmp.c \
 viclines.c \
-vicshape.c
+vicshape.c \
+vicspr.c

@@ -143,11 +143,9 @@ if this is VICE or if it would happen on a real C128.
 I pretty much include everything you need to take control of character mode. I
 also included PETSCII print functions, so you can use the ROM character set
 at 0x1800. To keep things consistent I like to use the VDC's character set since
-that's what you use in normal CP/M mode. It wouldn't be hard to add a cursor and
-use CP/M's stdin for input (or my loew level key scan and decode functions). You
-have to think a little different using C3L since stdout is no longer visible.
-stdout still goes to the screen in VIC bank 0, so that could be used for debugging,
-etc.
+that's what you use in normal CP/M mode. You have to think a little different
+using C3L since stdout is no longer visible. stdout still goes to the screen in
+VIC bank 0, so that could be used for debugging, etc.
 
 ![VIC Demo 1](images/vicdemo1.png)
 

@@ -29,8 +29,8 @@
 #define vicCtrlReg2    0xd016 /* Control/horizontal fine scrolling register */
 #define vicSprYexp     0xd017 /* Sprite vertical expansion register */
 #define vicMemCtrl     0xd018 /* Memory control register */
-#define vicIntFlag     0xd019 /* Interrupt mask register */
-#define vicIntMask     0xd01a /* Interrupt flag register */
+#define vicIntFlag     0xd019 /* Interrupt flag register */
+#define vicIntMask     0xd01a /* Interrupt mask register */
 #define vicSprFg       0xd01b /* Sprite-to-foreground priority register */
 #define vicSprMcm      0xd01c /* Sprite multicolor mode register */
 #define vicSprXexp     0xd01d /* Sprite horizontal expansion register */
@@ -54,10 +54,11 @@
 #define vicExtKey      0xd02f /* Extended keyboard scan register */
 #define vicPcrcr       0xd030 /* Processor clock rate control register */
 
-#define vicColMem 0xd800 /* VIC I/O mapped color memory */
-#define vicScrSize 1000  /* VIC screen size in bytes */
-#define vicScrSizeW 500  /* VIC screen size in words */
-#define vicBmpSizeW 4000 /* VIC bitmap size in words */
+#define vicColMem 0xd800  /* VIC I/O mapped color memory */
+#define vicScrSize 1000   /* VIC screen size in bytes */
+#define vicScrSizeW 500   /* VIC screen size in words */
+#define vicBmpSizeW 4000  /* VIC bitmap size in words */
+#define vicSprMemOfs 1016 /* Sprite memory pointers offset in screen.  */
 
 extern uchar *allocVicMem(uchar maxBank);
 extern void setVicMmuBank(uchar mmuRcr);
