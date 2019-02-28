@@ -90,7 +90,7 @@ void waitKey(uchar *scr) {
 }
 
 /*
- * Start sound effect.
+ * Sound effect.
  */
 void sound() {
     setSidEnv(sidVoice1, 0, 0, 15, 9);
@@ -176,10 +176,10 @@ void run(uchar *scr, uchar *chr, uchar *vicMem) {
     uchar i;
     char str[40];
     /* Note the use of printVicPet that converts ASCII to PETSCII */
-    printVicPet(scr, 0, 0, "Simple character mode using ROM for the "
-            "character set and one screen at the end "
-            "of VIC bank 0. Sprite is located above  "
-            "screen at 0x3bc0.");
+    printVicPet(scr, 0, 0, "Using ROM character set and one screen  "
+                           "at the end of VIC bank 0. Sprite is     "
+                           "located above screen at 0x3bc0.         "
+                           "Collision detection changes color.");
     for (i = 0; i < 255; i++) {
         scr[i + 280] = i;
     }

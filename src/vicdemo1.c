@@ -8,9 +8,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <conio.h>
 #include <sys.h>
 #include <hitech.h>
+#include <cia.h>
 #include <vic.h>
 
 /*
@@ -19,14 +19,27 @@
  */
 void init(uchar *scr, uchar *chr) {
     uchar vicBank = (ushort) scr / 16384;
+    /* Clear all CIA 1 IRQ enable bits */
+    outp(cia1Icr, 0x7f);
+    /* Clear CIA 1 ICR status */
+    inp(cia1Icr);
+    /* Clear all CIA 2 IRQ enable bits */
+    outp(cia2Icr, 0x7f);
+    /* Clear CIA 2 ICR status */
+    inp(cia2Icr);
+    /* Set CIA 1 DDRs for keyboard scan */
+    outp(cia1DdrA, 0xff);
+    outp(cia1DdrB, 0x00);
     /* Black screen and border */
     outp(vicBorderCol, 0);
     outp(vicBgCol0, 0);
+    /* Clear color to black */
+    clearVicCol(0);
+    /* Clear screen */
+    clearVicScr(scr, 32);
     /* Set standard character mode using MMU bank 1 and set VIC based on scr location */
     setVicChrMode(1, vicBank, ((ushort) scr - (vicBank * 16384)) / 1024,
             ((ushort) chr - (vicBank * 16384)) / 2048);
-    /* Clear screen */
-    clearVicScr(scr, 32);
     /* Clear color to white */
     clearVicCol(1);
     /* Enable screen */
@@ -44,14 +57,22 @@ void done(uchar bgCol, uchar fgCol) {
     clearVicCol(0);
     /* CPM default */
     setVicChrMode(0, 0, 11, 3);
+    /* Enable CIA 1 IRQ */
+    outp(cia1Icr, 0x82);
 }
 
 /*
- * Wait for key press.
+ * Wait for Return.
  */
 void waitKey(uchar *scr) {
-    printVicColPet(scr, 0, 24, 7, "Press Return ");
-    while (getch() == 0)
+    printVicColPet(scr, 0, 24, 7, "Press Return");
+    /* Debounce */
+    while (getKey(0) == 0xfd)
+        ;
+    while (getKey(0) != 0xfd)
+        ;
+    /* Debounce */
+    while (getKey(0) == 0xfd)
         ;
 }
 
