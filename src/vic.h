@@ -66,7 +66,8 @@ extern void setVicBank(uchar vicBank);
 extern void setVicMode(uchar ecm, uchar bmm, uchar mcm);
 extern void setVicScrMem(uchar scrMem);
 extern void setVicChrMem(uchar chrMem);
-extern void setVicChrMode(uchar mmuRcr, uchar vicBank, uchar scrMem, uchar chrMem);
+extern void setVicChrMode(uchar mmuRcr, uchar vicBank, uchar scrMem,
+        uchar chrMem);
 extern void fillVicScr(uchar *scr, ushort start, ushort len, ushort value);
 extern void clearVicScr(uchar *scr, uchar c);
 extern void clearVicCol(uchar color);
@@ -79,20 +80,29 @@ extern void scrollVicUpX(uchar *scr, uchar x, uchar y, uchar len, uchar lines);
 extern void scrollVicUp(uchar *scr, uchar y, uchar lines);
 extern char *readVicLine(uchar *scr, uchar x, uchar y, uchar len);
 extern void setVicBmpMem(uchar bmpMem);
-extern void setVicBmpMode(uchar mmuRcr, uchar vicBank, uchar scrMem, uchar bmpMem);
+extern void setVicBmpMode(uchar mmuRcr, uchar vicBank, uchar scrMem,
+        uchar bmpMem);
 extern void clearVicBmp(uchar *bmp, uchar c);
 extern void clearVicBmpCol(uchar *scr, uchar color);
 extern void setVicPix(uchar *bmp, ushort x, uchar y);
 extern void clearVicPix(uchar *bmp, ushort x, uchar y);
-extern void printVicBmp(uchar *bmp, uchar *scr, uchar *chr, uchar x, uchar y, uchar color, char *str);
-extern void drawVicLineH(uchar *bmp, ushort x, uchar y, ushort len, uchar setPix);
-extern void drawVicLineV(uchar *bmp, ushort x, uchar y, ushort len, uchar setPix);
-extern void drawVicLine(uchar *bmp, int x1, int y1, int x2, int y2, uchar setPix);
-extern void drawVicBezier(uchar *bmp, int x0, int y0, int x1, int y1, int x2, int y2, uchar setPix);
-extern void drawVicRect(uchar *bmp, int x0, int y0, int x1, int y1, uchar setPix);
+extern void printVicBmp(uchar *bmp, uchar *scr, uchar *chr, uchar x, uchar y,
+        uchar color, char *str);
+extern void drawVicLineH(uchar *bmp, ushort x, uchar y, ushort len,
+        uchar setPix);
+extern void drawVicLineV(uchar *bmp, ushort x, uchar y, ushort len,
+        uchar setPix);
+extern void drawVicLine(uchar *bmp, int x1, int y1, int x2, int y2,
+        uchar setPix);
+extern void drawVicBezier(uchar *bmp, int x0, int y0, int x1, int y1, int x2,
+        int y2, uchar setPix);
+extern void drawVicRect(uchar *bmp, int x0, int y0, int x1, int y1,
+        uchar setPix);
 extern void drawVicSquare(uchar *bmp, int x, int y, int len, uchar setPix);
-extern void drawVicOctant(uchar *bmp, int xc, int yc, int x, int y, uchar setPix);
-extern void drawVicEllipse(uchar *bmp, int x0, int y0, int x1, int y1, uchar setPix);
+extern void drawVicOctant(uchar *bmp, int xc, int yc, int x, int y,
+        uchar setPix);
+extern void drawVicEllipse(uchar *bmp, int x0, int y0, int x1, int y1,
+        uchar setPix);
 extern void drawVicCircle(uchar *bmp, int xc, int yc, int a, uchar setPix);
 extern void configVicSpr(uchar *scr, uchar *spr, uchar sprNum, uchar sprCol);
 extern void enableVicSpr(uchar sprNum);

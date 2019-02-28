@@ -12,6 +12,7 @@
 #include <hitech.h>
 #include <cia.h>
 #include <vic.h>
+#include <sid.h>
 
 /*
  * Sprite data.
@@ -29,14 +30,15 @@ uchar sprData[] = { 0x00, 0x7e, 0x00, 0x03, 0xff, 0xc0, 0x07, 0xff, 0xe0, 0x1f,
  */
 void init(uchar *scr, uchar *chr) {
     uchar vicBank = (ushort) scr / 16384;
-    /* Clear CIA 1 ICR status */
-    inp(cia1Icr);
+    clearSid();
     /* Clear all CIA 1 IRQ enable bits */
     outp(cia1Icr, 0x7f);
-    /* Clear CIA 2 ICR status */
-    inp(cia2Icr);
+    /* Clear CIA 1 ICR status */
+    inp(cia1Icr);
     /* Clear all CIA 2 IRQ enable bits */
     outp(cia2Icr, 0x7f);
+    /* Clear CIA 2 ICR status */
+    inp(cia2Icr);
     /* Set CIA 1 DDRs for keyboard scan */
     outp(cia1DdrA, 0xff);
     outp(cia1DdrB, 0x00);
@@ -61,6 +63,7 @@ void init(uchar *scr, uchar *chr) {
  * memory and char set memory location for CP/M return.
  */
 void done(uchar bgCol, uchar fgCol) {
+    clearSid();
     outp(vicBorderCol, bgCol);
     outp(vicBgCol0, fgCol);
     /* Clear color to black */
@@ -87,10 +90,20 @@ void waitKey(uchar *scr) {
 }
 
 /*
+ * Start sound effect.
+ */
+void sound() {
+    setSidEnv(sidVoice1, 0, 0, 15, 9);
+    setSidFreq(sidVoice1, 200);
+    setSidAtt(sidVoice1, sidNoi);
+    setSidRel(sidVoice1, sidNoi);
+}
+
+/*
  * Bounce sprite around screen.
  */
 void bounceSpr(uchar *scr) {
-    uchar y = 50, inFront = 0, i;
+    uchar y = 50, inFront = 0, color = 6, sound = 0, i;
     ushort x = 24;
     int xDir = 1, yDir = 1;
     uchar *spr = (uchar *) ((ushort) scr) - 64;
@@ -102,6 +115,7 @@ void bounceSpr(uchar *scr) {
     setVicSprLoc(0, x, y);
     enableVicSpr(0);
     printVicColPet(scr, 0, 24, 7, "Press Return");
+    setSidVol(15, 0);
     /* Bounce sprite until return pressed */
     while (getKey(0) != 0xfd) {
         x += xDir;
@@ -109,15 +123,36 @@ void bounceSpr(uchar *scr) {
         if (x > 321) {
             x = 321;
             xDir = -1;
+            sound();
         } else if (x < 24) {
             x = 24;
             xDir = 1;
+            sound();
         } else if (y > 230) {
             y = 228;
             yDir = -1;
+            sound();
         } else if (y < 50) {
             y = 50;
             yDir = 1;
+            sound();
+        }
+        /* Raster off screen? */
+        while ((inp(vicCtrlReg1) & 0x80) != 0x80)
+            ;
+        /* Move sprite */
+        setVicSprLoc(0, x, y);
+        /* Did sprite collide with text? */
+        if ((inp(vicSprFgColl) & 0x01) == 0x01) {
+            if (color == 6) {
+                color = 2;
+                outp(vicSpr0Col, color);
+            }
+        } else {
+            if (color == 2) {
+                color = 6;
+                outp(vicSpr0Col, color);
+            }
         }
         /* Toggle sprite FG/BG mode */
         if (rand() > 32700) {
@@ -129,14 +164,9 @@ void bounceSpr(uchar *scr) {
                 setVicSprBg(0);
             }
         }
-        /* Raster off screen? */
-        while ((inp(vicCtrlReg1) & 0x80) != 0x80)
-            ;
-        setVicSprLoc(0, x, y);
-        while ((inp(vicCtrlReg1) & 0x80) == 0x80)
-            ;
     }
     disableVicSpr(0);
+    clearSid();
 }
 
 /*
