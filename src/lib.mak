@@ -1,4 +1,5 @@
 r a:libc3l.lib \
+sid.c \
 ciakey.obj \
 rtc.obj \
 vicscr.obj \

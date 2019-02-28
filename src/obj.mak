@@ -1,4 +1,5 @@
 -c -o -x -i0:b: \
+sid.c \
 ciakey.c \
 rtc.c \
 vicscr.c \
