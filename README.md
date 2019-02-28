@@ -6,8 +6,7 @@ decided to build a new library from scratch after creating
 I updated my development process doing all development using Eclipse for editing
 the source, MyZ80 to build, ctools to move the source to a d71 disk image for
 running code on VICE. This is a vast improvement of how I did it back in 1992
-when I had to transfer to floppies for testing. I'm starting with the VIC II and
-will add other chips and features as I go.
+when I had to transfer to floppies for testing.
 
 ## Running demos
 You can run the demo applications using the [disk images](https://github.com/sgjava/c3l/tree/master/disks).
@@ -189,6 +188,16 @@ before using Bresenham's algorithm
 * Ellipse
 * Circle 
 * Use existing character set to print to bitmap
+
+## 6581/8580 SID
+All the required functions are there to drive the SID.
+
+### Features
+* Clear SID
+* Set master volume
+* Set envelopes
+* Set attack/release cycles
+* Set pulse wave
 
 ## Keyboard scan and decode
 The 8502 is responsible for most of the low-level I/O functions in CP/M mode and
