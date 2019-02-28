@@ -103,7 +103,7 @@ void sound() {
  * Bounce sprite around screen.
  */
 void bounceSpr(uchar *scr) {
-    uchar y = 50, inFront = 0, color = 6, sound = 0, i;
+    uchar y = 50, inFront = 0, color = 6, i;
     ushort x = 24;
     int xDir = 1, yDir = 1;
     uchar *spr = (uchar *) ((ushort) scr) - 64;
