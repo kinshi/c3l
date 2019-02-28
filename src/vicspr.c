@@ -52,3 +52,19 @@ void setVicSprLoc(uchar sprNum, ushort x, uchar y) {
     /* Sprite Y */
     outp(vicSpr0y + (sprNum << 1), y);
 }
+
+/*
+ * Make sprite appear in foreground.
+ */
+void setVicSprFg(uchar sprNum) {
+    /* Sprite priority */
+    outp(vicSprFg, inp(vicSprFg) & ~sprTable[sprNum]);
+}
+
+/*
+ * Make sprite appear in background.
+ */
+void setVicSprBg(uchar sprNum) {
+    /* Sprite priority */
+    outp(vicSprFg, inp(vicSprFg) | sprTable[sprNum]);
+}

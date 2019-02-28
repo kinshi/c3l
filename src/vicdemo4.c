@@ -33,11 +33,10 @@ void init(uchar *scr, uchar *chr) {
     inp(cia1Icr);
     /* Clear all CIA 1 IRQ enable bits */
     outp(cia1Icr, 0x7f);
-    /* Disable all VIC interrupts */
-    outp(vicIntMask, 0x00);
-#asm
-    di
-#endasm
+    /* Clear CIA 2 ICR status */
+    inp(cia2Icr);
+    /* Clear all CIA 2 IRQ enable bits */
+    outp(cia2Icr, 0x7f);
     /* Set CIA 1 DDRs for keyboard scan */
     outp(cia1DdrA, 0xff);
     outp(cia1DdrB, 0x00);
@@ -70,9 +69,6 @@ void done(uchar bgCol, uchar fgCol) {
     setVicChrMode(0, 0, 11, 3);
     /* Enable CIA 1 IRQ */
     outp(cia1Icr, 0x82);
-#asm
-    ei
-#endasm
 }
 
 /*
@@ -94,7 +90,7 @@ void waitKey(uchar *scr) {
  * Bounce sprite around screen.
  */
 void bounceSpr(uchar *scr) {
-    uchar y = 50, i;
+    uchar y = 50, inFront = 0, i;
     ushort x = 24;
     int xDir = 1, yDir = 1;
     uchar *spr = (uchar *) ((ushort) scr) - 64;
@@ -110,23 +106,35 @@ void bounceSpr(uchar *scr) {
     while (getKey(0) != 0xfd) {
         x += xDir;
         y += yDir;
-        if (x > 319) {
-            x = 319;
+        if (x > 321) {
+            x = 321;
             xDir = -1;
         } else if (x < 24) {
             x = 24;
             xDir = 1;
-        } else if (y > 228) {
+        } else if (y > 230) {
             y = 228;
             yDir = -1;
         } else if (y < 50) {
             y = 50;
             yDir = 1;
         }
+        /* Toggle sprite FG/BG mode */
+        if (rand() > 32700) {
+            if (inFront) {
+                inFront = 0;
+                setVicSprFg(0);
+            } else {
+                inFront = 1;
+                setVicSprBg(0);
+            }
+        }
         /* Raster off screen? */
-        while (inp(vicRaster) != 0xff)
+        while ((inp(vicCtrlReg1) & 0x80) != 0x80)
             ;
         setVicSprLoc(0, x, y);
+        while ((inp(vicCtrlReg1) & 0x80) == 0x80)
+            ;
     }
     disableVicSpr(0);
 }
