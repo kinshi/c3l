@@ -52,7 +52,7 @@ void init(uchar *bmp, uchar *scr, uchar *chr) {
     clearVicCol(0);
     clearBitmap(bmp, scr);
     /* Copy VDC alt char set to VIC mem */
-    copyVdcChars(chr, 0x3000, 256);
+    copyVdcChrMem(chr, 0x3000, 256);
     /* Set standard bitmap mode using MMU bank 1 */
     setVicBmpMode(1, vicBank, ((ushort) scr - (vicBank * 16384)) / 1024,
             ((ushort) bmp - (vicBank * 16384)) / 8192);

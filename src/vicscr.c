@@ -48,21 +48,10 @@ void setVicChrMode(uchar mmuRcr, uchar vicBank, uchar scrMem, uchar chrMem) {
 }
 
 /*
- * Fill screen with word value starting at start.
- */
-void fillVicScr(uchar *scr, ushort start, ushort len, ushort value) {
-    register ushort i;
-    ushort *scr16 = (ushort *) scr;
-    for (i = 0; i < len; i++) {
-        scr16[start + i] = value;
-    }
-}
-
-/*
  * Clear screen using 16 bit word.
  */
 void clearVicScr(uchar *scr, uchar c) {
-    fillVicScr(scr, 0, vicScrSizeW, (c << 8) + c);
+    fillVicMem(scr, 0, vicScrSizeW, (c << 8) + c);
 }
 
 /*

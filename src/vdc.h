@@ -82,16 +82,18 @@
 
 #define vdcOddFldOfs     21360 /* 640 X 480 interlace odd field offset */
 
+extern void saveVdc();
+extern void restoreVdc();
 extern uchar inVdc(uchar regNum);
 extern void outVdc(uchar regNum, uchar regVal);
-extern void copyVdcChars(uchar *chr, ushort vdcMem, ushort chars);
 extern void setVdcDspPage(ushort dispPage, ushort attrPage);
 extern void setVdcFgBg(uchar f, uchar b);
-extern void setVdcAttrsOn(void);
-extern void setVdcAttrsOff(void);
+extern void setVdcAttrsOn();
+extern void setVdcAttrsOff();
 extern void setVdcCursor(uchar top, uchar bottom, uchar mode);
 extern void fillVdcMem(ushort vdcMem, ushort len, uchar value);
-extern void copyVdcChars(uchar *mem, ushort vdcMem, ushort chars);
+extern void copyVdcChrMem(uchar *mem, ushort vdcMem, ushort chars);
+extern void copyVdcMemChr(uchar *mem, ushort vdcMem, ushort chars);
 extern void setVdcBmpMode(ushort dispPage, ushort attrPage);
 extern void clearVdcBmp(ushort vdcMem, ushort len, uchar c);
 extern void clearVdcBmpCol(ushort attrMem, ushort len, uchar color);

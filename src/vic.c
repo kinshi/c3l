@@ -45,3 +45,14 @@ void setVicBank(uchar vicBank) {
     outp(cia2DataA, (inp(cia2DataA) & 0xfc) | (3 - vicBank));
     outp(cia2DdrA, saveDdr);
 }
+
+/*
+ * Fill memory with word value starting at start.
+ */
+void fillVicMem(uchar *mem, ushort start, ushort len, ushort value) {
+    register ushort i;
+    ushort *mem16 = (ushort *) mem;
+    for (i = 0; i < len; i++) {
+        mem16[start + i] = value;
+    }
+}

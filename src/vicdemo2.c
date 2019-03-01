@@ -40,7 +40,7 @@ void init(uchar *scr, uchar *chr) {
     /* Clear screen */
     clearVicScr(scr, 32);
     /* Copy VDC alt char set to VIC mem */
-    copyVdcChars(chr, 0x3000, 256);
+    copyVdcChrMem(chr, 0x3000, 256);
     /* Set standard character mode using MMU bank 1 and set VIC based on scr location */
     setVicChrMode(1, vicBank, ((ushort) scr - (vicBank * 16384)) / 1024,
             ((ushort) chr - (vicBank * 16384)) / 2048);
@@ -109,7 +109,7 @@ void fillScrCol(uchar *scr) {
 void scrollScrUp(uchar *scr) {
     register uchar i;
     scrollVicUp(scr, 0, 24);
-    fillVicScr(scr, 480, 20, 0x2020);
+    fillVicMem(scr, 480, 20, 0x2020);
     for (i = 0; i < 24; i++) {
         scrollVicUp(scr, 0, 24);
     }
@@ -119,13 +119,13 @@ void scrollScrUp(uchar *scr) {
     }
     waitKey(scr);
     scrollVicUpX(scr, 0, 0, 10, 24);
-    fillVicScr(scr, 480, 10, 0x2020);
+    fillVicMem(scr, 480, 10, 0x2020);
     for (i = 0; i < 24; i++) {
         scrollVicUpX(scr, 0, 0, 10, 24);
     }
     waitKey(scr);
     scrollVicUpX(scr, 10, 0, 10, 24);
-    fillVicScr(scr, 490, 10, 0x2020);
+    fillVicMem(scr, 490, 10, 0x2020);
     for (i = 0; i < 24; i++) {
         scrollVicUpX(scr, 10, 0, 10, 24);
     }

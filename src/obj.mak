@@ -3,8 +3,8 @@ rtc.c \
 sid.c \
 ciakey.c \
 graphics.c \
+vic.c \
 vicscr.c \
-vicmem.c \
 vicbmp.c \
 vicspr.c \
 vdc.c \

@@ -9,6 +9,34 @@
 #include <vdc.h>
 
 /*
+ * VDC registers to save and restore.
+ */
+uchar vdcSavedRegs[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 20, 21,
+        22, 23, 24, 25, 26, 27, 28, 29, 34, 35, 36 };
+/*
+ * Saved registers.
+ */
+uchar vdcRegs[sizeof(vdcSavedRegs) - 1];
+
+/*
+ * Save key VDC registers.
+ */
+void saveVdc() {
+    uchar i;
+    for (i = 0; i < sizeof(vdcRegs); i++)
+        vdcRegs[i] = inVdc(vdcSavedRegs[i]);
+}
+
+/*
+ * Restore key VDC registers.
+ */
+void restoreVdc() {
+    uchar i;
+    for (i = 0; i < sizeof(vdcRegs); i++)
+        outVdc(vdcSavedRegs[i], vdcRegs[i]);
+}
+
+/*
  * Read VDC register.
  */
 uchar inVdc(uchar regNum) {
@@ -41,22 +69,21 @@ void setVdcDspPage(ushort dispPage, ushort attrPage) {
 /*
  * Set foreground and background color.
  */
-void setVdcFgBg(uchar f, uchar b)
-{
-  outVdc(vdcFgBgColor,(f << 4) | b);
+void setVdcFgBg(uchar f, uchar b) {
+    outVdc(vdcFgBgColor, (f << 4) | b);
 }
 
 /*
  * Turn attributes on.
  */
-void setVdcAttrsOn(void) {
+void setVdcAttrsOn() {
     outVdc(vdcHzSmScroll, inVdc(vdcHzSmScroll) | 0x40);
 }
 
 /*
  * Turn attributes off.
  */
-void setVdcAttrsOff(void) {
+void setVdcAttrsOff() {
     outVdc(vdcHzSmScroll, inVdc(vdcHzSmScroll) & 0xbf);
 }
 
@@ -93,18 +120,35 @@ void fillVdcMem(ushort vdcMem, ushort len, uchar value) {
 /*
  * Copy VDC character set to memory.
  */
-void copyVdcChars(uchar *mem, ushort vdcMem, ushort chars) {
+void copyVdcChrMem(uchar *mem, ushort vdcMem, ushort chars) {
     register uchar c;
-    ushort i;
-    outVdc(vdcUpdAddrHi, (uchar) (vdcMem >> 8));
-    outVdc(vdcUpdAddrLo, (uchar) vdcMem);
+    ushort vdcOfs = vdcMem, memOfs = 0, i;
     for (i = 0; i < chars; i++) {
+        outVdc(vdcUpdAddrHi, (uchar) (vdcOfs >> 8));
+        outVdc(vdcUpdAddrLo, (uchar) vdcOfs);
+        /* Only use 8 bytes of 16 byte character definition */
         for (c = 0; c < 8; c++) {
-            mem[(i * 8) + c] = inVdc(vdcCPUData);
+            mem[memOfs + c] = inVdc(vdcCPUData);
         }
-        /* Skip bottom 8 bytes of VDC data */
+        memOfs += 8;
+        vdcOfs += 16;
+    }
+}
+
+/*
+ * Copy character set to VDC memory.
+ */
+void copyVdcMemChr(uchar *mem, ushort vdcMem, ushort chars) {
+    register uchar c;
+    ushort vdcOfs = vdcMem, memOfs = 0, i;
+    for (i = 0; i < chars; i++) {
+        outVdc(vdcUpdAddrHi, (uchar) (vdcOfs >> 8));
+        outVdc(vdcUpdAddrLo, (uchar) vdcOfs);
+        /* Only use 8 bytes of 16 byte character definition */
         for (c = 0; c < 8; c++) {
-            inVdc(vdcCPUData);
+            outVdc(vdcCPUData, mem[memOfs + c]);
         }
+        memOfs += 8;
+        vdcOfs += 16;
     }
 }

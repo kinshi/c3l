@@ -3,8 +3,8 @@ rtc.obj \
 sid.obj \
 ciakey.obj \
 graphics.obj \
+vic.obj \
 vicscr.obj \
-vicmem.obj \
 vicbmp.obj \
 vicspr.obj \
 vdc.obj \

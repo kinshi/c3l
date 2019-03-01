@@ -2,4 +2,5 @@ c -o -x -i0:b: -lc3l -lc -lc3l vicdemo1.c
 c -o -x -i0:b: -lc3l -lc -lc3l vicdemo2.c
 c -o -x -i0:b: -lc3l -lc -lc3l vicdemo3.c
 c -o -x -i0:b: -lc3l -lc -lc3l vicdemo4.c
+c -o -x -i0:b: -lc3l -lc -lc3l vdycdemo1.c
 c -o -x -i0:b: -lc3l -lc keydemo.c

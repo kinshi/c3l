@@ -41,14 +41,14 @@ void setVicBmpMode(uchar mmuRcr, uchar vicBank, uchar scrMem, uchar bmpMem) {
  * Clear screen using 16 bit word.
  */
 void clearVicBmp(uchar *bmp, uchar c) {
-    fillVicScr(bmp, 0, vicBmpSizeW, (c << 8) + c);
+    fillVicMem(bmp, 0, vicBmpSizeW, (c << 8) + c);
 }
 
 /*
  * Clear bitmap color memory.
  */
 void clearVicBmpCol(uchar *scr, uchar color) {
-    fillVicScr(scr, 0, vicScrSizeW, (color << 8) + color);
+    fillVicMem(scr, 0, vicScrSizeW, (color << 8) + color);
 }
 
 /*

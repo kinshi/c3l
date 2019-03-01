@@ -34,7 +34,7 @@ void init(uchar *scr, uchar *chr) {
     /* Clear screen */
     clearVicScr(scr, 32);
     /* Copy VDC alt char set to VIC mem */
-    copyVdcChars(chr, 0x3000, 256);
+    copyVdcChrMem(chr, 0x3000, 256);
     /* Set standard character mode using MMU bank 1 and VIC bank 0 */
     setVicChrMode(1, 0, (ushort) scr / 1024, (ushort) chr / 2048);
     /* Clear color to white */

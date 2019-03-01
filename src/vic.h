@@ -68,7 +68,7 @@ extern void setVicScrMem(uchar scrMem);
 extern void setVicChrMem(uchar chrMem);
 extern void setVicChrMode(uchar mmuRcr, uchar vicBank, uchar scrMem,
         uchar chrMem);
-extern void fillVicScr(uchar *scr, ushort start, ushort len, ushort value);
+extern void fillVicMem(uchar *mem, ushort start, ushort len, ushort value);
 extern void clearVicScr(uchar *scr, uchar c);
 extern void clearVicCol(uchar color);
 extern void printVic(uchar *scr, uchar x, uchar y, char *str);
