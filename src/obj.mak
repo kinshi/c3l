@@ -4,7 +4,8 @@ sid.c \
 ciakey.c \
 graphics.c \
 vicscr.c \
-vdcio.c \
 vicmem.c \
 vicbmp.c \
-vicspr.c
+vicspr.c \
+vdc.c \
+vdcbm.c

@@ -1,10 +1,11 @@
 r a:libc3l.lib \
 rtc.obj \
-sid.c \
+sid.obj \
 ciakey.obj \
 graphics.obj \
 vicscr.obj \
-vdcio.obj \
 vicmem.obj \
 vicbmp.obj \
-vicspr.c
+vicspr.obj \
+vdc.obj \
+vdcbm.obj

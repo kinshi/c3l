@@ -54,7 +54,7 @@ void clearVicBmpCol(uchar *scr, uchar color) {
 /*
  * Set pixel.
  */
-void setVicPix(uchar *bmp, ushort x, uchar y) {
+void setVicPix(uchar *bmp, ushort x, ushort y) {
     ushort pixByte = 40 * (y & 0xf8) + (x & 0x1f8) + (y & 0x07);
     bmp[pixByte] = bmp[pixByte] | (bitTable[x & 0x07]);
 }
@@ -62,7 +62,7 @@ void setVicPix(uchar *bmp, ushort x, uchar y) {
 /*
  * Clear pixel.
  */
-void clearVicPix(uchar *bmp, ushort x, uchar y) {
+void clearVicPix(uchar *bmp, ushort x, ushort y) {
     ushort pixByte = 40 * (y & 0xf8) + (x & 0x1f8) + (y & 0x07);
     bmp[pixByte] = bmp[pixByte] & ~(bitTable[x & 0x07]);
 }
@@ -70,7 +70,7 @@ void clearVicPix(uchar *bmp, ushort x, uchar y) {
 /*
  * Optimized horizontal line algorithm up to 15x faster than Bresenham.
  */
-void drawVicLineH(uchar *bmp, ushort x, uchar y, ushort len, uchar setPix) {
+void drawVicLineH(uchar *bmp, ushort x, ushort y, ushort len, uchar setPix) {
     ushort pixByte = 40 * (y & 0xf8) + (x & 0x1f8) + (y & 0x07);
     uchar firstBits = x % 8;
     uchar lastBits = (x + len - 1) % 8;
@@ -107,7 +107,7 @@ void drawVicLineH(uchar *bmp, ushort x, uchar y, ushort len, uchar setPix) {
 /*
  * Optimized vertical line algorithm uses less calculation than setVicPix.
  */
-void drawVicLineV(uchar *bmp, ushort x, uchar y, ushort len, uchar setPix) {
+void drawVicLineV(uchar *bmp, ushort x, ushort y, ushort len, uchar setPix) {
     ushort pixByte = 40 * (y & 0xf8) + (x & 0x1f8) + (y & 0x07);
     uchar vBit = bitTable[x & 0x07];
     uchar i;

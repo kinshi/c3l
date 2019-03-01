@@ -84,11 +84,11 @@ extern void setVicBmpMode(uchar mmuRcr, uchar vicBank, uchar scrMem,
         uchar bmpMem);
 extern void clearVicBmp(uchar *bmp, uchar c);
 extern void clearVicBmpCol(uchar *scr, uchar color);
-extern void setVicPix(uchar *bmp, ushort x, uchar y);
-extern void clearVicPix(uchar *bmp, ushort x, uchar y);
-extern void drawVicLineH(uchar *bmp, ushort x, uchar y, ushort len,
+extern void setVicPix(uchar *bmp, ushort x, ushort y);
+extern void clearVicPix(uchar *bmp, ushort x, ushort y);
+extern void drawVicLineH(uchar *bmp, ushort x, ushort y, ushort len,
         uchar setPix);
-extern void drawVicLineV(uchar *bmp, ushort x, uchar y, ushort len,
+extern void drawVicLineV(uchar *bmp, ushort x, ushort y, ushort len,
         uchar setPix);
 extern void printVicBmp(uchar *bmp, uchar *scr, uchar *chr, uchar x, uchar y,
         uchar color, char *str);

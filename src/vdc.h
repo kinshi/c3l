@@ -45,6 +45,53 @@
 #define vdcDispEnableEnd   35
 #define vdcRamRefresh      36
 
+#define vdcBlack        0      /* VDC RGB colors */
+#define vdcDarkGray     1
+#define vdcDarkBlue     2
+#define vdcLightBlue    3
+#define vdcDarkGreen    4
+#define vdcLightGreen   5
+#define vdcDarkCyan     6
+#define vdcLightCyan    7
+#define vdcDarkRed      8
+#define vdcLightRed     9
+#define vdcDarkPurple  10
+#define vdcLightPurple 11
+#define vdcDarkYellow  12
+#define vdcLightYellow 13
+#define vdcMediumGray  14
+#define vdcWhite       15
+
+#define vdcAltChrSet 0x80      /* VDC text mode attribute bits */
+#define vdcRvsVid    0x40
+#define vdcUnderline 0x20
+#define vdcBlink     0x10
+#define vdcRed       0x08
+#define vdcGreen     0x04
+#define vdcBlue      0x02
+#define vdcIntensity 0x01
+
+#define vdcCurSolid  0         /* VDC cursor modes */
+#define vdcCurNone   1
+#define vdcCurRate16 2
+#define vdcCurRate32 3
+
+#define vdcMaxBlock      255   /* VDC character set */
+#define vdcCharsPerSet   256
+#define vdcMaxCharBytes  32
+
+#define vdcOddFldOfs     21360 /* 640 X 480 interlace odd field offset */
+
 extern uchar inVdc(uchar regNum);
 extern void outVdc(uchar regNum, uchar regVal);
 extern void copyVdcChars(uchar *chr, ushort vdcMem, ushort chars);
+extern void setVdcDspPage(ushort dispPage, ushort attrPage);
+extern void setVdcFgBg(uchar f, uchar b);
+extern void setVdcAttrsOn(void);
+extern void setVdcAttrsOff(void);
+extern void setVdcCursor(uchar top, uchar bottom, uchar mode);
+extern void fillVdcMem(ushort vdcMem, ushort len, uchar value);
+extern void copyVdcChars(uchar *mem, ushort vdcMem, ushort chars);
+extern void setVdcBmpMode(ushort dispPage, ushort attrPage);
+extern void clearVdcBmp(ushort vdcMem, ushort len, uchar c);
+extern void clearVdcBmpCol(ushort attrMem, ushort len, uchar color);

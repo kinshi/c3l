@@ -15,22 +15,22 @@
 /*
  * Set function pointer in your code before calling any functions.
  */
-void (*setPixel)(uchar *, ushort, uchar);
+void (*setPixel)(uchar *, ushort, ushort);
 
 /*
  * Set function pointer in your code before calling any functions.
  */
-void (*clearPixel)(uchar *, ushort, uchar);
+void (*clearPixel)(uchar *, ushort, ushort);
 
 /*
  * Set function pointer if implemented.
  */
-void (*drawLineH)(uchar *, ushort, uchar, ushort, uchar);
+void (*drawLineH)(uchar *, ushort, ushort, ushort, uchar);
 
 /*
  * Set function pointer if implemented.
  */
-void (*drawLineV)(uchar *, ushort, uchar, ushort, uchar);
+void (*drawLineV)(uchar *, ushort, ushort, ushort, uchar);
 
 /*
  * Bresenham’s line algorithm. setPix is 1 to set or 0 to clear pixel.
