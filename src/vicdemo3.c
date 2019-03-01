@@ -14,7 +14,7 @@
 #include <cia.h>
 #include <vic.h>
 #include <vdc.h>
-#include <rtc.h>
+#include <graphics.h>
 
 /*
  * Clear bitmap.
@@ -105,13 +105,13 @@ void lines(uchar *bmp, uchar *scr, uchar *chr) {
     uchar i;
     bannerBmp(bmp, scr, chr, " Bresenham lines ");
     for (i = 0; i < 16; i++) {
-        drawVicLine(bmp, 0, 0, i * 20, 199, 1);
-        drawVicLine(bmp, 319, 0, 319 - (i * 20), 199, 1);
+        drawLine(bmp, 0, 0, i * 20, 199, 1);
+        drawLine(bmp, 319, 0, 319 - (i * 20), 199, 1);
     }
     waitKey(bmp, scr, chr);
     for (i = 0; i < 16; i++) {
-        drawVicLine(bmp, 0, 0, i * 20, 199, 0);
-        drawVicLine(bmp, 319, 0, 319 - (i * 20), 199, 0);
+        drawLine(bmp, 0, 0, i * 20, 199, 0);
+        drawLine(bmp, 319, 0, 319 - (i * 20), 199, 0);
     }
 }
 
@@ -122,11 +122,11 @@ void linesH(uchar *bmp, uchar *scr, uchar *chr) {
     uchar i;
     bannerBmp(bmp, scr, chr, " Optimized horizontal lines ");
     for (i = 0; i < 159; i++) {
-        drawVicLine(bmp, i, i + 20, 320 - i, i + 20, 1);
+        drawLine(bmp, i, i + 20, 320 - i, i + 20, 1);
     }
     waitKey(bmp, scr, chr);
     for (i = 0; i < 159; i++) {
-        drawVicLine(bmp, i, i + 20, 320 - i, i + 20, 0);
+        drawLine(bmp, i, i + 20, 320 - i, i + 20, 0);
     }
 }
 
@@ -137,11 +137,11 @@ void linesV(uchar *bmp, uchar *scr, uchar *chr) {
     uchar i;
     bannerBmp(bmp, scr, chr, " Optimized vertical lines ");
     for (i = 10; i < 199; i++) {
-        drawVicLine(bmp, i + 57, 10, i + 57, i + 1, 1);
+        drawLine(bmp, i + 57, 10, i + 57, i + 1, 1);
     }
     waitKey(bmp, scr, chr);
     for (i = 10; i < 199; i++) {
-        drawVicLine(bmp, i + 57, 10, i + 57, i + 1, 0);
+        drawLine(bmp, i + 57, 10, i + 57, i + 1, 0);
     }
 }
 
@@ -152,11 +152,11 @@ void bezier(uchar *bmp, uchar *scr, uchar *chr) {
     uchar i;
     bannerBmp(bmp, scr, chr, " Bezier curves ");
     for (i = 0; i < 35; i++) {
-        drawVicBezier(bmp, i * 5, 10, 319, 15 + i * 5, 319, 15 + i * 5, 1);
+        drawBezier(bmp, i * 5, 10, 319, 15 + i * 5, 319, 15 + i * 5, 1);
     }
     waitKey(bmp, scr, chr);
     for (i = 0; i < 35; i++) {
-        drawVicBezier(bmp, i * 5, 10, 319, 15 + i * 5, 319, 15 + i * 5, 0);
+        drawBezier(bmp, i * 5, 10, 319, 15 + i * 5, 319, 15 + i * 5, 0);
     }
 }
 
@@ -167,13 +167,13 @@ void rectangles(uchar *bmp, uchar *scr, uchar *chr) {
     uchar i;
     bannerBmp(bmp, scr, chr, " Rectangles ");
     for (i = 1; i < 30; i++) {
-        drawVicRect(bmp, i * 2, i * 2, (i * 10) + 20, (i * 5) + 20, 1);
+        drawRect(bmp, i * 2, i * 2, (i * 10) + 20, (i * 5) + 20, 1);
     }
     waitKey(bmp, scr, chr);
     for (i = 1; i < 30; i++) {
-        drawVicRect(bmp, i * 2, i * 2, (i * 10) + 20, (i * 5) + 20, 0);
+        drawRect(bmp, i * 2, i * 2, (i * 10) + 20, (i * 5) + 20, 0);
     }
-    }
+}
 
 /*
  * Draw squares.
@@ -182,11 +182,11 @@ void squares(uchar *bmp, uchar *scr, uchar *chr) {
     uchar i;
     bannerBmp(bmp, scr, chr, " Squares ");
     for (i = 0; i < 10; i++) {
-        drawVicSquare(bmp, i * 8, i * 8, (i * 8) + 8, 1);
+        drawSquare(bmp, i * 8, i * 8, (i * 8) + 8, 1);
     }
     waitKey(bmp, scr, chr);
     for (i = 0; i < 10; i++) {
-        drawVicSquare(bmp, i * 8, i * 8, (i * 8) + 8, 0);
+        drawSquare(bmp, i * 8, i * 8, (i * 8) + 8, 0);
     }
 }
 
@@ -197,11 +197,11 @@ void ellipses(uchar *bmp, uchar *scr, uchar *chr) {
     ushort i;
     bannerBmp(bmp, scr, chr, " Ellipses ");
     for (i = 1; i < 9; i++) {
-        drawVicEllipse(bmp, 159, 99, i * 19, i * 10, 1);
+        drawEllipse(bmp, 159, 99, i * 19, i * 10, 1);
     }
     waitKey(bmp, scr, chr);
     for (i = 1; i < 9; i++) {
-        drawVicEllipse(bmp, 159, 99, i * 19, i * 10, 0);
+        drawEllipse(bmp, 159, 99, i * 19, i * 10, 0);
     }
 }
 
@@ -212,11 +212,11 @@ void circles(uchar *bmp, uchar *scr, uchar *chr) {
     ushort i;
     bannerBmp(bmp, scr, chr, " Circles ");
     for (i = 1; i < 12; i++) {
-        drawVicCircle(bmp, 159, 99, i * 10, 1);
+        drawCircle(bmp, 159, 99, i * 10, 1);
     }
     waitKey(bmp, scr, chr);
     for (i = 1; i < 12; i++) {
-        drawVicCircle(bmp, 159, 99, i * 10, 0);
+        drawCircle(bmp, 159, 99, i * 10, 0);
     }
 }
 
@@ -237,6 +237,12 @@ void run(uchar *bmp, uchar *scr, uchar *chr, uchar *vicMem) {
     printVicBmp(bmp, scr, chr, 0, 8, 0x12, str);
     sprintf(str, "bmp: %04x", bmp);
     printVicBmp(bmp, scr, chr, 0, 10, 0x12, str);
+    /* Use VIC pixel functions */
+    setPixel = setVicPix;
+    clearPixel = clearVicPix;
+    /* Use optimized horizontal and vertical lines on the VIC */
+    drawLineH = drawVicLineH;
+    drawLineV = drawVicLineV;
     waitKey(bmp, scr, chr);
     clearBitmap(bmp, scr);
     lines(bmp, scr, chr);

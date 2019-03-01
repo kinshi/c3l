@@ -177,9 +177,9 @@ void run(uchar *scr, uchar *chr, uchar *vicMem) {
     char str[40];
     /* Note the use of printVicPet that converts ASCII to PETSCII */
     printVicPet(scr, 0, 0, "Using ROM character set and one screen  "
-                           "at the end of VIC bank 0. Sprite is     "
-                           "located above screen at 0x3bc0.         "
-                           "Collision detection changes color.");
+            "at the end of VIC bank 0. Sprite is     "
+            "located above screen at 0x3bc0.         "
+            "Collision detection changes color.");
     for (i = 0; i < 255; i++) {
         scr[i + 280] = i;
     }

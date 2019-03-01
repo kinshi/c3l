@@ -172,7 +172,7 @@ char *readVicLine(uchar *scr, uchar x, uchar y, uchar len) {
     uchar keyVal, lastKeyVal, i;
     ushort scrOfs = (y * 40) + x;
     ushort scrMin = scrOfs;
-    ushort scrMax = scrMin + len -1;
+    ushort scrMax = scrMin + len - 1;
     lastKeyVal = 0x00;
     /* Show cursor */
     scr[scrOfs] = '_';

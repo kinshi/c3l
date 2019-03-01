@@ -1,11 +1,10 @@
 -c -o -x -i0:b: \
+rtc.c \
 sid.c \
 ciakey.c \
-rtc.c \
+graphics.c \
 vicscr.c \
 vdcio.c \
 vicmem.c \
 vicbmp.c \
-viclines.c \
-vicshape.c \
 vicspr.c
