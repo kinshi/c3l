@@ -58,6 +58,12 @@ void init(uchar *bmp, uchar *scr, uchar *chr) {
             ((ushort) bmp - (vicBank * 16384)) / 8192);
     /* Enable screen */
     outp(vicCtrlReg1, (inp(vicCtrlReg1) | 0x10));
+    /* Use VIC pixel functions */
+    setPixel = setVicPix;
+    clearPixel = clearVicPix;
+    /* Use optimized horizontal and vertical lines on the VIC */
+    drawLineH = drawVicLineH;
+    drawLineV = drawVicLineV;
 }
 
 /*
@@ -122,11 +128,11 @@ void linesH(uchar *bmp, uchar *scr, uchar *chr) {
     uchar i;
     bannerBmp(bmp, scr, chr, " Optimized horizontal lines ");
     for (i = 0; i < 159; i++) {
-        drawLine(bmp, i, i + 20, 320 - i, i + 20, 1);
+        drawLine(bmp, i, i + 20, 319 - i, i + 20, 1);
     }
     waitKey(bmp, scr, chr);
     for (i = 0; i < 159; i++) {
-        drawLine(bmp, i, i + 20, 320 - i, i + 20, 0);
+        drawLine(bmp, i, i + 20, 319 - i, i + 20, 0);
     }
 }
 
@@ -237,12 +243,6 @@ void run(uchar *bmp, uchar *scr, uchar *chr, uchar *vicMem) {
     printVicBmp(bmp, scr, chr, 0, 8, 0x12, str);
     sprintf(str, "bmp: %04x", bmp);
     printVicBmp(bmp, scr, chr, 0, 10, 0x12, str);
-    /* Use VIC pixel functions */
-    setPixel = setVicPix;
-    clearPixel = clearVicPix;
-    /* Use optimized horizontal and vertical lines on the VIC */
-    drawLineH = drawVicLineH;
-    drawLineV = drawVicLineV;
     waitKey(bmp, scr, chr);
     clearBitmap(bmp, scr);
     lines(bmp, scr, chr);

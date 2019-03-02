@@ -97,6 +97,33 @@ void setVdcCursor(uchar top, uchar bottom, uchar mode) {
 }
 
 /*
+ * Or VDC byte with value and store it.
+ */
+void orVdcByte(ushort vdcMem, uchar value) {
+    uchar saveByte;
+    outVdc(vdcUpdAddrHi, (uchar) (vdcMem >> 8));
+    outVdc(vdcUpdAddrLo, (uchar) vdcMem);
+    saveByte = inVdc(vdcCPUData);
+    outVdc(vdcUpdAddrHi, (uchar) (vdcMem >> 8));
+    outVdc(vdcUpdAddrLo, (uchar) vdcMem);
+    outVdc(vdcCPUData, saveByte | value);
+}
+
+/*
+ * And VDC byte with value and store it.
+ */
+void andVdcByte(ushort vdcMem, uchar value) {
+    uchar saveByte;
+    outVdc(vdcUpdAddrHi, (uchar) (vdcMem >> 8));
+    outVdc(vdcUpdAddrLo, (uchar) vdcMem);
+    saveByte = inVdc(vdcCPUData);
+    outVdc(vdcUpdAddrHi, (uchar) (vdcMem >> 8));
+    outVdc(vdcUpdAddrLo, (uchar) vdcMem);
+    outVdc(vdcCPUData, saveByte & value);
+}
+
+
+/*
  * Fast fill using block writes.
  */
 void fillVdcMem(ushort vdcMem, ushort len, uchar value) {

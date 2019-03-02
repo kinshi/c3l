@@ -1,5 +1,5 @@
 /*
- * C128 CP/M bitmap line functions.
+ * C128 CP/M graphics abstraction.
  *
  * Function pointers are used to drive the graphics, thus the same code will
  * work on the VIC and VDC. Technically this code would work with other graphic

@@ -10,7 +10,7 @@
 #include <vic.h>
 
 /*
- * Lookup for fast pixel selection
+ * Lookup for fast pixel selection.
  */
 uchar bitTable[8] = { 128, 64, 32, 16, 8, 4, 2, 1 };
 

@@ -19,7 +19,7 @@
  * Set screen color, MMU bank, VIC bank, screen memory and char set memory.
  * Clear screen and color memory then enable screen.
  */
-void init(ushort dispPage, ushort attrPage, uchar *chr) {
+void init(uchar *bmp, ushort attrPage, uchar *chr) {
     /* Clear all CIA 1 IRQ enable bits */
     outp(cia1Icr, 0x7f);
     /* Clear CIA 1 ICR status */
@@ -37,8 +37,14 @@ void init(ushort dispPage, ushort attrPage, uchar *chr) {
     copyVdcChrMem(chr, 0x2000, 512);
     setVdcFgBg(15, 0);
     setVdcAttrsOff();
-    setVdcBmpMode(dispPage, attrPage);
-    clearVdcBmp(dispPage, 16000, 0);
+    setVdcBmpMode((ushort) bmp, attrPage);
+    clearVdcBmp(bmp, vdcBmpSize, 0);
+    /* Use VIC pixel functions */
+    setPixel = setVdcPix;
+    clearPixel = clearVdcPix;
+    /* Use optimized horizontal and vertical lines on the VIC */
+    drawLineH = drawVdcLineH;
+    drawLineV = drawVdcLineV;
 }
 
 /*
@@ -96,14 +102,131 @@ void lines(uchar *bmp, uchar *chr) {
 }
 
 /*
+ * Draw horizontal lines.
+ */
+void linesH(uchar *bmp, uchar *chr) {
+    uchar i;
+    bannerBmp(bmp, chr, " Optimized horizontal lines ");
+    /* Use optimized horizontal lines */
+    for (i = 0; i < 159; i++) {
+        drawLine(bmp, i, i + 20, 639 - i, i + 20, 1);
+    }
+    waitKey(bmp, chr);
+    for (i = 0; i < 159; i++) {
+        drawLine(bmp, i, i + 20, 639 - i, i + 20, 0);
+    }
+}
+
+/*
+ * Draw vertical lines.
+ */
+void linesV(uchar *bmp, uchar *chr) {
+    uchar i;
+    bannerBmp(bmp, chr, " Optimized vertical lines ");
+    for (i = 10; i < 199; i++) {
+        drawLine(bmp, i + 114, 10, i + 114, i + 1, 1);
+    }
+    waitKey(bmp, chr);
+    for (i = 10; i < 199; i++) {
+        drawLine(bmp, i + 114, 10, i + 114, i + 1, 0);
+    }
+}
+
+/*
+ * Draw Bezier curves.
+ */
+void bezier(uchar *bmp, uchar *chr) {
+    uchar i;
+    bannerBmp(bmp, chr, " Bezier curves ");
+    for (i = 0; i < 35; i++) {
+        drawBezier(bmp, i * 5, 10, 639, 15 + i * 5, 639, 15 + i * 5, 1);
+    }
+    waitKey(bmp, chr);
+    for (i = 0; i < 35; i++) {
+        drawBezier(bmp, i * 5, 10, 639, 15 + i * 5, 639, 15 + i * 5, 0);
+    }
+}
+
+/*
+ * Draw rectangles.
+ */
+void rectangles(uchar *bmp, uchar *chr) {
+    uchar i;
+    bannerBmp(bmp, chr, " Rectangles ");
+    for (i = 1; i < 30; i++) {
+        drawRect(bmp, i * 2, i * 2, (i * 10) + 20, (i * 5) + 20, 1);
+    }
+    waitKey(bmp, chr);
+    for (i = 1; i < 30; i++) {
+        drawRect(bmp, i * 2, i * 2, (i * 10) + 20, (i * 5) + 20, 0);
+    }
+}
+
+/*
+ * Draw squares.
+ */
+void squares(uchar *bmp, uchar *chr) {
+    uchar i;
+    bannerBmp(bmp, chr, " Squares ");
+    for (i = 0; i < 10; i++) {
+        drawSquare(bmp, i * 8, i * 8, (i * 8) + 8, 1);
+    }
+    waitKey(bmp, chr);
+    for (i = 0; i < 10; i++) {
+        drawSquare(bmp, i * 8, i * 8, (i * 8) + 8, 0);
+    }
+}
+
+/*
+ * Draw ellipses.
+ */
+void ellipses(uchar *bmp, uchar *chr) {
+    ushort i;
+    bannerBmp(bmp, chr, " Ellipses ");
+    for (i = 1; i < 9; i++) {
+        drawEllipse(bmp, 319, 99, i * 19, i * 10, 1);
+    }
+    waitKey(bmp, chr);
+    for (i = 1; i < 9; i++) {
+        drawEllipse(bmp, 319, 99, i * 19, i * 10, 0);
+    }
+}
+
+/*
+ * Draw circles.
+ */
+void circles(uchar *bmp, uchar *chr) {
+    ushort i;
+    bannerBmp(bmp, chr, " Circles ");
+    for (i = 1; i < 12; i++) {
+        drawCircle(bmp, 319, 99, i * 10, 1);
+    }
+    waitKey(bmp, chr);
+    for (i = 1; i < 12; i++) {
+        drawCircle(bmp, 319, 99, i * 10, 0);
+    }
+}
+
+/*
  * Run demo.
  */
 void run(uchar *bmp, uchar *chr) {
-    /* Use VIC pixel functions */
-    setPixel = setVdcPix;
-    clearPixel = clearVdcPix;
     lines(bmp, chr);
-    waitKey(bmp, chr);
+    clearVdcBmp(bmp, vdcBmpSize, 0);
+    linesH(bmp, chr);
+    clearVdcBmp(bmp, vdcBmpSize, 0);
+    linesV(bmp, chr);
+    clearVdcBmp(bmp, vdcBmpSize, 0);
+    bezier(bmp, chr);
+    clearVdcBmp(bmp, vdcBmpSize, 0);
+    rectangles(bmp, chr);
+    clearVdcBmp(bmp, vdcBmpSize, 0);
+    squares(bmp, chr);
+    clearVdcBmp(bmp, vdcBmpSize, 0);
+    ellipses(bmp, chr);
+    clearVdcBmp(bmp, vdcBmpSize, 0);
+    circles(bmp, chr);
+
 }
 
 main() {

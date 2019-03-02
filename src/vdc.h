@@ -80,7 +80,8 @@
 #define vdcCharsPerSet   256
 #define vdcMaxCharBytes  32
 
-#define vdcOddFldOfs     21360 /* 640 X 480 interlace odd field offset */
+#define vdcBmpSize 16000      /* 640x200 screen size in bytes */
+#define vdcOddFldOfs 21360    /* 640 X 480 interlace odd field offset */
 
 extern void saveVdc();
 extern void restoreVdc();
@@ -91,14 +92,16 @@ extern void setVdcFgBg(uchar f, uchar b);
 extern void setVdcAttrsOn();
 extern void setVdcAttrsOff();
 extern void setVdcCursor(uchar top, uchar bottom, uchar mode);
+extern void orVdcByte(ushort vdcMem, uchar value);
+extern void andVdcByte(ushort vdcMem, uchar value);
 extern void fillVdcMem(ushort vdcMem, ushort len, uchar value);
 extern void copyVdcChrMem(uchar *mem, ushort vdcMem, ushort chars);
 extern void copyVdcMemChr(uchar *mem, ushort vdcMem, ushort chars);
 extern void setVdcBmpMode(ushort dispPage, ushort attrPage);
-extern void clearVdcBmp(ushort vdcMem, ushort len, uchar c);
+extern void clearVdcBmp(uchar *bmp, ushort len, uchar c);
 extern void clearVdcBmpCol(ushort attrMem, ushort len, uchar color);
 extern void setVdcPix(uchar *bmp, ushort x, ushort y);
 extern void clearVdcPix(uchar *bmp, ushort x, ushort y);
+extern void drawVdcLineH(uchar *bmp, ushort x, ushort y, ushort len, uchar setPix);
+extern void drawVdcLineV(uchar *bmp, ushort x, ushort y, ushort len, uchar setPix);
 extern void printVdcBmp(uchar *bmp, uchar *chr, uchar x, uchar y, char *str);
-
-

@@ -157,6 +157,12 @@ VIC bank 0, so that could be used for debugging, etc.
 * Scroll any area of screen
 
 ### Bitmap graphics
+I put some thought in how to share the same graphics functions across the VIC
+and VDC (DRY principle). In an OOP language like Java you'd just use an
+interface and create various implementations. Since I'm using ANSI C I had to
+go with function pointers. This basically allows runtime polymorphism, thus I
+can set the pixel routines, etc. at runtime and share the graphics functions.
+
 I took a fresh look at implementing lines, rectangles, ellipses and circles.
 setVicPix sets a pixel and clearVicPix clears a pixels. I added a parameter to
 the graphics function to tell it to set or clear pixels. This is pretty cool,
