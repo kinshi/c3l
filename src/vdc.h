@@ -97,3 +97,8 @@ extern void copyVdcMemChr(uchar *mem, ushort vdcMem, ushort chars);
 extern void setVdcBmpMode(ushort dispPage, ushort attrPage);
 extern void clearVdcBmp(ushort vdcMem, ushort len, uchar c);
 extern void clearVdcBmpCol(ushort attrMem, ushort len, uchar color);
+extern void setVdcPix(uchar *bmp, ushort x, ushort y);
+extern void clearVdcPix(uchar *bmp, ushort x, ushort y);
+extern void printVdcBmp(uchar *bmp, uchar *chr, uchar x, uchar y, char *str);
+
+
