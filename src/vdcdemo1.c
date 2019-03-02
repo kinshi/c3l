@@ -89,7 +89,7 @@ void lines(uchar *bmp, uchar *chr) {
         drawLine(bmp, 639, 0, 639 - (i * 20), 199, 1);
     }
     waitKey(bmp, chr);
-    for (i = 0; i < 16; i++) {
+    for (i = 0; i < 32; i++) {
         drawLine(bmp, 0, 0, i * 20, 199, 0);
         drawLine(bmp, 639, 0, 639 - (i * 20), 199, 0);
     }
