@@ -64,6 +64,8 @@ void init(uchar *bmp, uchar *scr, uchar *chr) {
     /* Use optimized horizontal and vertical lines on the VIC */
     drawLineH = drawVicLineH;
     drawLineV = drawVicLineV;
+    /* VIC aspect ratio */
+    aspectRatio = 2;
 }
 
 /*

@@ -45,6 +45,8 @@ void init(uchar *bmp, ushort attrPage, uchar *chr) {
     /* Use optimized horizontal and vertical lines on the VIC */
     drawLineH = drawVdcLineH;
     drawLineV = drawVdcLineV;
+    /* VDC aspect ratio */
+    aspectRatio = 3;
 }
 
 /*
@@ -154,11 +156,11 @@ void rectangles(uchar *bmp, uchar *chr) {
     uchar i;
     bannerBmp(bmp, chr, " Rectangles ");
     for (i = 1; i < 30; i++) {
-        drawRect(bmp, i * 2, i * 2, (i * 10) + 20, (i * 5) + 20, 1);
+        drawRect(bmp, i * 2, i * 2, (i * 20) + 20, (i * 5) + 20, 1);
     }
     waitKey(bmp, chr);
     for (i = 1; i < 30; i++) {
-        drawRect(bmp, i * 2, i * 2, (i * 10) + 20, (i * 5) + 20, 0);
+        drawRect(bmp, i * 2, i * 2, (i * 20) + 20, (i * 5) + 20, 0);
     }
 }
 
@@ -184,11 +186,11 @@ void ellipses(uchar *bmp, uchar *chr) {
     ushort i;
     bannerBmp(bmp, chr, " Ellipses ");
     for (i = 1; i < 9; i++) {
-        drawEllipse(bmp, 319, 99, i * 19, i * 10, 1);
+        drawEllipse(bmp, 319, 99, i * 39, i * 10, 1);
     }
     waitKey(bmp, chr);
     for (i = 1; i < 9; i++) {
-        drawEllipse(bmp, 319, 99, i * 19, i * 10, 0);
+        drawEllipse(bmp, 319, 99, i * 39, i * 10, 0);
     }
 }
 
@@ -199,11 +201,11 @@ void circles(uchar *bmp, uchar *chr) {
     ushort i;
     bannerBmp(bmp, chr, " Circles ");
     for (i = 1; i < 12; i++) {
-        drawCircle(bmp, 319, 99, i * 10, 1);
+        drawCircle(bmp, 319, 99, i * 20, 1);
     }
     waitKey(bmp, chr);
     for (i = 1; i < 12; i++) {
-        drawCircle(bmp, 319, 99, i * 10, 0);
+        drawCircle(bmp, 319, 99, i * 20, 0);
     }
 }
 

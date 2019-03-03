@@ -33,6 +33,11 @@ void (*drawLineH)(uchar *, ushort, ushort, ushort, uchar);
 void (*drawLineV)(uchar *, ushort, ushort, ushort, uchar);
 
 /*
+ * Aspect ratio used by circle and square functions.
+ */
+uchar aspectRatio;
+
+/*
  * Bresenham’s line algorithm. setPix is 1 to set or 0 to clear pixel.
  */
 void drawLine(uchar *bmp, int x0, int y0, int x1, int y1, uchar setPix) {
@@ -212,11 +217,12 @@ void drawEllipse(uchar *bmp, int xc, int yc, int a, int b, uchar setPix) {
 }
 
 /*
- * Draw circle using ellipse with aspect ration adjustment.
+ * Draw circle using ellipse with aspect ratio adjustment.
  */
 void drawCircle(uchar *bmp, int xc, int yc, int a, uchar setPix) {
     /* Circle approximation based on 1:0.75 aspect ratio */
-    drawEllipse(bmp, xc, yc, a, (a >> 1) + ((a >> 1) >> 1), setPix);
+    drawEllipse(bmp, xc, yc, a,
+            (a / aspectRatio) + ((a / aspectRatio) / aspectRatio), setPix);
 }
 
 /*
@@ -234,9 +240,10 @@ void drawRect(uchar *bmp, int x0, int y0, int x1, int y1, uchar setPix) {
 }
 
 /*
- * Square approximation based on 1:0.75 aspect ratio.
+ * Draw square using rectangle with aspect ratio adjustment.
  */
 void drawSquare(uchar *bmp, int x, int y, int len, uchar setPix) {
-    int yLen = (len >> 1) + ((len >> 1) >> 1);
+    /* Square approximation based on 1:0.75 aspect ratio */
+    int yLen = (len / aspectRatio) + ((len / aspectRatio) / aspectRatio);
     drawRect(bmp, x, y, x + len - 1, y + yLen - 1, setPix);
 }
