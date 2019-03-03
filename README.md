@@ -135,9 +135,6 @@ program will still use this memory normally. See [vicdemo1](https://github.com/s
 for an example of using the ROM character set and the ASCII to PETSCII translation
 of printVicPet.
 
-Sprites flicker and cause characters on the screen to flicker too. I'm not sure
-if this is VICE or if it would happen on a real C128.
-
 ### Character mode
 I pretty much include everything you need to take control of character mode. I
 also included PETSCII print functions, so you can use the ROM character set
