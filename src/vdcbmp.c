@@ -116,7 +116,7 @@ void drawVdcLineH(uchar *bmp, ushort x, ushort y, ushort len, uchar setPix) {
 }
 
 /*
- * Optimized vertical line algorithm uses less calculation than setVicPix.
+ * Optimized vertical line algorithm uses less calculation than setVdcPix.
  */
 void drawVdcLineV(uchar *bmp, ushort x, ushort y, ushort len, uchar setPix) {
     ushort vdcMem = (ushort) bmp;
