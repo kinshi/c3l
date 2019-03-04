@@ -2,10 +2,7 @@
 rtc.c \
 sid.c \
 ciakey.c \
+screen.c \
 graphics.c \
 vic.c \
-vicscr.c \
-vicbmp.c \
-vicspr.c \
-vdc.c \
-vdcbm.c
+vdc.c

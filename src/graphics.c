@@ -1,9 +1,9 @@
 /*
  * C128 CP/M graphics abstraction.
  *
- * Function pointers are used to drive the graphics, thus the same code will
- * work on the VIC and VDC. Technically this code would work with other graphic
- * displays as well. You just need to implement the functions.
+ * Graphics abstraction uses function pointers to drive the graphics, thus the
+ * same code will work on the VIC and VDC. Technically this code would work
+ * with other graphic displays as well. You just need to implement the functions.
  *
  * Copyright (c) Steven P. Goldsmith. All rights reserved.
  */

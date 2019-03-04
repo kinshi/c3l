@@ -12,6 +12,7 @@
 #include <hitech.h>
 #include <cia.h>
 #include <vic.h>
+#include <screen.h>
 
 /*
  * Set screen color, MMU bank, VIC bank, screen memory and char set memory.
@@ -44,6 +45,9 @@ void init(uchar *scr, uchar *chr) {
     clearVicCol(1);
     /* Enable screen */
     outp(vicCtrlReg1, (inp(vicCtrlReg1) | 0x10));
+    /* Use VIC print functions (in this case PETSCII) */
+    print = printVicPet;
+    printCol = printVicColPet;
 }
 
 /*
@@ -65,7 +69,7 @@ void done(uchar bgCol, uchar fgCol) {
  * Wait for Return.
  */
 void waitKey(uchar *scr) {
-    printVicColPet(scr, 0, 24, 7, "Press Return");
+    printCol(scr, 0, 24, 7, "Press Return");
     /* Debounce */
     while (getKey(0) == 0xfd)
         ;
@@ -82,8 +86,7 @@ void waitKey(uchar *scr) {
 void run(uchar *scr, uchar *chr, uchar *vicMem) {
     uchar i;
     char str[40];
-    /* Note the use of printVicPet that converts ASCII to PETSCII */
-    printVicPet(scr, 0, 0, "Simple character mode using ROM for the "
+    print(scr, 0, 0, "Simple character mode using ROM for the "
             "character set and one screen at the end "
             "of VIC bank 0. This leaves about 15K for"
             "your program. Once your program grows   "
@@ -93,11 +96,11 @@ void run(uchar *scr, uchar *chr, uchar *vicMem) {
         scr[i + 280] = i;
     }
     sprintf(str, "vicMem: %04x", vicMem);
-    printVicColPet(scr, 0, 15, 14, str);
+    printCol(scr, 0, 15, 14, str);
     sprintf(str, "chr:    %04x", chr);
-    printVicColPet(scr, 0, 16, 14, str);
+    printCol(scr, 0, 16, 14, str);
     sprintf(str, "scr:    %04x", scr);
-    printVicColPet(scr, 0, 17, 14, str);
+    printCol(scr, 0, 17, 14, str);
     waitKey(scr);
 }
 

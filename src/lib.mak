@@ -2,10 +2,7 @@ r a:libc3l.lib \
 rtc.obj \
 sid.obj \
 ciakey.obj \
+screen.obj \
 graphics.obj \
 vic.obj \
-vicscr.obj \
-vicbmp.obj \
-vicspr.obj \
-vdc.obj \
-vdcbm.obj
+vdc.obj
