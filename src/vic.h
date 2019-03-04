@@ -56,21 +56,20 @@
 
 #define vicColMem 0xd800  /* VIC I/O mapped color memory */
 #define vicScrSize 1000   /* VIC screen size in bytes */
-#define vicScrSizeW 500   /* VIC screen size in words */
-#define vicBmpSizeW 4000  /* VIC bitmap size in words */
+#define vicBmpSize 8000   /* VIC bitmap size in bytes */
 #define vicSprMemOfs 1016 /* Sprite memory pointers offset in screen.  */
 
 extern uchar *allocVicMem(uchar maxBank);
 extern void setVicMmuBank(uchar mmuRcr);
 extern void setVicBank(uchar vicBank);
+extern void fillVicMem(uchar *mem, ushort start, ushort len, ushort value);
 extern void setVicMode(uchar ecm, uchar bmm, uchar mcm);
 extern void setVicScrMem(uchar scrMem);
 extern void setVicChrMem(uchar chrMem);
 extern void setVicChrMode(uchar mmuRcr, uchar vicBank, uchar scrMem,
         uchar chrMem);
-extern void fillVicMem(uchar *mem, ushort start, ushort len, ushort value);
 extern void clearVicScr(uchar *scr, uchar c);
-extern void clearVicCol(uchar color);
+extern void clearVicCol(ushort colMem, uchar color);
 extern void printVic(uchar *scr, uchar x, uchar y, char *str);
 extern void printVicCol(uchar *scr, uchar x, uchar y, uchar color, char *str);
 extern char *asciiToPet(char *str);

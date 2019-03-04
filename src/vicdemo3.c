@@ -49,7 +49,7 @@ void init(uchar *bmp, uchar *scr, uchar *chr) {
     outp(vicBorderCol, 14);
     outp(vicBgCol0, 0);
     /* Clear color to black */
-    clearVicCol(0);
+    clearVicCol(vicColMem, 0);
     clearBitmap(bmp, scr);
     /* Copy VDC alt char set to VIC mem */
     copyVdcChrMem(chr, 0x3000, 256);
@@ -76,7 +76,7 @@ void done(uchar bgCol, uchar fgCol) {
     outp(vicBorderCol, bgCol);
     outp(vicBgCol0, fgCol);
     /* Clear color to black */
-    clearVicCol(0);
+    clearVicCol(vicColMem, 0);
     /* CPM default */
     setVicChrMode(0, 0, 11, 3);
     /* Enable CIA 1 IRQ */

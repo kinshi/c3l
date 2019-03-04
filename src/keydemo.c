@@ -30,7 +30,7 @@ void init(uchar *scr, uchar *chr) {
     outp(vicBorderCol, 0);
     outp(vicBgCol0, 0);
     /* Clear color to black */
-    clearVicCol(0);
+    clearVicCol(vicColMem, 0);
     /* Clear screen */
     clearVicScr(scr, 32);
     /* Copy VDC alt char set to VIC mem */
@@ -38,7 +38,7 @@ void init(uchar *scr, uchar *chr) {
     /* Set standard character mode using MMU bank 1 and VIC bank 0 */
     setVicChrMode(1, 0, (ushort) scr / 1024, (ushort) chr / 2048);
     /* Clear color to white */
-    clearVicCol(1);
+    clearVicCol(vicColMem, 1);
     /* Enable screen */
     outp(vicCtrlReg1, (inp(vicCtrlReg1) | 0x10));
 }
@@ -51,7 +51,7 @@ void done(uchar bgCol, uchar fgCol) {
     outp(vicBorderCol, bgCol);
     outp(vicBgCol0, fgCol);
     /* Clear color to black */
-    clearVicCol(0);
+    clearVicCol(vicColMem, 0);
     /* CPM default */
     setVicChrMode(0, 0, 11, 3);
     /* Enable CIA 1 IRQ */
@@ -79,7 +79,7 @@ void waitKey(uchar *scr) {
 void readLine(uchar *scr) {
     char *str;
     clearVicScr(scr, 32);
-    clearVicCol(1);
+    clearVicCol(vicColMem, 1);
     printVicCol(scr, 0, 0, 14, "Type in line and press return:");
     str = readVicLine(scr, 0, 2, 40);
     printVicCol(scr, 0, 4, 14, "You entered:");
@@ -95,7 +95,7 @@ void keyboard(uchar *scr) {
     char str[40];
     uchar *ciaKeyScan, exitKey;
     clearVicScr(scr, 32);
-    clearVicCol(1);
+    clearVicCol(vicColMem, 1);
     printVic(scr, 4, 0, "Standard and extended key scan");
     printVicCol(scr, 0, 2, 14, " 0  1  2  3  4  5  6  7  8  9 10");
     printVicCol(scr, 0, 6, 3, "Key pressed:");

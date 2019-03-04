@@ -200,11 +200,11 @@ void ellipses(uchar *bmp, uchar *chr) {
 void circles(uchar *bmp, uchar *chr) {
     ushort i;
     bannerBmp(bmp, chr, " Circles ");
-    for (i = 1; i < 11; i++) {
+    for (i = 1; i < 10; i++) {
         drawCircle(bmp, 319, 99, i * 20, 1);
     }
     waitKey(bmp, chr);
-    for (i = 1; i < 12; i++) {
+    for (i = 1; i < 10; i++) {
         drawCircle(bmp, 319, 99, i * 20, 0);
     }
 }

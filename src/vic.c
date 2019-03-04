@@ -10,6 +10,8 @@
 #include <hitech.h>
 #include <mmu.h>
 #include <cia.h>
+#include <screen.h>
+#include <graphics.h>
 #include <vic.h>
 
 /*
@@ -113,16 +115,16 @@ void setVicChrMode(uchar mmuRcr, uchar vicBank, uchar scrMem, uchar chrMem) {
  * Clear screen using 16 bit word.
  */
 void clearVicScr(uchar *scr, uchar c) {
-    fillVicMem(scr, 0, vicScrSizeW, (c << 8) + c);
+    fillVicMem(scr, 0, screenSize >> 1, (c << 8) + c);
 }
 
 /*
  * Clear color memory.
  */
-void clearVicCol(uchar color) {
+void clearVicCol(ushort colMem, uchar color) {
     register ushort i;
     for (i = 0; i < vicScrSize; i++) {
-        outp(vicColMem + i, color);
+        outp(colMem + i, color);
     }
 }
 
@@ -294,14 +296,14 @@ void setVicBmpMode(uchar mmuRcr, uchar vicBank, uchar scrMem, uchar bmpMem) {
  * Clear screen using 16 bit word.
  */
 void clearVicBmp(uchar *bmp, uchar c) {
-    fillVicMem(bmp, 0, vicBmpSizeW, (c << 8) + c);
+    fillVicMem(bmp, 0, bitmapSize >> 1, (c << 8) + c);
 }
 
 /*
  * Clear bitmap color memory.
  */
 void clearVicBmpCol(uchar *scr, uchar color) {
-    fillVicMem(scr, 0, vicScrSizeW, (color << 8) + color);
+    fillVicMem(scr, 0, screenSize >> 1, (color << 8) + color);
 }
 
 /*

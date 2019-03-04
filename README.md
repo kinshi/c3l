@@ -1,12 +1,13 @@
 ![C3L is the Commodore 128 CP/M C Library](images/title.png)
 
-C3L is an ANSI C based API to access C128 specific features under CP/M. I
-decided to build a new library from scratch after creating
-[C128 CP/M VIC Demo](https://github.com/sgjava/garage/tree/master/commodore/cpm/vicdemo).
-I updated my development process doing all development using Eclipse for editing
-the source, MyZ80 to build, ctools to move the source to a d71 disk image for
-running code on VICE. This is a vast improvement of how I did it back in 1992
-when I had to transfer to floppies for testing.
+C3L is an ANSI C based API to access C128 specific features under CP/M.
+Currently there are two abstraction layers. One for bitmap graphics and one for
+character mode. This allows you to set the target (VIC or VDC) at runtime and use
+the same functions. You only need to initialize which display chip you would like
+to use or use both at the same time! This allows you to switch between VIC and VDC
+with minimal effort. One cool feature of the VIC is that you can use the PETSCII
+character ROM without having to worry about translation. Then if you change to
+ASCII character set (CP/M default) there is only one simple change to make.
 
 ## Running demos
 You can run the demo applications using the [disk images](https://github.com/sgjava/c3l/tree/master/disks).

@@ -5,7 +5,7 @@
  */
 
 extern void (*clearScr)(uchar *, uchar);
-extern void (*clearCol)(uchar *, uchar);
+extern void (*clearCol)(ushort, uchar);
 extern void (*print)(uchar *, uchar, uchar, char *);
 extern void (*printCol)(uchar *, uchar, uchar, uchar, char *);
 extern ushort screenSize;

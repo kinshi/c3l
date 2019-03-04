@@ -36,7 +36,7 @@ void init(uchar *scr, uchar *chr) {
     outp(vicBorderCol, 0);
     outp(vicBgCol0, 0);
     /* Clear color to white */
-    clearVicCol(0);
+    clearVicCol(vicColMem, 0);
     /* Clear screen */
     clearVicScr(scr, 32);
     /* Copy VDC alt char set to VIC mem */
@@ -45,7 +45,7 @@ void init(uchar *scr, uchar *chr) {
     setVicChrMode(1, vicBank, ((ushort) scr - (vicBank * 16384)) / 1024,
             ((ushort) chr - (vicBank * 16384)) / 2048);
     /* Clear color to white */
-    clearVicCol(1);
+    clearVicCol(vicColMem, 1);
     /* Enable screen */
     outp(vicCtrlReg1, (inp(vicCtrlReg1) | 0x10));
 }
@@ -58,7 +58,7 @@ void done(uchar bgCol, uchar fgCol) {
     outp(vicBorderCol, bgCol);
     outp(vicBgCol0, fgCol);
     /* Clear color to black */
-    clearVicCol(0);
+    clearVicCol(vicColMem, 0);
     /* CPM default */
     setVicChrMode(0, 0, 11, 3);
     /* Enable CIA 1 IRQ */
@@ -113,7 +113,7 @@ void scrollScrUp(uchar *scr) {
     for (i = 0; i < 24; i++) {
         scrollVicUp(scr, 0, 24);
     }
-    clearVicCol(1);
+    clearVicCol(vicColMem, 1);
     for (i = 0; i < 24; i++) {
         printVic(scr, 0, i, "You can scroll any part of the screen!!!");
     }

@@ -33,6 +33,11 @@ void (*drawLineH)(uchar *, ushort, ushort, ushort, uchar);
 void (*drawLineV)(uchar *, ushort, ushort, ushort, uchar);
 
 /*
+ * Bitmap size in bytes.
+ */
+ushort bitmapSize;
+
+/*
  * Aspect ratio used by circle and square functions.
  */
 uchar aspectRatio;

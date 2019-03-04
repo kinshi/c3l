@@ -8,6 +8,7 @@ extern void (*setPixel)(uchar *, ushort, ushort);
 extern void (*clearPixel)(uchar *, ushort, ushort);
 extern void (*drawLineH)(uchar *, ushort, ushort, ushort, uchar);
 extern void (*drawLineV)(uchar *, ushort, ushort, ushort, uchar);
+extern ushort bitmapSize;
 extern uchar aspectRatio;
 extern void drawLine(uchar *bmp, int x0, int y0, int x1, int y1, uchar setPix);
 extern void drawBezier(uchar *bmp, int x0, int y0, int x1, int y1, int x2,

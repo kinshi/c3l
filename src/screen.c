@@ -8,8 +8,6 @@
  * Copyright (c) Steven P. Goldsmith. All rights reserved.
  */
 
-#include <stdlib.h>
-#include <assert.h>
 #include <hitech.h>
 
 /*
@@ -20,7 +18,7 @@ void (*clearScr)(uchar *, uchar);
 /*
  * Set function pointer in your code before calling any functions.
  */
-void (*clearCol)(uchar *, uchar);
+void (*clearCol)(ushort, uchar);
 
 /*
  * Set function pointer in your code before calling any functions.
