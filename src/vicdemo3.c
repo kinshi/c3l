@@ -14,6 +14,7 @@
 #include <cia.h>
 #include <vic.h>
 #include <vdc.h>
+#include <screen.h>
 #include <graphics.h>
 
 /*
@@ -48,8 +49,7 @@ void init(uchar *bmp, uchar *scr, uchar *chr) {
     /* Set screen and border color */
     outp(vicBorderCol, 14);
     outp(vicBgCol0, 0);
-    /* Clear color to black */
-    clearVicCol(vicColMem, 0);
+    /* Clear bitmap */
     clearBitmap(bmp, scr);
     /* Copy VDC alt char set to VIC mem */
     copyVdcChrMem(chr, 0x3000, 256);
@@ -76,7 +76,7 @@ void done(uchar bgCol, uchar fgCol) {
     outp(vicBorderCol, bgCol);
     outp(vicBgCol0, fgCol);
     /* Clear color to black */
-    clearVicCol(vicColMem, 0);
+    clearVicBmpCol(scrMem, 0x10);
     /* CPM default */
     setVicChrMode(0, 0, 11, 3);
     /* Enable CIA 1 IRQ */
@@ -235,7 +235,7 @@ void run(uchar *bmp, uchar *scr, uchar *chr, uchar *vicMem) {
     char str[40];
     printVicBmp(bmp, scr, chr, 0, 0, 0x16,
             "This demo will show off bitmap graphics."
-                    "No interrupts are disabled and getch is "
+                    "Interrupts are disabled and getKey is   "
                     "used to read keyboard.                  ");
     sprintf(str, "mem: %04x", vicMem);
     printVicBmp(bmp, scr, chr, 0, 4, 0x12, str);
@@ -277,6 +277,11 @@ main() {
     /* Save border/background color */
     uchar border = inp(vicBorderCol);
     uchar background = inp(vicBgCol0);
+    /* Set default sizes and locations */
+    scrSize = vicScrSize;
+    bitmapSize = vicBmpSize;
+    scrMem = scr;
+    chrMem = chr;
     init(bmp, scr, chr);
     run(bmp, scr, chr, vicMem);
     done(border, background);

@@ -3,4 +3,5 @@ c -o -x -lc3l -lc3l vicdemo2.c
 c -o -x -lc3l -lc3l vicdemo3.c
 c -o -x -lc3l -lc3l vicdemo4.c
 c -o -x -lc3l -lc3l vdcdemo1.c
+c -o -x -lc3l -lc3l vdcdemo2.c
 c -o -x -lc3l -lc3l keydemo.c

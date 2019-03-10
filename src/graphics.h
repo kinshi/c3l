@@ -16,5 +16,5 @@ extern void drawBezier(uchar *bmp, int x0, int y0, int x1, int y1, int x2,
 extern drawOctant(uchar *bmp, int xc, int yc, int x, int y, uchar setPix);
 extern drawEllipse(uchar *bmp, int xc, int yc, int a, int b, uchar setPix);
 extern drawCircle(uchar *bmp, int xc, int yc, int a, uchar setPix);
-void drawRect(uchar *bmp, int x0, int y0, int x1, int y1, uchar setPix);
-void drawSquare(uchar *bmp, int x, int y, int len, uchar setPix);
+extern void drawRect(uchar *bmp, int x0, int y0, int x1, int y1, uchar setPix);
+extern void drawSquare(uchar *bmp, int x, int y, int len, uchar setPix);

@@ -13,6 +13,7 @@
 #include <cia.h>
 #include <vic.h>
 #include <vdc.h>
+#include <screen.h>
 #include <rtc.h>
 
 /*
@@ -36,16 +37,16 @@ void init(uchar *scr, uchar *chr) {
     outp(vicBorderCol, 0);
     outp(vicBgCol0, 0);
     /* Clear color to white */
-    clearVicCol(vicColMem, 0);
+    clearCol(0);
     /* Clear screen */
-    clearVicScr(scr, 32);
+    clearScr(32);
     /* Copy VDC alt char set to VIC mem */
     copyVdcChrMem(chr, 0x3000, 256);
     /* Set standard character mode using MMU bank 1 and set VIC based on scr location */
     setVicChrMode(1, vicBank, ((ushort) scr - (vicBank * 16384)) / 1024,
             ((ushort) chr - (vicBank * 16384)) / 2048);
     /* Clear color to white */
-    clearVicCol(vicColMem, 1);
+    clearCol(1);
     /* Enable screen */
     outp(vicCtrlReg1, (inp(vicCtrlReg1) | 0x10));
 }
@@ -58,7 +59,7 @@ void done(uchar bgCol, uchar fgCol) {
     outp(vicBorderCol, bgCol);
     outp(vicBgCol0, fgCol);
     /* Clear color to black */
-    clearVicCol(vicColMem, 0);
+    clearCol(0);
     /* CPM default */
     setVicChrMode(0, 0, 11, 3);
     /* Enable CIA 1 IRQ */
@@ -69,7 +70,7 @@ void done(uchar bgCol, uchar fgCol) {
  * Wait for Return.
  */
 void waitKey(uchar *scr) {
-    printVicCol(scr, 0, 24, 7, "Press Return");
+    printCol(0, 24, 7, "Press Return");
     /* Debounce */
     while (getKey(0) == 0xfd)
         ;
@@ -86,7 +87,7 @@ void waitKey(uchar *scr) {
 void fillScr(uchar *scr) {
     register uchar i;
     for (i = 0; i < 24; i++) {
-        printVic(scr, 0, i, "|Watch how fast you can fill the screen|");
+        print(0, i, "|Watch how fast you can fill the screen|");
     }
     waitKey(scr);
 }
@@ -96,9 +97,9 @@ void fillScr(uchar *scr) {
  */
 void fillScrCol(uchar *scr) {
     register uchar i;
-    clearVicScr(scr, 32);
+    clearScr(32);
     for (i = 0; i < 24; i++) {
-        printVicCol(scr, 4, i, i / 2 + 1, "You can do color text as well");
+        printCol(4, i, i / 2 + 1, "You can do color text as well");
     }
     waitKey(scr);
 }
@@ -113,9 +114,9 @@ void scrollScrUp(uchar *scr) {
     for (i = 0; i < 24; i++) {
         scrollVicUp(scr, 0, 24);
     }
-    clearVicCol(vicColMem, 1);
+    clearCol(1);
     for (i = 0; i < 24; i++) {
-        printVic(scr, 0, i, "You can scroll any part of the screen!!!");
+        printVic(0, i, "You can scroll any part of the screen!!!");
     }
     waitKey(scr);
     scrollVicUpX(scr, 0, 0, 10, 24);
@@ -141,21 +142,20 @@ void run(uchar *scr, uchar *chr, uchar *vicMem) {
     setRtcMode(0x87);
     dateStr = getRtcDate();
     timeStr = getRtcTime();
-    printVic(scr, 0, 0, "Simple character mode using the VDC     "
-            "character set and one screen. No        "
-            "interrupts are disabled and getch is    "
-            "used to read keyboard. Since no color is"
-            "updated text output is blazing fast!");
+    print(0, 0, "Simple character mode using the VDC     "
+            "character set, one screen and interrupts"
+            "are disabled. Since no color is updated "
+            "text output is blazing fast!");
     sprintf(str, "Date:   %s", dateStr);
-    printVic(scr, 0, 6, str);
+    print(0, 6, str);
     sprintf(str, "Time:   %s", timeStr);
-    printVic(scr, 0, 7, str);
+    print(0, 7, str);
     sprintf(str, "vicMem: %04x", vicMem);
-    printVic(scr, 0, 8, str);
+    print(0, 8, str);
     sprintf(str, "chr:    %04x", chr);
-    printVic(scr, 0, 9, str);
+    print(0, 9, str);
     sprintf(str, "scr:    %04x", scr);
-    printVic(scr, 0, 10, str);
+    print(0, 10, str);
     free(dateStr);
     free(timeStr);
     waitKey(scr);
@@ -174,6 +174,16 @@ main() {
     /* Save screen/border color */
     uchar border = inp(vicBorderCol);
     uchar background = inp(vicBgCol0);
+    scrSize = vicScrSize;
+    scrMem = scr;
+    scrColMem = (uchar *) vicColMem;
+    chrMem = chr;
+    /* Set screen functions */
+    clearScr = clearVicScr;
+    clearCol = clearVicCol;
+    /* Use VIC print functions */
+    print = printVic;
+    printCol = printVicCol;
     init(scr, chr);
     run(scr, chr, vicMem);
     free(vicMem);

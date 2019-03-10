@@ -1,8 +1,13 @@
 -c -o -x -i0:b: \
 rtc.c \
 sid.c \
-ciakey.c \
+cia.c \
 screen.c \
 graphics.c \
 vic.c \
-vdc.c
+vicscr.c \
+vicbmp.c \
+vicspr.c \
+vdc.c \
+vdcscr.c \
+vdcbmp.c

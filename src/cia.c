@@ -1,5 +1,5 @@
 /*
- * C128 6526 CIA keyboard functions.
+ * C128 6526 CIA functions.
  *
  * Keys are mapped the same as getch for the most part.
  *

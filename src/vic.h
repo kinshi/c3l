@@ -64,22 +64,21 @@ extern void setVicMmuBank(uchar mmuRcr);
 extern void setVicBank(uchar vicBank);
 extern void fillVicMem(uchar *mem, ushort start, ushort len, ushort value);
 extern void setVicMode(uchar ecm, uchar bmm, uchar mcm);
-extern void setVicScrMem(uchar scrMem);
-extern void setVicChrMem(uchar chrMem);
-extern void setVicChrMode(uchar mmuRcr, uchar vicBank, uchar scrMem,
-        uchar chrMem);
-extern void clearVicScr(uchar *scr, uchar c);
-extern void clearVicCol(ushort colMem, uchar color);
-extern void printVic(uchar *scr, uchar x, uchar y, char *str);
-extern void printVicCol(uchar *scr, uchar x, uchar y, uchar color, char *str);
-extern char *asciiToPet(char *str);
-extern void printVicPet(uchar *scr, uchar x, uchar y, char *str);
-extern void printVicColPet(uchar *scr, uchar x, uchar y, uchar color, char *str);
+extern void setVicScrMem(uchar scrLoc);
+extern void setVicChrMem(uchar chrLoc);
+extern void setVicChrMode(uchar mmuRcr, uchar vicBank, uchar scrLoc,
+        uchar chrLoc);
+extern void clearVicScr(uchar c);
+extern void clearVicCol(uchar c);
+extern void printVic(uchar x, uchar y, char *str);
+extern void printVicCol(uchar x, uchar y, uchar color, char *str);
+extern void printVicPet(uchar x, uchar y, char *str);
+extern void printVicColPet(uchar x, uchar y, uchar color, char *str);
 extern void scrollVicUpX(uchar *scr, uchar x, uchar y, uchar len, uchar lines);
 extern void scrollVicUp(uchar *scr, uchar y, uchar lines);
 extern char *readVicLine(uchar *scr, uchar x, uchar y, uchar len);
 extern void setVicBmpMem(uchar bmpMem);
-extern void setVicBmpMode(uchar mmuRcr, uchar vicBank, uchar scrMem,
+extern void setVicBmpMode(uchar mmuRcr, uchar vicBank, uchar scrLoc,
         uchar bmpMem);
 extern void clearVicBmp(uchar *bmp, uchar c);
 extern void clearVicBmpCol(uchar *scr, uchar color);

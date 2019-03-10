@@ -4,8 +4,13 @@
  * Copyright (c) Steven P. Goldsmith. All rights reserved.
  */
 
-extern void (*clearScr)(uchar *, uchar);
-extern void (*clearCol)(ushort, uchar);
-extern void (*print)(uchar *, uchar, uchar, char *);
-extern void (*printCol)(uchar *, uchar, uchar, uchar, char *);
-extern ushort screenSize;
+extern ushort scrSize;
+extern uchar *scrMem;
+extern uchar *scrColMem;
+extern uchar *chrMem;
+extern void (*clearScr)( uchar);
+extern void (*clearCol)( uchar);
+extern void (*print)( uchar, uchar, char *);
+extern void (*printCol)( uchar, uchar, uchar, char *);
+extern char *asciiToPet(char *str);
+

@@ -12,6 +12,7 @@
 #include <hitech.h>
 #include <cia.h>
 #include <vic.h>
+#include <screen.h>
 #include <sid.h>
 
 /*
@@ -46,14 +47,14 @@ void init(uchar *scr, uchar *chr) {
     outp(vicBorderCol, 13);
     outp(vicBgCol0, 0);
     /* Clear color to black */
-    clearVicCol(vicColMem, 0);
+    clearCol(0);
     /* Clear screen */
-    clearVicScr(scr, 32);
+    clearScr(32);
     /* Set standard character mode using MMU bank 1 and set VIC based on scr location */
     setVicChrMode(1, vicBank, ((ushort) scr - (vicBank * 16384)) / 1024,
             ((ushort) chr - (vicBank * 16384)) / 2048);
     /* Clear color to white */
-    clearVicCol(vicColMem, 1);
+    clearCol(1);
     /* Enable screen */
     outp(vicCtrlReg1, (inp(vicCtrlReg1) | 0x10));
 }
@@ -67,7 +68,7 @@ void done(uchar bgCol, uchar fgCol) {
     outp(vicBorderCol, bgCol);
     outp(vicBgCol0, fgCol);
     /* Clear color to black */
-    clearVicCol(vicColMem, 0);
+    clearCol(0);
     /* CPM default */
     setVicChrMode(0, 0, 11, 3);
     /* Enable CIA 1 IRQ */
@@ -78,7 +79,7 @@ void done(uchar bgCol, uchar fgCol) {
  * Wait for Return.
  */
 void waitKey(uchar *scr) {
-    printVicColPet(scr, 0, 24, 7, "Press Return");
+    printCol(0, 24, 7, "Press Return");
     /* Debounce */
     while (getKey(0) == 0xfd)
         ;
@@ -114,7 +115,7 @@ void bounceSpr(uchar *scr) {
     configVicSpr(scr, spr, 0, 6);
     setVicSprLoc(0, x, y);
     enableVicSpr(0);
-    printVicColPet(scr, 0, 24, 7, "Press Return");
+    printCol(0, 24, 7, "Press Return");
     setSidVol(15, 0);
     /* Bounce sprite until return pressed */
     while (getKey(0) != 0xfd) {
@@ -176,7 +177,7 @@ void run(uchar *scr, uchar *chr, uchar *vicMem) {
     uchar i;
     char str[40];
     /* Note the use of printVicPet that converts ASCII to PETSCII */
-    printVicPet(scr, 0, 0, "Using ROM character set and one screen  "
+    print(0, 0, "Using ROM character set and one screen  "
             "at the end of VIC bank 0. Sprite is     "
             "located above screen at 0x3bc0.         "
             "Collision detection changes color.");
@@ -184,11 +185,11 @@ void run(uchar *scr, uchar *chr, uchar *vicMem) {
         scr[i + 280] = i;
     }
     sprintf(str, "vicMem: %04x", vicMem);
-    printVicColPet(scr, 0, 15, 14, str);
+    printCol(0, 15, 14, str);
     sprintf(str, "chr:    %04x", chr);
-    printVicColPet(scr, 0, 16, 14, str);
+    printCol(0, 16, 14, str);
     sprintf(str, "scr:    %04x", scr);
-    printVicColPet(scr, 0, 17, 14, str);
+    printCol(0, 17, 14, str);
     /* Use VIC raster to seed random numbers */
     srand(inp(vicRaster));
     bounceSpr(scr);
@@ -204,6 +205,16 @@ main() {
     /* Save screen/border color */
     uchar border = inp(vicBorderCol);
     uchar background = inp(vicBgCol0);
+    scrSize = vicScrSize;
+    scrMem = scr;
+    scrColMem = (uchar *) vicColMem;
+    chrMem = chr;
+    /* Set screen functions */
+    clearScr = clearVicScr;
+    clearCol = clearVicCol;
+    /* Use VIC print functions */
+    print = printVicPet;
+    printCol = printVicColPet;
     init(scr, chr);
     run(scr, chr, vicMem);
     free(vicMem);

@@ -35,14 +35,14 @@ void init(uchar *scr, uchar *chr) {
     outp(vicBorderCol, 0);
     outp(vicBgCol0, 0);
     /* Clear color to black */
-    clearCol(vicColMem, 0);
+    clearCol(0);
     /* Clear screen */
-    clearScr(scr, 32);
+    clearScr(32);
     /* Set standard character mode using MMU bank 1 and set VIC based on scr location */
     setVicChrMode(1, vicBank, ((ushort) scr - (vicBank * 16384)) / 1024,
             ((ushort) chr - (vicBank * 16384)) / 2048);
     /* Clear color to white */
-    clearCol(vicColMem, 1);
+    clearCol(1);
     /* Enable screen */
     outp(vicCtrlReg1, (inp(vicCtrlReg1) | 0x10));
 }
@@ -55,7 +55,7 @@ void done(uchar bgCol, uchar fgCol) {
     outp(vicBorderCol, bgCol);
     outp(vicBgCol0, fgCol);
     /* Clear color to black */
-    clearCol(vicColMem, 0);
+    clearCol(0);
     /* CPM default */
     setVicChrMode(0, 0, 11, 3);
     /* Enable CIA 1 IRQ */
@@ -65,8 +65,8 @@ void done(uchar bgCol, uchar fgCol) {
 /*
  * Wait for Return.
  */
-void waitKey(uchar *scr) {
-    printCol(scr, 0, 24, 7, "Press Return");
+void waitKey() {
+    printCol(0, 24, 7, "Press Return");
     /* Debounce */
     while (getKey(0) == 0xfd)
         ;
@@ -83,7 +83,7 @@ void waitKey(uchar *scr) {
 void run(uchar *scr, uchar *chr, uchar *vicMem) {
     uchar i;
     char str[40];
-    print(scr, 0, 0, "Simple character mode using ROM for the "
+    print(0, 0, "Simple character mode using ROM for the "
             "character set and one screen at the end "
             "of VIC bank 0. This leaves about 15K for"
             "your program. Once your program grows   "
@@ -93,12 +93,12 @@ void run(uchar *scr, uchar *chr, uchar *vicMem) {
         scr[i + 280] = i;
     }
     sprintf(str, "vicMem: %04x", vicMem);
-    printCol(scr, 0, 15, 14, str);
+    printCol(0, 15, 14, str);
     sprintf(str, "chr:    %04x", chr);
-    printCol(scr, 0, 16, 14, str);
+    printCol(0, 16, 14, str);
     sprintf(str, "scr:    %04x", scr);
-    printCol(scr, 0, 17, 14, str);
-    waitKey(scr);
+    printCol(0, 17, 14, str);
+    waitKey();
 }
 
 main() {
@@ -111,7 +111,11 @@ main() {
     /* Save screen/border color */
     uchar border = inp(vicBorderCol);
     uchar background = inp(vicBgCol0);
-    screenSize = vicScrSize;
+    /* Set default sizes and locations */
+    scrSize = vicScrSize;
+    scrMem = scr;
+    scrColMem = (uchar *) vicColMem;
+    chrMem = chr;
     /* Set screen functions */
     clearScr = clearVicScr;
     clearCol = clearVicCol;

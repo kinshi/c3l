@@ -1,8 +1,13 @@
 r a:libc3l.lib \
 rtc.obj \
 sid.obj \
-ciakey.obj \
+cia.obj \
 screen.obj \
 graphics.obj \
 vic.obj \
-vdc.obj
+vicscr.obj \
+vicbmp.obj \
+vicspr.obj \
+vdc.obj \
+vdcscr.obj \
+vdcbmp.obj
