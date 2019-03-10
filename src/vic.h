@@ -77,19 +77,18 @@ extern void printVicColPet(uchar x, uchar y, uchar color, char *str);
 extern void scrollVicUpX(uchar *scr, uchar x, uchar y, uchar len, uchar lines);
 extern void scrollVicUp(uchar *scr, uchar y, uchar lines);
 extern char *readVicLine(uchar *scr, uchar x, uchar y, uchar len);
-extern void setVicBmpMem(uchar bmpMem);
+extern void setVicBmpMem(uchar bmpLoc);
 extern void setVicBmpMode(uchar mmuRcr, uchar vicBank, uchar scrLoc,
-        uchar bmpMem);
-extern void clearVicBmp(uchar *bmp, uchar c);
-extern void clearVicBmpCol(uchar *scr, uchar color);
-extern void setVicPix(uchar *bmp, ushort x, ushort y);
-extern void clearVicPix(uchar *bmp, ushort x, ushort y);
-extern void drawVicLineH(uchar *bmp, ushort x, ushort y, ushort len,
+        uchar bmpLoc);
+extern void clearVicBmp(uchar c);
+extern void clearVicBmpCol(uchar c);
+extern void setVicPix(ushort x, ushort y);
+extern void clearVicPix(ushort x, ushort y);
+extern void drawVicLineH(ushort x, ushort y, ushort len,
         uchar setPix);
-extern void drawVicLineV(uchar *bmp, ushort x, ushort y, ushort len,
+extern void drawVicLineV(ushort x, ushort y, ushort len,
         uchar setPix);
-extern void printVicBmp(uchar *bmp, uchar *scr, uchar *chr, uchar x, uchar y,
-        uchar color, char *str);
+extern void printVicBmp(uchar x, uchar y, uchar color, char *str);
 extern void configVicSpr(uchar *scr, uchar *spr, uchar sprNum, uchar sprCol);
 extern void enableVicSpr(uchar sprNum);
 extern void disableVicSpr(uchar sprNum);

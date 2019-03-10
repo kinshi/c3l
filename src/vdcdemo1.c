@@ -13,13 +13,14 @@
 #include <hitech.h>
 #include <cia.h>
 #include <vdc.h>
+#include <screen.h>
 #include <graphics.h>
 
 /*
  * Set screen color, MMU bank, VIC bank, screen memory and char set memory.
  * Clear screen and color memory then enable screen.
  */
-void init(uchar *bmp, ushort attrPage, uchar *chr) {
+void init() {
     /* Clear all CIA 1 IRQ enable bits */
     outp(cia1Icr, 0x7f);
     /* Clear CIA 1 ICR status */
@@ -34,29 +35,21 @@ void init(uchar *bmp, ushort attrPage, uchar *chr) {
     saveVdc();
     setVdcCursor(0, 0, vdcCurNone);
     /* Copy VDC char sets to VIC mem */
-    copyVdcChrMem(chr, 0x2000, 512);
+    copyVdcChrMem(chrMem, 0x2000, 512);
     setVdcFgBg(15, 0);
     setVdcAttrsOff();
-    setVdcBmpMode((ushort) bmp, attrPage);
-    clearVdcBmp(bmp, vdcBmpSize, 0);
-    /* Use VIC pixel functions */
-    setPixel = setVdcPix;
-    clearPixel = clearVdcPix;
-    /* Use optimized horizontal and vertical lines on the VIC */
-    drawLineH = drawVdcLineH;
-    drawLineV = drawVdcLineV;
-    /* VDC aspect ratio */
-    aspectRatio = 3;
+    setVdcBmpMode((ushort) bmpMem, (ushort) bmpColMem);
+    clearVdcBmp(0);
 }
 
 /*
  * Restore screen color, set MMU bank, VIC bank, screen
  * memory and char set memory location for CP/M return.
  */
-void done(uchar *chr) {
+void done() {
     restoreVdc();
-    copyVdcMemChr(chr, 0x2000, 512);
-    free(chr);
+    copyVdcMemChr(chrMem, 0x2000, 512);
+    free(chrMem);
     /* Enable CIA 1 IRQ */
     outp(cia1Icr, 0x82);
     /* ADM-3A clear-home cursor */
@@ -66,8 +59,8 @@ void done(uchar *chr) {
 /*
  * Wait for Return.
  */
-void waitKey(uchar *bmp, uchar *chr) {
-    printVdcBmp(bmp, chr, 0, 24, " Press Return ");
+void waitKey() {
+    printVdcBmp(0, 24, " Press Return ");
     /* Debounce */
     while (getKey(0) == 0xfd)
         ;
@@ -76,158 +69,158 @@ void waitKey(uchar *bmp, uchar *chr) {
     /* Debounce */
     while (getKey(0) == 0xfd)
         ;
-    printVdcBmp(bmp, chr, 0, 24, " Erasing pixels ");
+    printVdcBmp(0, 24, " Erasing pixels ");
 }
 
 /*
  * Print centered text on top line in bitmap.
  */
-void bannerBmp(uchar *bmp, uchar *chr, char *str) {
-    printVdcBmp(bmp, chr, ((80 - strlen(str)) >> 1), 0, str);
+void bannerBmp(char *str) {
+    printVdcBmp(((80 - strlen(str)) >> 1), 0, str);
 }
 
 /*
  * Draw lines.
  */
-void lines(uchar *bmp, uchar *chr) {
+void lines() {
     uchar i;
-    bannerBmp(bmp, chr, " Bresenham lines ");
+    bannerBmp(" Bresenham lines ");
     for (i = 0; i < 32; i++) {
-        drawLine(bmp, 0, 0, i * 20, 199, 1);
-        drawLine(bmp, 639, 0, 639 - (i * 20), 199, 1);
+        drawLine(0, 0, i * 20, 199, 1);
+        drawLine(639, 0, 639 - (i * 20), 199, 1);
     }
-    waitKey(bmp, chr);
+    waitKey();
     for (i = 0; i < 32; i++) {
-        drawLine(bmp, 0, 0, i * 20, 199, 0);
-        drawLine(bmp, 639, 0, 639 - (i * 20), 199, 0);
+        drawLine(0, 0, i * 20, 199, 0);
+        drawLine(639, 0, 639 - (i * 20), 199, 0);
     }
 }
 
 /*
  * Draw horizontal lines.
  */
-void linesH(uchar *bmp, uchar *chr) {
+void linesH() {
     uchar i;
-    bannerBmp(bmp, chr, " Optimized horizontal lines ");
+    bannerBmp(" Optimized horizontal lines ");
     /* Use optimized horizontal lines */
     for (i = 0; i < 159; i++) {
-        drawLine(bmp, i, i + 20, 639 - i, i + 20, 1);
+        drawLine(i, i + 20, 639 - i, i + 20, 1);
     }
-    waitKey(bmp, chr);
+    waitKey();
     for (i = 0; i < 159; i++) {
-        drawLine(bmp, i, i + 20, 639 - i, i + 20, 0);
+        drawLine(i, i + 20, 639 - i, i + 20, 0);
     }
 }
 
 /*
  * Draw vertical lines.
  */
-void linesV(uchar *bmp, uchar *chr) {
+void linesV() {
     uchar i;
-    bannerBmp(bmp, chr, " Optimized vertical lines ");
+    bannerBmp(" Optimized vertical lines ");
     for (i = 10; i < 199; i++) {
-        drawLine(bmp, i + 114, 10, i + 114, i + 1, 1);
+        drawLine(i + 114, 10, i + 114, i + 1, 1);
     }
-    waitKey(bmp, chr);
+    waitKey();
     for (i = 10; i < 199; i++) {
-        drawLine(bmp, i + 114, 10, i + 114, i + 1, 0);
+        drawLine(i + 114, 10, i + 114, i + 1, 0);
     }
 }
 
 /*
  * Draw Bezier curves.
  */
-void bezier(uchar *bmp, uchar *chr) {
+void bezier() {
     uchar i;
-    bannerBmp(bmp, chr, " Bezier curves ");
+    bannerBmp(" Bezier curves ");
     for (i = 0; i < 35; i++) {
-        drawBezier(bmp, i * 5, 10, 639, 15 + i * 5, 639, 15 + i * 5, 1);
+        drawBezier(i * 5, 10, 639, 15 + i * 5, 639, 15 + i * 5, 1);
     }
-    waitKey(bmp, chr);
+    waitKey();
     for (i = 0; i < 35; i++) {
-        drawBezier(bmp, i * 5, 10, 639, 15 + i * 5, 639, 15 + i * 5, 0);
+        drawBezier(i * 5, 10, 639, 15 + i * 5, 639, 15 + i * 5, 0);
     }
 }
 
 /*
  * Draw rectangles.
  */
-void rectangles(uchar *bmp, uchar *chr) {
+void rectangles() {
     uchar i;
-    bannerBmp(bmp, chr, " Rectangles ");
+    bannerBmp(" Rectangles ");
     for (i = 1; i < 30; i++) {
-        drawRect(bmp, i * 2, i * 2, (i * 20) + 20, (i * 5) + 20, 1);
+        drawRect(i * 2, i * 2, (i * 20) + 20, (i * 5) + 20, 1);
     }
-    waitKey(bmp, chr);
+    waitKey();
     for (i = 1; i < 30; i++) {
-        drawRect(bmp, i * 2, i * 2, (i * 20) + 20, (i * 5) + 20, 0);
+        drawRect(i * 2, i * 2, (i * 20) + 20, (i * 5) + 20, 0);
     }
 }
 
 /*
  * Draw squares.
  */
-void squares(uchar *bmp, uchar *chr) {
+void squares() {
     uchar i;
-    bannerBmp(bmp, chr, " Squares ");
+    bannerBmp(" Squares ");
     for (i = 0; i < 10; i++) {
-        drawSquare(bmp, i * 8, i * 8, (i * 8) + 8, 1);
+        drawSquare(i * 8, i * 8, (i * 8) + 8, 1);
     }
-    waitKey(bmp, chr);
+    waitKey();
     for (i = 0; i < 10; i++) {
-        drawSquare(bmp, i * 8, i * 8, (i * 8) + 8, 0);
+        drawSquare(i * 8, i * 8, (i * 8) + 8, 0);
     }
 }
 
 /*
  * Draw ellipses.
  */
-void ellipses(uchar *bmp, uchar *chr) {
+void ellipses() {
     ushort i;
-    bannerBmp(bmp, chr, " Ellipses ");
+    bannerBmp(" Ellipses ");
     for (i = 1; i < 9; i++) {
-        drawEllipse(bmp, 319, 99, i * 39, i * 10, 1);
+        drawEllipse(319, 99, i * 39, i * 10, 1);
     }
-    waitKey(bmp, chr);
+    waitKey();
     for (i = 1; i < 9; i++) {
-        drawEllipse(bmp, 319, 99, i * 39, i * 10, 0);
+        drawEllipse(319, 99, i * 39, i * 10, 0);
     }
 }
 
 /*
  * Draw circles.
  */
-void circles(uchar *bmp, uchar *chr) {
+void circles() {
     ushort i;
-    bannerBmp(bmp, chr, " Circles ");
+    bannerBmp(" Circles ");
     for (i = 1; i < 10; i++) {
-        drawCircle(bmp, 319, 99, i * 20, 1);
+        drawCircle(319, 99, i * 20, 1);
     }
-    waitKey(bmp, chr);
+    waitKey();
     for (i = 1; i < 10; i++) {
-        drawCircle(bmp, 319, 99, i * 20, 0);
+        drawCircle(319, 99, i * 20, 0);
     }
 }
 
 /*
  * Run demo.
  */
-void run(uchar *bmp, uchar *chr) {
-    lines(bmp, chr);
-    clearVdcBmp(bmp, vdcBmpSize, 0);
-    linesH(bmp, chr);
-    clearVdcBmp(bmp, vdcBmpSize, 0);
-    linesV(bmp, chr);
-    clearVdcBmp(bmp, vdcBmpSize, 0);
-    bezier(bmp, chr);
-    clearVdcBmp(bmp, vdcBmpSize, 0);
-    rectangles(bmp, chr);
-    clearVdcBmp(bmp, vdcBmpSize, 0);
-    squares(bmp, chr);
-    clearVdcBmp(bmp, vdcBmpSize, 0);
-    ellipses(bmp, chr);
-    clearVdcBmp(bmp, vdcBmpSize, 0);
-    circles(bmp, chr);
+void run() {
+    lines();
+    clearVdcBmp(0);
+    linesH();
+    clearVdcBmp(0);
+    linesV();
+    clearVdcBmp(0);
+    bezier();
+    clearVdcBmp(0);
+    rectangles();
+    clearVdcBmp(0);
+    squares();
+    clearVdcBmp(0);
+    ellipses();
+    clearVdcBmp(0);
+    circles();
 
 }
 
@@ -238,7 +231,21 @@ main() {
     uchar *chr = (uchar *) malloc(4096);
     /* Use alternate character set */
     uchar *altChr = (uchar *) ((ushort) chr) + 0x0800;
-    init(0, 0, chr);
-    run(bmp, altChr);
-    done(chr);
+    /* Set default sizes and locations */
+    scrSize = vdcScrSize;
+    bmpSize = vdcBmpSize;
+    bmpMem = bmp;
+    bmpColMem = (uchar *) vdcColMem;
+    chrMem = altChr;
+    /* Use VIC pixel functions */
+    setPixel = setVdcPix;
+    clearPixel = clearVdcPix;
+    /* Use optimized horizontal and vertical lines on the VIC */
+    drawLineH = drawVdcLineH;
+    drawLineV = drawVdcLineV;
+    /* VDC aspect ratio */
+    aspectRatio = 3;
+    init();
+    run();
+    done();
 }

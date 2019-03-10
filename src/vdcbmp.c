@@ -7,6 +7,8 @@
 #include <sys.h>
 #include <string.h>
 #include <hitech.h>
+#include <screen.h>
+#include <graphics.h>
 #include <vdc.h>
 
 /*
@@ -22,22 +24,22 @@ uchar vdcFillTable[7] = { 0x7f, 0x3f, 0x1f, 0x0f, 0x07, 0x03, 0x01 };
 /*
  * Clear screen.
  */
-void clearVdcBmp(uchar *bmp, ushort len, uchar c) {
-    fillVdcMem((ushort) bmp, len, c);
+void clearVdcBmp(uchar c) {
+    fillVdcMem((ushort) bmpMem, bmpSize, c);
 }
 
 /*
  * Clear bitmap color memory.
  */
-void clearVdcBmpCol(ushort attrMem, ushort len, uchar color) {
-    fillVdcMem(attrMem, len, color);
+void clearVdcBmpCol(uchar c) {
+    fillVdcMem((ushort) bmpColMem, scrSize, c);
 }
 
 /*
  * Set pixel.
  */
-void setVdcPix(uchar *bmp, ushort x, ushort y) {
-    ushort vdcMem = (ushort) bmp;
+void setVdcPix(ushort x, ushort y) {
+    ushort vdcMem = (ushort) bmpMem;
     uchar saveByte;
     ushort pixByte;
     pixByte = vdcMem + (y << 6) + (y << 4) + (x >> 3);
@@ -52,8 +54,8 @@ void setVdcPix(uchar *bmp, ushort x, ushort y) {
 /*
  * Clear pixel.
  */
-void clearVdcPix(uchar *bmp, ushort x, ushort y) {
-    ushort vdcMem = (ushort) bmp;
+void clearVdcPix(ushort x, ushort y) {
+    ushort vdcMem = (ushort) bmpMem;
     uchar saveByte;
     ushort pixByte;
     pixByte = vdcMem + (y << 6) + (y << 4) + (x >> 3);
@@ -68,8 +70,8 @@ void clearVdcPix(uchar *bmp, ushort x, ushort y) {
 /*
  * Optimized horizontal line algorithm up to 40x faster than Bresenham.
  */
-void drawVdcLineH(uchar *bmp, ushort x, ushort y, ushort len, uchar setPix) {
-    ushort vdcMem = (ushort) bmp;
+void drawVdcLineH(ushort x, ushort y, ushort len, uchar setPix) {
+    ushort vdcMem = (ushort) bmpMem;
     ushort pixByte = vdcMem + (y << 6) + (y << 4) + (x >> 3);
     uchar firstBits = x % 8;
     uchar lastBits = (x + len - 1) % 8;
@@ -110,8 +112,8 @@ void drawVdcLineH(uchar *bmp, ushort x, ushort y, ushort len, uchar setPix) {
 /*
  * Optimized vertical line algorithm uses less calculation than setVdcPix.
  */
-void drawVdcLineV(uchar *bmp, ushort x, ushort y, ushort len, uchar setPix) {
-    ushort vdcMem = (ushort) bmp;
+void drawVdcLineV(ushort x, ushort y, ushort len, uchar setPix) {
+    ushort vdcMem = (ushort) bmpMem;
     ushort pixByte = vdcMem + (y << 6) + (y << 4) + (x >> 3);
     uchar vBit = vdcBitTable[x & 0x07];
     uchar saveByte, i;
@@ -139,8 +141,8 @@ void drawVdcLineV(uchar *bmp, ushort x, ushort y, ushort len, uchar setPix) {
 /*
  * Print without color. Optimized by setting VDC address once for each scan line.
  */
-void printVdcBmp(uchar *bmp, uchar *chr, uchar x, uchar y, char *str) {
-    ushort vdcMem = (ushort) bmp;
+void printVdcBmp(uchar x, uchar y, char *str) {
+    ushort vdcMem = (ushort) bmpMem;
     ushort dispOfs = ((y * 80) * 8) + vdcMem + x;
     ushort len = strlen(str);
     ushort i, chrOfs;
@@ -151,7 +153,7 @@ void printVdcBmp(uchar *bmp, uchar *chr, uchar x, uchar y, char *str) {
         outVdc(vdcUpdAddrLo, (uchar) dispOfs);
         for (i = 0; i < len; i++) {
             chrOfs = (str[i] << 3) + c;
-            outVdc(vdcCPUData, chr[chrOfs]);
+            outVdc(vdcCPUData, chrMem[chrOfs]);
         }
         /* Next scan line */
         dispOfs += 80;

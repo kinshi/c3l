@@ -108,12 +108,12 @@ extern void clearVdcCol(uchar c);
 extern void printVdc(uchar x, uchar y, char *str);
 extern void printVdcCol(uchar x, uchar y, uchar color, char *str);
 extern void setVdcBmpMode(ushort dispPage, ushort attrPage);
-extern void clearVdcBmp(uchar *bmp, ushort len, uchar c);
-extern void clearVdcBmpCol(ushort attrMem, ushort len, uchar color);
-extern void setVdcPix(uchar *bmp, ushort x, ushort y);
-extern void clearVdcPix(uchar *bmp, ushort x, ushort y);
-extern void drawVdcLineH(uchar *bmp, ushort x, ushort y, ushort len,
+extern void clearVdcBmp(uchar c);
+extern void clearVdcBmpCol(uchar c);
+extern void setVdcPix(ushort x, ushort y);
+extern void clearVdcPix(ushort x, ushort y);
+extern void drawVdcLineH(ushort x, ushort y, ushort len,
         uchar setPix);
-extern void drawVdcLineV(uchar *bmp, ushort x, ushort y, ushort len,
+extern void drawVdcLineV(ushort x, ushort y, ushort len,
         uchar setPix);
-extern void printVdcBmp(uchar *bmp, uchar *chr, uchar x, uchar y, char *str);
+extern void printVdcBmp(uchar x, uchar y, char *str);

@@ -13,6 +13,31 @@
 #include <vic.h>
 
 /*
+ * Set screen 0-15 memory location (1K per screen).
+ */
+void setVicScrMem(uchar scrLoc) {
+    outp(vicMemCtrl, (inp(vicMemCtrl) & 0x0f) | (scrLoc << 4));
+}
+
+/*
+ * Set character set 0-7 memory location (2K per character set).
+ */
+void setVicChrMem(uchar chrLoc) {
+    outp(vicMemCtrl, (inp(vicMemCtrl) & 0xf0) | (chrLoc << 1));
+}
+
+/*
+ * Set standard character mode (no MCM or ECM).
+ */
+void setVicChrMode(uchar mmuRcr, uchar vicBank, uchar scrLoc, uchar chrLoc) {
+    setVicMmuBank(mmuRcr);
+    setVicBank(vicBank);
+    setVicMode(0, 0, 0);
+    setVicScrMem(scrLoc);
+    setVicChrMem(chrLoc);
+}
+
+/*
  * Clear screen using 16 bit word.
  */
 void clearVicScr(uchar c) {

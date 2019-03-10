@@ -4,6 +4,7 @@
  * Copyright (c) Steven P. Goldsmith. All rights reserved.
  */
 
+#include <sys.h>
 #include <string.h>
 #include <hitech.h>
 #include <screen.h>
@@ -21,39 +22,57 @@ uchar bitTable[8] = { 128, 64, 32, 16, 8, 4, 2, 1 };
 uchar fillTable[7] = { 0x7f, 0x3f, 0x1f, 0x0f, 0x07, 0x03, 0x01 };
 
 /*
+ * Set bitmap 0-1 memory location (8K per bitmap).
+ */
+void setVicBmpMem(uchar bmpLoc) {
+    outp(vicMemCtrl, (inp(vicMemCtrl) & 0xf0) | (bmpLoc << 3));
+}
+
+/*
+ * Set bitmap mode.
+ */
+void setVicBmpMode(uchar mmuRcr, uchar vicBank, uchar scrLoc, uchar bmpLoc) {
+    setVicMmuBank(mmuRcr);
+    setVicBank(vicBank);
+    setVicMode(0, 1, 0);
+    setVicScrMem(scrLoc);
+    setVicBmpMem(bmpLoc);
+}
+
+/*
  * Clear screen using 16 bit word.
  */
-void clearVicBmp(uchar *bmp, uchar c) {
-    fillVicMem(bmp, 0, bitmapSize >> 1, (c << 8) + c);
+void clearVicBmp(uchar c) {
+    fillVicMem(bmpMem, 0, bmpSize >> 1, (c << 8) + c);
 }
 
 /*
  * Clear bitmap color memory.
  */
-void clearVicBmpCol(uchar *scr, uchar color) {
-    fillVicMem(scr, 0, scrSize >> 1, (color << 8) + color);
+void clearVicBmpCol(uchar c) {
+    fillVicMem(bmpColMem, 0, scrSize >> 1, (c << 8) + c);
 }
 
 /*
  * Set pixel.
  */
-void setVicPix(uchar *bmp, ushort x, ushort y) {
+void setVicPix(ushort x, ushort y) {
     ushort pixByte = 40 * (y & 0xf8) + (x & 0x1f8) + (y & 0x07);
-    bmp[pixByte] = bmp[pixByte] | (bitTable[x & 0x07]);
+    bmpMem[pixByte] = bmpMem[pixByte] | (bitTable[x & 0x07]);
 }
 
 /*
  * Clear pixel.
  */
-void clearVicPix(uchar *bmp, ushort x, ushort y) {
+void clearVicPix(ushort x, ushort y) {
     ushort pixByte = 40 * (y & 0xf8) + (x & 0x1f8) + (y & 0x07);
-    bmp[pixByte] = bmp[pixByte] & ~(bitTable[x & 0x07]);
+    bmpMem[pixByte] = bmpMem[pixByte] & ~(bitTable[x & 0x07]);
 }
 
 /*
  * Optimized horizontal line algorithm up to 15x faster than Bresenham.
  */
-void drawVicLineH(uchar *bmp, ushort x, ushort y, ushort len, uchar setPix) {
+void drawVicLineH(ushort x, ushort y, ushort len, uchar setPix) {
     ushort pixByte = 40 * (y & 0xf8) + (x & 0x1f8) + (y & 0x07);
     uchar firstBits = x % 8;
     uchar lastBits = (x + len - 1) % 8;
@@ -62,27 +81,27 @@ void drawVicLineH(uchar *bmp, ushort x, ushort y, ushort len, uchar setPix) {
     if (firstBits > 0) {
         /* Handle left over bits on first byte */
         if (setPix) {
-            bmp[pixByte] = bmp[pixByte] | fillTable[firstBits - 1];
+            bmpMem[pixByte] = bmpMem[pixByte] | fillTable[firstBits - 1];
         } else {
-            bmp[pixByte] = bmp[pixByte] & ~fillTable[firstBits - 1];
+            bmpMem[pixByte] = bmpMem[pixByte] & ~fillTable[firstBits - 1];
         }
         pixByte += 8;
     }
     /* Fill in bytes */
     for (i = 0; i < fillBytes; i++) {
         if (setPix) {
-            bmp[pixByte] = 0xff;
+            bmpMem[pixByte] = 0xff;
         } else {
-            bmp[pixByte] = 0x00;
+            bmpMem[pixByte] = 0x00;
         }
         pixByte += 8;
     }
     /* Handle left over bits on last byte */
     if (lastBits > 0) {
         if (setPix) {
-            bmp[pixByte] = bmp[pixByte] | ~fillTable[lastBits - 1];
+            bmpMem[pixByte] = bmpMem[pixByte] | ~fillTable[lastBits - 1];
         } else {
-            bmp[pixByte] = bmp[pixByte] & fillTable[lastBits - 1];
+            bmpMem[pixByte] = bmpMem[pixByte] & fillTable[lastBits - 1];
         }
     }
 }
@@ -90,16 +109,16 @@ void drawVicLineH(uchar *bmp, ushort x, ushort y, ushort len, uchar setPix) {
 /*
  * Optimized vertical line algorithm uses less calculation than setVicPix.
  */
-void drawVicLineV(uchar *bmp, ushort x, ushort y, ushort len, uchar setPix) {
+void drawVicLineV(ushort x, ushort y, ushort len, uchar setPix) {
     ushort pixByte = 40 * (y & 0xf8) + (x & 0x1f8) + (y & 0x07);
     uchar vBit = bitTable[x & 0x07];
     uchar i;
     /* Plot pixels */
     for (i = 0; i < len; i++) {
         if (setPix) {
-            bmp[pixByte] = bmp[pixByte] | vBit;
+            bmpMem[pixByte] = bmpMem[pixByte] | vBit;
         } else {
-            bmp[pixByte] = bmp[pixByte] & ~vBit;
+            bmpMem[pixByte] = bmpMem[pixByte] & ~vBit;
         }
         y += 1;
         /* Increment based on char boundary */
@@ -114,10 +133,9 @@ void drawVicLineV(uchar *bmp, ushort x, ushort y, ushort len, uchar setPix) {
 /*
  * Print with foreground/background color.
  */
-void printVicBmp(uchar *bmp, uchar *scr, uchar *chr, uchar x, uchar y,
-uchar color, char *str) {
-    ushort *bmp16 = (ushort *) bmp;
-    ushort *chr16 = (ushort *) chr;
+void printVicBmp(uchar x, uchar y, uchar color, char *str) {
+    ushort *bmp16 = (ushort *) bmpMem;
+    ushort *chr16 = (ushort *) chrMem;
     ushort bmpOfs = (y * 160) + (x * 4);
     ushort colOfs = (y * 40) + x;
     ushort len = strlen(str);
@@ -126,7 +144,7 @@ uchar color, char *str) {
     for (i = 0; i < len; i++) {
         chrOfs = str[i] << 2;
         destOfs = i << 2;
-        scr[colOfs + i] = color;
+        bmpColMem[colOfs + i] = color;
         for (c = 0; c < 4; c++) {
             bmp16[bmpOfs + destOfs + c] = chr16[chrOfs + c];
         }
