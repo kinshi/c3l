@@ -38,7 +38,7 @@ void init(uchar *chr) {
     setVdcFgBg(15, 0);
     setVdcAttrsOff();
     setVdcBmpMode((ushort) bmpMem, (ushort) bmpColMem);
-    clearVdcBmp(0);
+    clearBmp(0);
 }
 
 /*
@@ -206,19 +206,19 @@ void circles() {
  */
 void run() {
     lines();
-    clearVdcBmp(0);
+    clearBmp(0);
     linesH();
-    clearVdcBmp(0);
+    clearBmp(0);
     linesV();
-    clearVdcBmp(0);
+    clearBmp(0);
     bezier();
-    clearVdcBmp(0);
+    clearBmp(0);
     rectangles();
-    clearVdcBmp(0);
+    clearBmp(0);
     squares();
-    clearVdcBmp(0);
+    clearBmp(0);
     ellipses();
-    clearVdcBmp(0);
+    clearBmp(0);
     circles();
 
 }
@@ -236,10 +236,13 @@ main() {
     bmpMem = bmp;
     bmpColMem = (uchar *) vdcColMem;
     bmpChrMem = altChr;
-    /* Use VIC pixel functions */
+    /* Use VDC clear functions */
+    clearBmp = clearVdcBmp;
+    clearBmpCol= clearVdcBmpCol;
+    /* Use VDC pixel functions */
     setPixel = setVdcPix;
     clearPixel = clearVdcPix;
-    /* Use optimized horizontal and vertical lines on the VIC */
+    /* Use optimized horizontal and vertical lines on the VDC */
     drawLineH = drawVdcLineH;
     drawLineV = drawVdcLineV;
     /* VDC aspect ratio */

@@ -53,6 +53,16 @@ void (*setPixel)(ushort, ushort);
 void (*clearPixel)(ushort, ushort);
 
 /*
+ * Clear bitmap.
+ */
+void (*clearBmp)(uchar);
+
+/*
+ * Clear bitmap color.
+ */
+void (*clearBmpCol)(uchar);
+
+/*
  * Draw horizontal line.
  */
 void (*drawLineH)(ushort, ushort, ushort, uchar);

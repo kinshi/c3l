@@ -12,6 +12,8 @@ extern uchar *bmpChrMem;
 extern uchar aspectRatio;
 extern void (*setPixel)(ushort, ushort);
 extern void (*clearPixel)(ushort, ushort);
+extern void (*clearBmp)(uchar);
+extern void (*clearBmpCol)(uchar);
 extern void (*drawLineH)(ushort, ushort, ushort, uchar);
 extern void (*drawLineV)(ushort, ushort, ushort, uchar);
 extern void drawLine(int x0, int y0, int x1, int y1, uchar setPix);

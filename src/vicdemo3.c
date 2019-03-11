@@ -20,11 +20,11 @@
  */
 void clearBitmap() {
     /* Set to black */
-    clearVicBmpCol(0x00);
+    clearBmpCol(0x00);
     /* Clear bitmap */
-    clearVicBmp(0);
+    clearBmp(0);
     /* White foreground and black background */
-    clearVicBmpCol(0x10);
+    clearBmpCol(0x10);
 }
 
 /*
@@ -66,7 +66,7 @@ void done(uchar bgCol, uchar fgCol) {
     outp(vicBorderCol, bgCol);
     outp(vicBgCol0, fgCol);
     /* Clear color to black */
-    clearVicBmpCol(0x10);
+    clearBmpCol(0x10);
     /* CPM default */
     setVicChrMode(0, 0, 11, 3);
     /* Enable CIA 1 IRQ */
@@ -273,6 +273,9 @@ main() {
     bmpMem = bmp;
     bmpColMem = scr;
     bmpChrMem = chr;
+    /* Use VIC clear functions */
+    clearBmp = clearVicBmp;
+    clearBmpCol= clearVicBmpCol;
     /* Use VIC pixel functions */
     setPixel = setVicPix;
     clearPixel = clearVicPix;
