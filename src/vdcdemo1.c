@@ -19,7 +19,7 @@
  * Set screen color, MMU bank, VIC bank, screen memory and char set memory.
  * Clear screen and color memory then enable screen.
  */
-void init() {
+void init(uchar *chr) {
     /* Clear all CIA 1 IRQ enable bits */
     outp(cia1Icr, 0x7f);
     /* Clear CIA 1 ICR status */
@@ -34,7 +34,7 @@ void init() {
     saveVdc();
     setVdcCursor(0, 0, vdcCurNone);
     /* Copy VDC char sets to VIC mem */
-    copyVdcChrMem(bmpChrMem, 0x2000, 512);
+    copyVdcChrMem(chr, 0x2000, 512);
     setVdcFgBg(15, 0);
     setVdcAttrsOff();
     setVdcBmpMode((ushort) bmpMem, (ushort) bmpColMem);
@@ -45,10 +45,10 @@ void init() {
  * Restore screen color, set MMU bank, VIC bank, screen
  * memory and char set memory location for CP/M return.
  */
-void done() {
+void done(uchar *chr) {
     restoreVdc();
-    copyVdcMemChr(bmpChrMem, 0x2000, 512);
-    free(bmpChrMem);
+    copyVdcMemChr(chr, 0x2000, 512);
+    free(chr);
     /* Enable CIA 1 IRQ */
     outp(cia1Icr, 0x82);
     /* ADM-3A clear-home cursor */
@@ -244,7 +244,7 @@ main() {
     drawLineV = drawVdcLineV;
     /* VDC aspect ratio */
     aspectRatio = 3;
-    init();
+    init(chr);
     run();
-    done();
+    done(chr);
 }
