@@ -4,6 +4,9 @@ sid.obj \
 cia.obj \
 screen.obj \
 graphics.obj \
+grline.obj \
+grellip.obj \
+grbezier.obj \
 vic.obj \
 vicscr.obj \
 vicbmp.obj \
