@@ -13,19 +13,29 @@
 #include <hitech.h>
 
 /*
- * Bitmap size in bytes.
- */
-ushort bmpSize;
-
-/*
  * Bitmap memory location.
  */
 uchar *bmpMem;
 
 /*
+ * Bitmap size in bytes.
+ */
+ushort bmpSize;
+
+/*
  * Bitmap color location.
  */
 uchar *bmpColMem;
+
+/*
+ * Bitmap color size.
+ */
+ushort bmpColSize;
+
+/*
+ * Bitmap character set location.
+ */
+uchar *bmpChrMem;
 
 /*
  * Aspect ratio used by circle and square functions.

@@ -4,9 +4,11 @@
  * Copyright (c) Steven P. Goldsmith. All rights reserved.
  */
 
-extern ushort bmpSize;
 extern uchar *bmpMem;
+extern ushort bmpSize;
 extern uchar *bmpColMem;
+extern ushort bmpColSize;
+extern uchar *bmpChrMem;
 extern uchar aspectRatio;
 extern void (*setPixel)(ushort, ushort);
 extern void (*clearPixel)(ushort, ushort);

@@ -13,7 +13,6 @@
 #include <hitech.h>
 #include <cia.h>
 #include <vdc.h>
-#include <screen.h>
 #include <graphics.h>
 
 /*
@@ -35,7 +34,7 @@ void init() {
     saveVdc();
     setVdcCursor(0, 0, vdcCurNone);
     /* Copy VDC char sets to VIC mem */
-    copyVdcChrMem(chrMem, 0x2000, 512);
+    copyVdcChrMem(bmpChrMem, 0x2000, 512);
     setVdcFgBg(15, 0);
     setVdcAttrsOff();
     setVdcBmpMode((ushort) bmpMem, (ushort) bmpColMem);
@@ -48,8 +47,8 @@ void init() {
  */
 void done() {
     restoreVdc();
-    copyVdcMemChr(chrMem, 0x2000, 512);
-    free(chrMem);
+    copyVdcMemChr(bmpChrMem, 0x2000, 512);
+    free(bmpChrMem);
     /* Enable CIA 1 IRQ */
     outp(cia1Icr, 0x82);
     /* ADM-3A clear-home cursor */
@@ -232,11 +231,11 @@ main() {
     /* Use alternate character set */
     uchar *altChr = (uchar *) ((ushort) chr) + 0x0800;
     /* Set default sizes and locations */
-    scrSize = vdcScrSize;
     bmpSize = vdcBmpSize;
+    bmpColSize = vdcScrSize;
     bmpMem = bmp;
     bmpColMem = (uchar *) vdcColMem;
-    chrMem = altChr;
+    bmpChrMem = altChr;
     /* Use VIC pixel functions */
     setPixel = setVdcPix;
     clearPixel = clearVdcPix;

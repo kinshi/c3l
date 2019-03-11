@@ -4,8 +4,8 @@
  * Copyright (c) Steven P. Goldsmith. All rights reserved.
  */
 
-extern ushort scrSize;
 extern uchar *scrMem;
+extern ushort scrSize;
 extern uchar *scrColMem;
 extern uchar *chrMem;
 extern void (*clearScr)( uchar);

@@ -7,7 +7,6 @@
 #include <sys.h>
 #include <string.h>
 #include <hitech.h>
-#include <screen.h>
 #include <graphics.h>
 #include <vic.h>
 
@@ -50,7 +49,7 @@ void clearVicBmp(uchar c) {
  * Clear bitmap color memory.
  */
 void clearVicBmpCol(uchar c) {
-    fillVicMem(bmpColMem, 0, scrSize >> 1, (c << 8) + c);
+    fillVicMem(bmpColMem, 0, bmpColSize >> 1, (c << 8) + c);
 }
 
 /*
@@ -135,7 +134,7 @@ void drawVicLineV(ushort x, ushort y, ushort len, uchar setPix) {
  */
 void printVicBmp(uchar x, uchar y, uchar color, char *str) {
     ushort *bmp16 = (ushort *) bmpMem;
-    ushort *chr16 = (ushort *) chrMem;
+    ushort *chr16 = (ushort *) bmpChrMem;
     ushort bmpOfs = (y * 160) + (x * 4);
     ushort colOfs = (y * 40) + x;
     ushort len = strlen(str);

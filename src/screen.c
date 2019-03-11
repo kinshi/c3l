@@ -13,14 +13,14 @@
 #include <hitech.h>
 
 /*
- * Screen size in bytes.
- */
-ushort scrSize;
-
-/*
  * Screen memory location.
  */
 uchar *scrMem;
+
+/*
+ * Screen size in bytes.
+ */
+ushort scrSize;
 
 /*
  * Screen color location.

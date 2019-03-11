@@ -7,7 +7,6 @@
 #include <sys.h>
 #include <string.h>
 #include <hitech.h>
-#include <screen.h>
 #include <graphics.h>
 #include <vdc.h>
 
@@ -32,7 +31,7 @@ void clearVdcBmp(uchar c) {
  * Clear bitmap color memory.
  */
 void clearVdcBmpCol(uchar c) {
-    fillVdcMem((ushort) bmpColMem, scrSize, c);
+    fillVdcMem((ushort) bmpColMem, bmpColSize, c);
 }
 
 /*
@@ -153,7 +152,7 @@ void printVdcBmp(uchar x, uchar y, char *str) {
         outVdc(vdcUpdAddrLo, (uchar) dispOfs);
         for (i = 0; i < len; i++) {
             chrOfs = (str[i] << 3) + c;
-            outVdc(vdcCPUData, chrMem[chrOfs]);
+            outVdc(vdcCPUData, bmpChrMem[chrOfs]);
         }
         /* Next scan line */
         dispOfs += 80;

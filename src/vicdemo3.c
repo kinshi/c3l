@@ -13,8 +13,6 @@
 #include <hitech.h>
 #include <cia.h>
 #include <vic.h>
-#include <vdc.h>
-#include <screen.h>
 #include <graphics.h>
 
 /*
@@ -50,11 +48,11 @@ void init() {
     outp(vicBorderCol, 14);
     outp(vicBgCol0, 0);
     /* Clear bitmap */
-    clearBitmap(bmpMem, scrMem);
+    clearBitmap();
     /* Copy VDC alt char set to VIC mem */
-    copyVdcChrMem(chrMem, 0x3000, 256);
+    copyVdcChrMem(bmpChrMem, 0x3000, 256);
     /* Set standard bitmap mode using MMU bank 1 */
-    setVicBmpMode(1, vicBank, ((ushort) scrMem - (vicBank * 16384)) / 1024,
+    setVicBmpMode(1, vicBank, ((ushort) bmpColMem - (vicBank * 16384)) / 1024,
             ((ushort) bmpMem - (vicBank * 16384)) / 8192);
     /* Enable screen */
     outp(vicCtrlReg1, (inp(vicCtrlReg1) | 0x10));
@@ -231,9 +229,9 @@ void run(uchar *vicMem) {
                     "used to read keyboard.                  ");
     sprintf(str, "mem: %04x", vicMem);
     printVicBmp(0, 4, 0x12, str);
-    sprintf(str, "chr: %04x", chrMem);
+    sprintf(str, "chr: %04x", bmpChrMem);
     printVicBmp(0, 6, 0x12, str);
-    sprintf(str, "scr: %04x", scrMem);
+    sprintf(str, "scr: %04x", bmpColMem);
     printVicBmp(0, 8, 0x12, str);
     sprintf(str, "bmp: %04x", bmpMem);
     printVicBmp(0, 10, 0x12, str);
@@ -270,11 +268,11 @@ main() {
     uchar border = inp(vicBorderCol);
     uchar background = inp(vicBgCol0);
     /* Set default sizes and locations */
-    scrSize = vicScrSize;
     bmpSize = vicBmpSize;
+    bmpColSize = vicScrSize;
     bmpMem = bmp;
     bmpColMem = scr;
-    chrMem = chr;
+    bmpChrMem = chr;
     /* Use VIC pixel functions */
     setPixel = setVicPix;
     clearPixel = clearVicPix;

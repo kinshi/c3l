@@ -7,7 +7,6 @@
 #include <sys.h>
 #include <string.h>
 #include <hitech.h>
-#include <screen.h>
 #include <vdc.h>
 
 /*
